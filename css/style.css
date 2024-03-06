@@ -33,6 +33,7 @@ input{  margin:0 0 10px 0;}
     display: block;
     width: fit-content;
     animation: slide-up 1s;
+    text-decoration: none;
 }
 @keyframes slide-up{
     0%{transform: translateY(40px); opacity: 0%;}

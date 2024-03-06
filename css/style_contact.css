@@ -1,0 +1,75 @@
+h1 {
+    font-size: 40px;
+    margin: 1px;
+    padding: 1px;
+    text-align: center;
+    color: #007EA7FF;
+}
+
+/* ---------------- contact form section ---------------- */
+
+.contact-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 10px;
+}
+
+.contact-section p {
+    font-size: 18px;
+    text-align: center;
+    color: black;
+    margin-bottom: 30px;
+}
+
+form {
+    width: 70%;
+}
+
+.contact-form {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.input-box {
+    width: calc(45% - 10px);
+    margin-bottom: 20px;
+}
+
+.input-box input,
+.input-box textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    margin-top: 5px;
+}
+
+.input-box textarea {
+    height: 100px;
+    resize: vertical;
+}
+
+.button {
+    width: 100%;
+    text-align: center;
+}
+
+.button input[type="submit"] {
+    background: rgb(0, 167, 225);
+    color: #000000;
+    padding: 12px 25px;
+    font-size: 18px;
+    font-weight: bold;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition-duration: 0.3s;
+}
+
+.button input[type="submit"]:hover {
+    background-color: #454fc1;
+    color: white;
+}

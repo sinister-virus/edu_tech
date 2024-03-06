@@ -1,0 +1,43 @@
+body{
+    font-family: Arial, Helvetica, sans-serif;
+    margin: 0;
+    color: black;
+}
+.body-dark{
+    background-color: #1E1E1E;
+    color: white;
+}
+
+/* ---------------- navigation bar style ---------------- */
+header{
+    display: flex;
+    padding: 0 5%;
+    justify-content: space-between;
+    background-color: white;
+    box-shadow: 0px 10px 25px #00000043;
+    height: 70px;
+}
+header img{     padding-top: 12px;}
+.main-nav{
+    padding: 20px;
+    display: flex;
+    column-gap: 40px;
+    padding-top: 18px;
+    background: rgba(96, 236, 255, 0.24);
+    border-radius: 0px 25px 0px 25px;
+
+}
+.main-nav a{
+    font-size: 20px;
+    color: rgb(0, 0, 0);
+    text-decoration: none;
+    transition-duration: 0.3s;
+    padding-top: 5px;
+}
+.main-nav a:hover{
+    color: #007EA7;
+}
+#selected{color: #00a7e1;}
+header svg:hover{ cursor: pointer;}
+#moon-icon{ transform: translateY(-5px); display: none;}
+#sun-icon{ transform: translateY(-5px);}

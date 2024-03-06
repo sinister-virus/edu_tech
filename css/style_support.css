@@ -1,0 +1,46 @@
+h1 {
+    font-size: 40px;
+    margin: 1px;
+    padding: 1px;
+    text-align: center;
+    color: #007EA7FF;
+}
+
+h2 {
+    display: inline-block; /* Added to keep h2 in the same line */
+    border-bottom: 1px solid #ddd;
+    font-size: 25px;
+    margin: 0;
+    padding: 5px;
+    color: #004764;
+}
+
+main li {
+    font-size: 20px;
+    font-weight: bold;
+    margin: 0;
+    padding: 0;
+}
+
+.faq,
+.support {
+    margin: 10px;
+}
+
+.faq p,
+.support p {
+    margin: 5px;
+    padding: 5px;
+    font-size: 20px;
+    color: #000000;
+    font-weight: normal
+}
+
+main a {
+    color: #0066cc;
+    text-decoration: none;
+}
+
+main a:hover {
+    text-decoration: underline;
+}

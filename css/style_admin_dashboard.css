@@ -1,0 +1,38 @@
+h1 {
+    font-size: 40px;
+    margin: 1px;
+    padding: 1px;
+    text-align: center;
+    color: #007EA7FF;
+}
+
+.stats {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    margin: 0 -10px;
+}
+
+.stat {
+    background-color: #f2f2f2;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    flex-basis: calc(33.333% - 20px);
+    margin: 10px;
+    padding: 20px;
+    text-align: center;
+}
+
+.stat h2 {
+    color: #333;
+    font-size: 1.25rem;
+    margin-bottom: 10px;
+}
+
+.stat p {
+    color: #666;
+    font-size: 2.5rem;
+    font-weight: bold;
+    line-height: 1.2;
+    margin-bottom: 0;
+}

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Information and Educational History Form</title>
+</head>
+<body>
+    <form action="submit.php" method="post">
+        <fieldset>
+            <legend>Personal Information:</legend>
+            <p>
+                <label for="fullName">Full Name:</label>
+                <input type="text" id="fullName" name="fullName" required>
+            </p>
+            <p>
+                <label for="dateOfBirth">Date of Birth:</label>
+                <input type="date" id="dateOfBirth" name="dateOfBirth" required>
+            </p>
+            <p>
+                <label for="gender">Gender:</label>
+                <select id="gender" name="gender" required>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="other">Other</option>
+                </select>
+            </p>
+            <p>
+                <label for="contactAddress">Contact Address:</label>
+                <textarea id="contactAddress" name="contactAddress" rows="4" cols="50" required></textarea>
+            </p>
+            <p>
+                <label for="phoneNumber">Phone Number:</label>
+                <input type="tel" id="phoneNumber" name="phoneNumber" required>
+            </p>
+            <p>
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+            </p>
+        </fieldset>
+
+        <fieldset>
+            <legend>Educational Institutions:</legend>
+            <p>
+                <label for="institutionName">School/College/University Name:</label>
+                <input type="text" id="institutionName" name="institutionName" required>
+            </p>
+            <p>
+                <label for="institutionAddress">Address:</label>
+                <textarea id="institutionAddress" name="institutionAddress" rows="4" cols="50" required></textarea>
+            </p>
+            <p>
+                <label for="contactDetails">Contact Details:</label>
+                <textarea id="contactDetails" name="contactDetails" rows="4" cols="50" required></textarea>
+            </p>
+            <p>
+                <label for="datesattended">Dates Attended:</label>
+                <input type="date" id="startDate" name="startDate" required> - <input type="date" id="endDate"
+                                                                                      name="endDate" required>
+
+                <label for="degreesCertificates">Degrees or Certificates Earned:</label>
+                <input type="text" id="degreesCertificates" name="degreesCertificates" required>
+            </p>
+            <p>
+                <label for="majorFieldOfStudy">Major/Field of Study:</label>
+                <input type="text" id="majorFieldOfStudy" name="majorFieldOfStudy" required>
+            </p>
+            <p>
+                <label for="gpaGrades">GPA/Grades:</label>
+                <input type="text" id="gpaGrades" name="gpaGrades" required>
+            </p>
+        </fieldset>
+
+        <fieldset>
+            <legend>Courses/Subjects:</legend>
+            <p>
+                <label for="courseName">Course/Subject Name:</label>
+                <input type="text" id="courseName" name="courseName" required>
+            </p>
+            <p>
+                <label for="courseCode">Course Code:</label>
+                <input type="text" id="courseCode" name="courseCode" required>
+            </p>
+            <p>
+                <label for="courseDescription">Description:</label>
+                <textarea id="courseDescription" name="courseDescription" rows="4" cols="50" required></textarea>
+           </p>
+            <p>
+                <label for="creditsHours">Credits/Hours:</label>
+                <input type="number" id="creditsHours" name="creditsHours" min="1" required>
+            </p>
+            <p>
+                <label for="grade">Grades Received:</label>
+                <input type="text" class="form-control" id="grade" name="grade" placeholder="Enter grades received" required>
+            </p>
+
+            <p>
+                <label for="date">Dates Taken:</label>
+                <input type="date" class="form-control" id="date" name="date" required>
+            </p>
+        </fieldset>
+        <p>
+            <input type="submit" value="Submit">
+        </p>
+    </form>
+    <script  src="../js/script_student_information.js"></script>
+</body>
+</html>>

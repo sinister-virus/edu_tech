@@ -15,7 +15,7 @@ function login() {
     case 'admin':
       if (username === 'admin' && password === 'admin') {
         // Redirect to admin home page
-        window.location.href = '../Dashboard/dashboard_admin.html';
+        window.location.href = '../Admin/admin_dashboard.html';
       } else {
         alert('Invalid username or password for Admin.');
       }
@@ -24,7 +24,7 @@ function login() {
     case 'student':
       if (username === 'student' && password === 'student') {
         // Redirect to student home page
-        window.location.href = '../Dashboard/dashboard_student.html';
+        window.location.href = '../Student/dashboard_student.html';
       } else {
         alert('Invalid username or password for Student.');
       }
@@ -33,7 +33,7 @@ function login() {
     case 'institute':
       if (username === 'institute' && password === 'institute') {
         // Redirect to institute home page
-        window.location.href = '../Dashboard/dashboard_institute.html';
+        window.location.href = '../Institute/institute_dashboard.html';
       } else {
         alert('Invalid username or password for Institute.');
       }

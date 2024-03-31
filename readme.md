@@ -16,7 +16,7 @@ To develop an Interlinked platform for School education, Higher education and Te
 
 ## Features
 
-A list of the features of the platform, including those related to school education, higher education, and technical education.
+The list of the features of the platform, including those related to school education, higher education, and technical education.
 
 ## Installation
 
@@ -28,19 +28,17 @@ Instructions on how to use the platform, including how to access the different e
 
 ## Technologies Used
 
-A list of the technologies used to build the platform.
+The list of the technologies used to build the platform.
 
 Front End
 1. HTML
 2. CSS
-3. Javascript
-4. React
-5. Tailwind CSS
+3. JavaScript
 
 Back End
 1. Python
-2. Django
-3. AWS
+2. Flask
+3. NetApp/AWS/GCP
 
 ## Contributors
 

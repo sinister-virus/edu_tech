@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+
+<html lang="en" dir="ltr">
+	<head>
+		<meta charset="UTF-8">
+		<link rel="stylesheet" href="../../static/styles/style_register_institute.css">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Institute Registration</title>
+	</head>
+   
+	<body>
+	  <div class="container">
+		<div class="title">Institute Registration</div>
+		<div class="content">
+		  <form action="/institute_register" method="POST">
+			<div class="user-details">
+
+			  <div class="input-box">
+				<span class="details">First Name</span>
+				<input type="text" name="first_name" placeholder="Enter First name" required>
+			  </div>
+
+			  <div class="input-box">
+				<span class="details">Last Name</span>
+				<input type="text" name="last_name" placeholder="Enter Last name" required>
+			  </div>
+
+			  <div class="input-box">
+
+				<div class="gender-details">
+					<input type="radio" name="gender" id="dot-1" value="Male">
+					<input type="radio" name="gender" id="dot-2" value="Female">
+					<input type="radio" name="gender" id="dot-3" value="Other">
+
+				  <span class="gender-type">Gender</span>
+
+				  <div class="category">
+
+				  <label for="dot-1">
+					<span class="dot one"></span>
+					<span class="Male">Male</span>
+				  </label>
+
+				  <label for="dot-2">
+					<span class="dot two"></span>
+					<span class="Female">Female</span>
+				  </label>
+
+				  <label for="dot-3">
+					<span class="dot three"></span>
+					<span class="Other">Other</span>
+				  </label>
+
+				  </div>
+				</div>
+			  </div>
+
+			  <div class="input-box">
+				<span class="details">Date of Birth</span>
+				<input type="date" name="dob" placeholder="Enter Date of Birth" required>
+			  </div>
+
+			  <div class="input-box">
+				<span class="details">Email</span>
+				<input type="email" name="email" placeholder="Enter Email" required>
+			  </div>
+
+			  <div class="input-box">
+				<span class="details">Phone Number</span>
+				<input type="text" name="phone_no" placeholder="Enter Phone Number" required>
+			  </div>
+
+			  <div class="input-box">
+				<span class="details">Institute Name</span>
+				<input type="text" name="institute_name" placeholder="Enter Institute name" required>
+			  </div>
+
+			  <div class="input-box">
+				<span class="details">Institute Code</span>
+				<input type="text" name="institute_code" placeholder="Enter Register number" required>
+			  </div>
+			</div>
+
+			<div class="Institute type-details">
+			  <input type="radio" name="institute_type" value="School" id="dot-4">
+			  <input type="radio" name="institute_type" value="High School" id="dot-5">
+			  <input type="radio" name="institute_type" value="College" id="dot-6">
+			  <span class="Institute type-title">Institute type</span>
+
+			  <div class="category">
+				<label for="dot-4">
+				<span class="dot four"></span>
+				<span class="School">School</span>
+			  </label>
+
+			  <label for="dot-5">
+				<span class="dot five"></span>
+				<span class="High School">High School</span>
+			  </label>
+
+			  <label for="dot-6">
+				<span class="dot six"></span>
+				<span class="Collage">College</span>
+				</label>
+			  </div>
+
+			</div>
+
+			<div class="user-details">
+			  <div class="input-box">
+				<span class="details">Institute Email</span>
+				<input type="text" name="institute_email" placeholder="Enter Institute email" required>
+			  </div>
+
+			  <div class="input-box">
+				<span class="details">Institute Phone Number</span>
+				<input type="text" name="institute_phone_no" placeholder="Enter Institute number" required>
+			  </div>
+
+			  <div class="input-box">
+				<span class="details">Aadhaar Number</span>
+				<input type="number" name="aadhaar_no" placeholder="Enter your password" required>
+			  </div>
+
+			  <div class="input-box">
+				<span class="details">Confirm Aadhaar Number</span>
+				<input type="number" name="confirm_aadhaar_no" placeholder="Enter your password" required>
+			  </div>
+
+			  <div class="input-box">
+				<span class="details">Password</span>
+				<input type="text" name="password" placeholder="Enter your password" required>
+			  </div>
+
+			  <div class="input-box">
+				<span class="details">Confirm Password</span>
+				<input type="text" name="confirm_password" placeholder="Confirm your password" required>
+			  </div>
+			</div>
+
+			<div class="button">
+			  <input type="submit" value="Register">
+			</div>
+
+		  </form>
+		</div>
+	  </div>
+    <script src="../../static/js/script_registration_success.js"></script>
+	</body>
+</html>

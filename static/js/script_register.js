@@ -25,13 +25,13 @@ continueBtn.addEventListener("click", (event) => {
       errorMsg.remove();
     }
     if (selectedUserType === "student") {
-      window.location.href = "/register_student";
+      window.location.href = "/student_register";
     }
     if (selectedUserType === "institute") {
-      window.location.href = "/register_institute";
+      window.location.href = "institute_register";
     }
     else if (selectedUserType === "admin") {
-      window.location.href = "/register_admin";
+      window.location.href = "/admin_register";
     }
   }
 });

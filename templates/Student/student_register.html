@@ -3,35 +3,36 @@
 <html lang="en" dir="ltr">
 	<head>
 		<meta charset="UTF-8">
-			<link rel="stylesheet" href="../../static/styles/style_register_student.css">
+		<link rel="stylesheet" href="../../static/styles/style_register_student.css">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Student Registration</title>
 	</head>
    
 	<body>
 	  <div class="container">
 		<div class="title">Student Registration</div>
 		<div class="content">
-		  <form action="#">
+		  <form action="/student_register" method="POST">
 		  
 			<div class="user-details">
 			
 			  <div class="input-box">
 				<span class="details">First Name</span>
-				<input type="text" placeholder="Enter First Name" required>
+				<input type="text" name="first_name" placeholder="Enter First Name" required>
 			  </div>
 			  
 			  <div class="input-box">
 				<span class="details">Last Name</span>
-				<input type="text" placeholder="Enter Last Name" required>
+				<input type="text" name="last_name" placeholder="Enter Last Name" required>
 			  </div>
 			  
 			  <div class="input-box">
 			
 				<div class="gender-details">
-				  <input type="radio" name="gender type" id="dot-1">
-				  <input type="radio" name="gender type" id="dot-2">
-				  <input type="radio" name="gender type" id="dot-3">
-				  
+					<input type="radio" name="gender" id="dot-1" value="Male">
+					<input type="radio" name="gender" id="dot-2" value="Female">
+					<input type="radio" name="gender" id="dot-3" value="Other">
+
 				  <span class="gender-type">Gender</span>
 				  
 				  <div class="category">
@@ -58,37 +59,37 @@
 			
 			  <div class="input-box">
 				<span class="details">Date of Birth</span>
-				<input type="date" placeholder="Enter Date of Birth" required>
+				<input type="date" name="dob" placeholder="Enter Date of Birth" required>
 			  </div>
-			
+
 			  <div class="input-box">
 				<span class="details">Email</span>
-				<input type="email" placeholder="Enter Email" required>
+				<input type="email" name="email" placeholder="Enter Email" required>
 			  </div>
 			  
 			  <div class="input-box">
 				<span class="details">Phone Number</span>
-				<input type="text" placeholder="Enter Phone Number" required>
+				<input type="text" name="phone_no" placeholder="Enter Phone Number" required>
 			  </div>
 			  
 			  <div class="input-box">
 				<span class="details">Aadhaar Number</span>
-				<input type="number" placeholder="Enter your password" required>
+				<input type="number" name="aadhaar_no" placeholder="Enter your Aadhaar Number" required>
 			  </div>
 
 			  <div class="input-box">
 				<span class="details">Confirm Aadhaar Number</span>
-				<input type="number" placeholder="Enter your password" required>
+				<input type="number" name="confirm_aadhaar_no" placeholder="Confirm Aadhaar Number" required>
 			  </div>
 
 			  <div class="input-box">
 				<span class="details">Password</span>
-				<input type="password" placeholder="Enter your password" required>
+				<input type="password" name="password" placeholder="Enter your password" required>
 			  </div>
 			  
 			  <div class="input-box">
 				<span class="details">Confirm Password</span>
-				<input type="password" placeholder="Confirm your password" required>
+				<input type="password" name="confirm_password" placeholder="Confirm your password" required>
 			  </div>
 			  
 			</div>

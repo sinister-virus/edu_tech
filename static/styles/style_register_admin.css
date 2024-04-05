@@ -6,12 +6,12 @@
   font-family: 'Poppins',sans-serif;
 }
 body{
-  height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
   padding: 10px;
   background: #71b7e6;
+  margin: auto;
 }
 .container{
   max-width: 700px;
@@ -20,6 +20,7 @@ body{
   padding: 25px 30px;
   border-radius: 5px;
   box-shadow: 0 5px 10px rgba(0,0,0,0.15);
+  margin: 50px;
 }
 .container .title{
   font-size: 25px;

@@ -52,3 +52,16 @@ main{
         transform: rotate(45deg) scale(1);
     }
 }
+
+.success-container a{
+    color: #14ce51;
+    font-weight: 500;
+    font-size: 30px;
+    display: block;
+    margin-top: 20px;
+}
+
+.success-container a:hover{
+    color: #228a00;
+    text-decoration: none;
+}

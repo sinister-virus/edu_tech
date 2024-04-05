@@ -1,6 +1,6 @@
 h1 {
     font-size: 40px;
-    margin: 1px;
+    margin: 0 auto 0 auto;
     padding: 1px;
     text-align: center;
     color: #007EA7FF;
@@ -24,7 +24,7 @@ main li {
 
 .faq,
 .support {
-    margin: 10px;
+    margin: 0 10px 0 10px;
 }
 
 .faq p,
@@ -44,3 +44,4 @@ main a {
 main a:hover {
     text-decoration: underline;
 }
+

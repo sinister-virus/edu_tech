@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+		<link rel="stylesheet" href="../../../static/styles/form/style_form_student_info.css">
+		<link rel="stylesheet" href="../../../static/styles/footer.css">
+		<link rel="stylesheet" href="../../../static/styles/nav.css">
+    	<link rel="icon" type="image/x-icon" href="../../../static/img/et_logo.png">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Student Registration Form</title>
+    </head>
+
+    <body>
+        <header>
+            <img id="et_logo" src="../../../static/img/et_logo.png" height="50px" width="50px" alt="Edu Tech Logo"/>
+
+            <nav class="main-nav">
+
+                <a href="../../index.html" >Home</a>
+                <a href="../../login.html">Login</a>
+                <a href="../../register_tnc.html">Register</a>
+                <a href="../../support.html">Support & FAQ</a>
+                <a href="../../about.html">About</a>
+                <a href="../../contact.html">Contact</a>
+
+            </nav>
+        </header>
+    <main>
+        <div class="container">
+                <div class="content">
+                    <div class="title">Student Registration Form</div>
+                    <form action="form_address.html" method="post">
+                        <fieldset>
+                            <legend>Parent Information:</legend>
+                            <p>
+                                <label for="f_first_name">Father's First Name:</label>
+                                <input type="text" id="f_first_name" name="f_first_name"><br>
+                            </p>
+                            <p>
+                                <label for="f_middle_name">Father's Middle Name:</label>
+                                <input type="text" id="f_middle_name" name="f_middle_name"><br>
+                            </p>
+                            <p>
+                                <label for="f_last_name">Father's Last Name:</label>
+                                <input type="text" id="f_last_name" name="f_last_name"><br>
+                            </p>
+                            <p>
+                                <label for="f_phone_no">Father's Phone Number:</label>
+                                <input type="tel" id="f_phone_no" name="f_phone_no" pattern="[0-9]{10}"><br>
+                            </p>
+                            <p>
+                                <label for="f_email">Father's Email:</label>
+                                <input type="email" id="f_email" name="f_email"><br>
+                            </p>
+                            <p>
+                                <label for="m_first_name">Mother's First Name:</label>
+                                <input type="text" id="m_first_name" name="m_first_name"><br>
+                            </p>
+                            <p>
+                                <label for="m_middle_name">Mother's Middle Name:</label>
+                                <input type="text" id="m_middle_name" name="m_middle_name"><br>
+                            </p>
+                            <p>
+                                <label for="m_last_name">Mother's Last Name:</label>
+                                <input type="text" id="m_last_name" name="m_last_name"><br>
+                            </p>
+                            <p>
+                                <label for="m_phone_no">Mother's Phone Number:</label>
+                                <input type="tel" id="m_phone_no" name="m_phone_no" pattern="[0-9]{10}"><br>
+                            </p>
+                            <p>
+                                <label for="m_email">Mother's Email:</label>
+                                <input type="email" id="m_email" name="m_email"><br>
+                            </p>
+                        </fieldset>
+                        <a href="form_student_info.html"><button id="prev_btn" type="button" >Previous</button></a>
+                        <button id="next_btn" type="submit"> Next</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+		<img src="../../../static/img/smart_india_hackathon_2022_w.png" id="Smart_India_Hackathon_2022_img" alt="Smart India Hackathon 2022 Logo">
+			<p>© 2024 Your Website. All Rights Reserved.</p>
+			<!-- social links, Digital India , help, and support info -->
+            <div class="footer-social">
+                <ul class="footer-social">
+                    <li><a href="https://www.facebook.com/yourwebsite" target="_blank">Facebook</a></li>
+                    <li><a href="https://www.twitter.com/yourwebsite" target="_blank">Twitter</a></li>
+                    <li><a href="https://www.instagram.com/yourwebsite" target="_blank">Instagram</a></li>
+                    <li><a href="https://www.linkedin.com/yourwebsite" target="_blank">LinkedIn</a></li>
+                </ul>
+            </div>
+            <div class="footer-contact">
+                <ul>
+                    <li><a href="mailto:help@iep.com">Email - help@iep.com </a></li>
+                    <li><a href="tel:1234567890">Help Line No. - 1234567890</a></li>
+                    <li><a href="https://www.digitalindia.gov.in" target="_blank">Digital India</a></li>
+                </ul>
+            </div>
+		<img src="../../../static/img/digital_india_logo.png" id="Digital_India_img" alt="Digital India Logo">
+    </footer>
+
+    <script src="../../../static/js/forms/script_form_student_info.js"></script>
+</body>
+</html>

@@ -29,51 +29,59 @@
         <div class="container">
                 <div class="content">
                     <div class="title">Student Registration Form</div>
-                    <form action="form_address.html" method="post">
+                    <form action="/form_parents_info" method="POST">
                         <fieldset>
-                            <legend>Parent Information:</legend>
+                            <legend>Parents Information:</legend>
                             <p>
-                                <label for="f_first_name">Father's First Name:</label>
-                                <input type="text" id="f_first_name" name="f_first_name"><br>
+                                <label for="f_middle_name">Father's First Name:</label>
+                                <input type="text" id="f_first_name" name="f_first_name" value="{{ student_info.f_first_name }}"><br>
                             </p>
-                            <p>
+                             <p>
                                 <label for="f_middle_name">Father's Middle Name:</label>
-                                <input type="text" id="f_middle_name" name="f_middle_name"><br>
+                                <input type="text" id="f_middle_name" name="f_middle_name" value="{{ student_info.f_middle_name }}"><br>
                             </p>
                             <p>
                                 <label for="f_last_name">Father's Last Name:</label>
-                                <input type="text" id="f_last_name" name="f_last_name"><br>
+                                <input type="text" id="f_last_name" name="f_last_name" value="{{ student_info.f_last_name }}"><br>
                             </p>
                             <p>
                                 <label for="f_phone_no">Father's Phone Number:</label>
-                                <input type="tel" id="f_phone_no" name="f_phone_no" pattern="[0-9]{10}"><br>
+                                <input type="tel" id="f_phone_no" name="f_phone_no" pattern="[0-9]{10}" value="{{ student_info.f_phone_no }}"><br>
                             </p>
                             <p>
                                 <label for="f_email">Father's Email:</label>
-                                <input type="email" id="f_email" name="f_email"><br>
+                                <input type="email" id="f_email" name="f_email" value="{{ student_info.f_email }}"><br>
+                            </p>
+                            <p>
+                                <label for="f_occupation">Father's Occupation:</label>
+                                <input type="text" id="f_occupation" name="f_occupation" value="{{ student_info.f_occupation }}"><br>
                             </p>
                             <p>
                                 <label for="m_first_name">Mother's First Name:</label>
-                                <input type="text" id="m_first_name" name="m_first_name"><br>
+                                <input type="text" id="m_first_name" name="m_first_name" value="{{ student_info.m_first_name }}"><br>
                             </p>
                             <p>
                                 <label for="m_middle_name">Mother's Middle Name:</label>
-                                <input type="text" id="m_middle_name" name="m_middle_name"><br>
+                                <input type="text" id="m_middle_name" name="m_middle_name" value="{{ student_info.m_middle_name }}"><br>
                             </p>
                             <p>
                                 <label for="m_last_name">Mother's Last Name:</label>
-                                <input type="text" id="m_last_name" name="m_last_name"><br>
+                                <input type="text" id="m_last_name" name="m_last_name" value="{{ student_info.m_last_name }}"><br>
                             </p>
                             <p>
                                 <label for="m_phone_no">Mother's Phone Number:</label>
-                                <input type="tel" id="m_phone_no" name="m_phone_no" pattern="[0-9]{10}"><br>
+                                <input type="tel" id="m_phone_no" name="m_phone_no" pattern="[0-9]{10}" value="{{ student_info.m_phone_no }}"><br>
                             </p>
                             <p>
                                 <label for="m_email">Mother's Email:</label>
-                                <input type="email" id="m_email" name="m_email"><br>
+                                <input type="email" id="m_email" name="m_email" value="{{ student_info.m_email }}"><br>
+                            </p>
+                            <p>
+                                <label for="m_occupation">Mother's Occupation:</label>
+                                <input type="text" id="m_occupation" name="m_occupation" value="{{ student_info.m_occupation }}"><br>
                             </p>
                         </fieldset>
-                        <a href="form_student_info.html"><button id="prev_btn" type="button" >Previous</button></a>
+                        <a href="/form_student_info"><button id="prev_btn" type="button" >Previous</button></a>
                         <button id="next_btn" type="submit"> Next</button>
                     </form>
                 </div>

@@ -1,3 +1,7 @@
+main {
+    flex-direction: column;
+}
+
 h1 {
     font-size: 40px;
     margin: 1px;

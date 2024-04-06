@@ -12,26 +12,26 @@
 	  <div class="container">
 		<div class="title">Admin Registration</div>
 		<div class="content">
-		  <form action="#">
+		  <form action="/admin_register" method="POST">
 		  
 			<div class="user-details">
 			
 			  <div class="input-box">
 				<span class="details">First Name</span>
-				<input type="text" placeholder="Enter First Name" required>
+				<input type="text" name="first_name" placeholder="Enter First Name" required>
 			  </div>
 			  
 			  <div class="input-box">
 				<span class="details">Last Name</span>
-				<input type="text" placeholder="Enter Last Name" required>
+				<input type="text" name="last_name" placeholder="Enter Last Name" required>
 			  </div>
 			  
 			  <div div class="input-box">
 			
 				<div class="gender-details">
-				  <input type="radio" name="gender type" id="dot-1">
-				  <input type="radio" name="gender type" id="dot-2">
-				  <input type="radio" name="gender type" id="dot-3">
+				  <input type="radio" name="gender" value="Male" id="dot-1">
+				  <input type="radio" name="gender" value="Female" id="dot-2">
+				  <input type="radio" name="gender" value="Other" id="dot-3">
 				  
 				  <span class="gender-type">Gender</span>
 				  
@@ -59,37 +59,37 @@
 			
 			  <div class="input-box">
 				<span class="details">Date of Birth</span>
-				<input type="date" placeholder="Enter Date of Birth" required>
+				<input type="date" name="dob" placeholder="Enter Date of Birth" required>
 			  </div>
 			
 			  <div class="input-box">
 				<span class="details">Email</span>
-				<input type="text" placeholder="Enter Email" required>
+				<input type="text" name="email" placeholder="Enter Email" required>
 			  </div>
 			  
 			  <div class="input-box">
 				<span class="details">Phone Number</span>
-				<input type="text" placeholder="Enter Phone Number" required>
+				<input type="text" name="phone_no" placeholder="Enter Phone Number" required>
 			  </div>
 
 			  <div class="input-box">
 				<span class="details">Aadhaar Number</span>
-				<input type="number" placeholder="Enter your password" required>
+				<input type="number" name="aadhaar_no" placeholder="Enter your password" required>
 			  </div>
 
 			  <div class="input-box">
 				<span class="details">Confirm Aadhaar Number</span>
-				<input type="number" placeholder="Enter your password" required>
+				<input type="number" name="confirm_aadhaar_no" placeholder="Enter your password" required>
 			  </div>
 
 			  <div class="input-box">
 				<span class="details">Password</span>
-				<input type="password" placeholder="Enter your password" required>
+				<input type="password" name="password" placeholder="Enter your password" required>
 			  </div>
 			  
 			  <div class="input-box">
 				<span class="details">Confirm Password</span>
-				<input type="password" placeholder="Confirm your password" required>
+				<input type="password" name="confirm_password" placeholder="Confirm your password" required>
 			  </div>
 			  
 			</div>

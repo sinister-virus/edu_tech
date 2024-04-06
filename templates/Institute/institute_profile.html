@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Institute Dashboard</title>
+    <title>institute Dashboard</title>
     <link rel="stylesheet" href="../../static/styles/style.css">
-    <link rel="stylesheet" href="../../static/styles/style_institute_dashboard.css">
+    <link rel="stylesheet" href="../../static/styles/style_institute_profile.css">
     <link rel="stylesheet" href="../../static/styles/footer.css">
     <link rel="stylesheet" href="../../static/styles/nav.css">
     <link rel="icon" type="image/x-icon" href="../../static/img/et_logo.png">
@@ -17,7 +17,7 @@
 
         <nav class="main-nav">
 
-            <a href="/institute_profile"  id="selected">Profile</a>
+            <a href="/institute_profile" id="selected">Profile</a>
             <a href="/institute_dashboard">Dashboard</a>
             <a href="/institute_manage">Manage</a>
             <a href="/login">Logout</a>
@@ -27,50 +27,18 @@
 
     <main>
         <h1>Profile</h1>
-        <h2>Overview</h2>
-        <!-- Add a brief overview of the platform's statistics and recent activity -->
-        <div class="stats">
-            <div class="stat">
-                <h2>Total Users</h2>
-                <p>1,234</p>
-            </div>
-            <div class="stat">
-                <h2>Active Users</h2>
-                <p>567</p>
-            </div>
-            <div class="stat">
-                <h2>New Users Today</h2>
-                <p>34</p>
+        <div class="profile">
+            <div class="profile-info">
+                <h2>Personal Information</h2>
+                <p>Name: {{ institute.first_name }} {{ institute.last_name }}</p>
+                <p>Gender: {{ institute.gender }}</p>
+                <p>Date of Birth: {{ institute.date_of_birth }}</p>
+                <p>Email: {{ institute.email }}</p>
+                <p>Phone Number: {{ institute.phone_no }}</p>
+                <p>Aadhaar Number: {{ institute.aadhaar_no }}</p>
+                <button class="edit-info-button" onclick="location.href='/form_institute_info'" type="button">Edit Information</button>
             </div>
         </div>
-        <h2>Recent Activity</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>User</th>
-                    <th>Action</th>
-                    <th>Date/Time</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>John Doe</td>
-                    <td>Created Account</td>
-                    <td>12/01/2023 10:30 AM</td>
-                </tr>
-                <tr>
-                    <td>Jane Smith</td>
-                    <td>Logged In</td>
-                    <td>12/01/2023 09:45 AM</td>
-                </tr>
-                <tr>
-                    <td>Bob Johnson</td>
-                    <td>Reset Password</td>
-                    <td>11/30/2023 06:15 PM</td>
-                </tr>
-            </tbody>
-        </table>
-
     </main>
 
     <footer>

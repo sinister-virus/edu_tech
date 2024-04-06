@@ -28,49 +28,37 @@
     <main>
         <h1>Dashboard</h1>
         <h2>Overview</h2>
-        <!-- Add a brief overview of the platform's statistics and recent activity -->
-        <div class="stats">
-            <div class="stat">
-                <h2>Total Users</h2>
-                <p>1,234</p>
-            </div>
-            <div class="stat">
-                <h2>Active Users</h2>
-                <p>567</p>
-            </div>
-            <div class="stat">
-                <h2>New Users Today</h2>
-                <p>34</p>
-            </div>
-        </div>
-        <h2>Recent Activity</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>User</th>
-                    <th>Action</th>
-                    <th>Date/Time</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>John Doe</td>
-                    <td>Created Account</td>
-                    <td>12/01/2023 10:30 AM</td>
-                </tr>
-                <tr>
-                    <td>Jane Smith</td>
-                    <td>Logged In</td>
-                    <td>12/01/2023 09:45 AM</td>
-                </tr>
-                <tr>
-                    <td>Bob Johnson</td>
-                    <td>Reset Password</td>
-                    <td>11/30/2023 06:15 PM</td>
-                </tr>
-            </tbody>
-        </table>
 
+        <!-- Display the overview pie chart -->
+        <form id="overview_form" action="/student_dashboard" method="post">
+        <div class="select_class">
+            <label for="select_class" class="select_class">Select class:</label>
+            <select id="select_class" class="select_class" onchange="submitForm(this)">
+                <option value="1">Class 1</option>
+                <option value="2">Class 2</option>
+                <option value="3">Class 3</option>
+                <option value="4">Class 4</option>
+                <option value="5">Class 5</option>
+                <option value="6">Class 6</option>
+                <option value="7">Class 7</option>
+                <option value="8">Class 8</option>
+                <option value="9">Class 9</option>
+                <option value="10">Class 10</option>
+                <option value="11">Class 11</option>
+                <option value="12">Class 12</option>
+            </select>
+            <button class="select_class" id="graph_gen"> Go</button>
+        </div>
+        </form>
+
+        <!-- Display the pie charts in a grid -->
+        <div class="pie-chart-grid">
+            {% for pie_chart in pie_charts %}
+                <div class="pie-chart">
+                    {{ pie_chart | safe }}
+                </div>
+            {% endfor %}
+        </div>
     </main>
 
     <footer>
@@ -94,5 +82,7 @@
             </div>
 		<img src="../../static/img/digital_india_logo.png" id="Digital_India_img" alt="Digital India Logo">
     </footer>
+
+    <script src="../../static/js/script_graph_gen.js"></script>
 </body>
 </html>

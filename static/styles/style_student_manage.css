@@ -1,0 +1,11 @@
+main{
+    flex-direction: column;
+}
+
+main h1 {
+    font-size: 40px;
+    margin: 0 auto 0 auto;
+    padding: 1px;
+    text-align: center;
+    color: #007EA7FF;
+}

@@ -2,7 +2,7 @@
 let subjectCount = 6;
 
 function addSubject() {
-    if (subjectCount <= 20) {
+    if (subjectCount <= 15) {
         const subjectFields = document.getElementById('subjectFields');
 
         subjectFields.appendChild(document.createElement('hr'));
@@ -18,6 +18,7 @@ function addSubject() {
         input1.type = 'text';
         input1.id = `c_1_sub_${subjectCount}_name`;
         input1.name = `c_1_sub_${subjectCount}_name`;
+        input1.value = `{{ student_info.c_1_sub_${subjectCount}_name }}`;
         subjectFields.appendChild(input1);
 
         subjectFields.appendChild(document.createElement('br'));
@@ -34,6 +35,7 @@ function addSubject() {
         input2.type = 'text';
         input2.id = `c_1_sub_${subjectCount}_marks_obtained`;
         input2.name = `c_1_sub_${subjectCount}_marks_obtained`;
+        input2.value = `{{ student_info.c_1_sub_${subjectCount}_marks_obtained }}`;
         subjectFields.appendChild(input2);
 
         subjectFields.appendChild(document.createElement('br'));
@@ -50,6 +52,7 @@ function addSubject() {
         input3.type = 'text';
         input3.id = `c_1_sub_${subjectCount}_total_marks`;
         input3.name = `c_1_sub_${subjectCount}_total_marks`;
+        input3.value = `{{ student_info.c_1_sub_${subjectCount}_total_marks }}`;
         subjectFields.appendChild(input3);
 
         subjectFields.appendChild(document.createElement('br'));

@@ -29,32 +29,32 @@
         <div class="container">
                 <div class="content">
                     <div class="title">Student Registration Form</div>
-                    <form action="form_parents_info.html" method="post">
+                    <form action="/form_student_info" method="POST">
                         <fieldset>
                             <legend>Student Information:</legend>
                             <p>
                                 <label for="aadhaar_no">Aadhaar Number:</label>
-                                <input type="text" id="aadhaar_no" name="aadhaar_no" required><br>
+                                <input type="text" id="aadhaar_no" name="aadhaar_no" value="{{ student_info.aadhaar_no }}" required><br>
                             </p>
                             <p>
                                 <label for="pan_no">PAN Number:</label>
-                                <input type="text" id="pan_no" name="pan_no"><br>
+                                <input type="text" id="pan_no" name="pan_no" value="{{ student_info.pan_no }}"><br>
                             </p>
                             <p>
-                                <label for="s_first_name">Student First Name:</label>
-                                <input type="text" id="s_first_name" name="s_first_name" required><br>
+                                <label for="first_name">Student First Name:</label>
+                                <input type="text" id="first_name" name="first_name" value="{{ student_info.first_name }}" required><br>
                             </p>
                             <p>
-                                <label for="s_middle_name">Student Middle Name:</label>
-                                <input type="text" id="s_middle_name" name="s_middle_name"><br>
+                                <label for="middle_name">Student Middle Name:</label>
+                                <input type="text" id="middle_name" name="middle_name" value="{{ student_info.middle_name }}"><br>
                             </p>
                             <p>
-                                <label for="s_last_name">Student Last Name:</label>
-                                <input type="text" id="s_last_name" name="s_last_name" required><br>
+                                <label for="last_name">Student Last Name:</label>
+                                <input type="text" id="last_name" name="last_name" value="{{ student_info.last_name }}" required><br>
                             </p>
                             <p>
                                 <label for="date_of_birth">Date of Birth:</label>
-                                <input type="date" id="date_of_birth" name="date_of_birth" required><br>
+                                <input type="date" id="date_of_birth" name="date_of_birth" value="{{ student_info.date_of_birth }}" required><br>
                             </p>
                             <p>
                                 <label for="gender">Gender:</label>
@@ -65,12 +65,12 @@
                                 </select><br>
                             </p>
                             <p>
-                                <label for="s_phone_no">Student Phone Number:</label>
-                                <input type="tel" id="s_phone_no" name="s_phone_no" pattern="[0-9]{10}" required><br>
+                                <label for="phone_no">Student Phone Number:</label>
+                                <input type="tel" id="phone_no" name="phone_no" value="{{ student_info.phone_no }}" pattern="[0-9]{10}" required><br>
                             </p>
                             <p>
-                                <label for="s_email">Student Email:</label>
-                                <input type="email" id="s_email" name="s_email" required><br>
+                                <label for="email">Student Email:</label>
+                                <input type="email" id="email" name="email" value="{{ student_info.email }}" required><br>
                             </p>
                         </fieldset>
                         <button id="next_btn" type="submit">Next</button>

@@ -1,0 +1,7 @@
+matplotlib
+flask
+pyodbc
+Werkzeug
+numpy
+mpld3
+pandas

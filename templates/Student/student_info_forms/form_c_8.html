@@ -25,114 +25,206 @@
 
             </nav>
         </header>
-    <main>
-        <div class="container">
-                <div class="content">
-                    <div class="title">Student Registration Form</div>
-                    <form action="form_c_8.html" method="post">
-                        <fieldset>
-                            <legend>Class 1 Information:</legend>
+        <main>
+            <div class="container">
+                <div>
+                    <div class="content">
+                        <div class="title">Student Registration Form</div>
+                        <form action="/form_c_8" method="POST">
+                            <fieldset>
+                                <legend>Class 8 Information:</legend>
+
                                 <label for="aadhaar_no">Aadhaar Number:</label>
-                                <input type="text" id="aadhaar_no" name="aadhaar_no" required><br>
+                                <input type="text" id="aadhaar_no" name="aadhaar_no" value="{{ class_8.aadhaar_no }}"><br>
 
                                 <label for="c_8_year">Year:</label>
-                                <input type="text" id="c_8_year" name="c_8_year" required><br>
+                                <input type="text" id="c_8_year" name="c_8_year" value="{{ class_8.c_8_year }}" ><br>
 
                                 <label for="c_8_board">Board:</label>
-                                <input type="text" id="c_8_board" name="c_8_board" required><br>
+                                <input type="text" id="c_8_board" name="c_8_board" value="{{ class_8.c_8_board }}" ><br>
 
                                 <label for="c_8_roll_no">Roll Number:</label>
-                                <input type="text" id="c_8_roll_no" name="c_8_roll_no"><br>
+                                <input type="text" id="c_8_roll_no" name="c_8_roll_no" value="{{ class_8.c_8_roll_no }}"><br>
 
                                 <label for="c_8_result">Result:</label>
-                                <input type="text" id="c_8_result" name="c_8_result"><br>
+                                <input type="text" id="c_8_result" name="c_8_result" value="{{ class_8.c_8_result }}"><br>
 
                                 <label for="c_8_name_of_school">Name of School:</label>
-                                <input type="text" id="c_8_name_of_school" name="c_8_name_of_school"><br>
+                                <input type="text" id="c_8_name_of_school" name="c_8_name_of_school" value="{{ class_8.c_8_name_of_school }}"><br>
 
                                 <div id="subjectFields">
 
-                                <!-- Subject 1 -->
-                                <hr>
-                                <label for="c_8_sub_1_name">Subject 1 Name:</label>
-                                <input type="text" id="c_8_sub_1_name" name="c_8_sub_1_name"><br>
-                                <label for="c_8_sub_1_marks_obtained">Subject 1 Marks Obtained:</label>
-                                <input type="text" id="c_8_sub_1_marks_obtained" name="c_8_sub_1_marks_obtained"><br>
-                                <label for="c_8_sub_1_total_marks">Subject 1 Total Marks:</label>
-                                <input type="text" id="c_8_sub_1_total_marks" name="c_8_sub_1_total_marks"><br>
+                                    <!-- Subject 1 -->
+                                    <hr>
+                                    <label for="c_8_sub_1_name">Subject 1 Name:</label>
+                                    <input type="text" id="c_8_sub_1_name" name="c_8_sub_1_name" value="{{ class_8.c_8_sub_1_name }}"><br>
+                                    <label for="c_8_sub_1_marks_obtained">Subject 1 Marks Obtained:</label>
+                                    <input type="text" id="c_8_sub_1_marks_obtained" name="c_8_sub_1_marks_obtained" value="{{ class_8.c_8_sub_1_marks_obtained }}"><br>
+                                    <label for="c_8_sub_1_total_marks">Subject 1 Total Marks:</label>
+                                    <input type="text" id="c_8_sub_1_total_marks" name="c_8_sub_1_total_marks" value="{{ class_8.c_8_sub_1_total_marks }}"><br>
 
-                                <!-- Subject 2 -->
-                                <hr>
-                                <label for="c_8_sub_2_name">Subject 2 Name:</label>
-                                <input type="text" id="c_8_sub_2_name" name="c_8_sub_2_name"><br>
-                                <label for="c_8_sub_2_marks_obtained">Subject 2 Marks Obtained:</label>
-                                <input type="text" id="c_8_sub_2_marks_obtained" name="c_8_sub_2_marks_obtained"><br>
-                                <label for="c_8_sub_2_total_marks">Subject 2 Total Marks:</label>
-                                <input type="text" id="c_8_sub_2_total_marks" name="c_8_sub_2_total_marks"><br>
+                                    <!-- Subject 2 -->
+                                    <hr>
+                                    <label for="c_8_sub_2_name">Subject 2 Name:</label>
+                                    <input type="text" id="c_8_sub_2_name" name="c_8_sub_2_name" value="{{ class_8.c_8_sub_2_name }}"><br>
+                                    <label for="c_8_sub_2_marks_obtained">Subject 2 Marks Obtained:</label>
+                                    <input type="text" id="c_8_sub_2_marks_obtained" name="c_8_sub_2_marks_obtained" value="{{ class_8.c_8_sub_2_marks_obtained }}"><br>
+                                    <label for="c_8_sub_2_total_marks">Subject 2 Total Marks:</label>
+                                    <input type="text" id="c_8_sub_2_total_marks" name="c_8_sub_2_total_marks" value="{{ class_8.c_8_sub_2_total_marks }}"><br>
 
-                                <!-- Subject 3 -->
-                                <hr>
-                                <label for="c_8_sub_3_name">Subject 3 Name:</label>
-                                <input type="text" id="c_8_sub_3_name" name="c_8_sub_3_name"><br>
-                                <label for="c_8_sub_3_marks_obtained">Subject 3 Marks Obtained:</label>
-                                <input type="text" id="c_8_sub_3_marks_obtained" name="c_8_sub_3_marks_obtained"><br>
-                                <label for="c_8_sub_3_total_marks">Subject 3 Total Marks:</label>
-                                <input type="text" id="c_8_sub_3_total_marks" name="c_8_sub_3_total_marks"><br>
+                                    <!-- Subject 3 -->
+                                    <hr>
+                                    <label for="c_8_sub_3_name">Subject 3 Name:</label>
+                                    <input type="text" id="c_8_sub_3_name" name="c_8_sub_3_name" value="{{ class_8.c_8_sub_3_name }}"><br>
+                                    <label for="c_8_sub_3_marks_obtained">Subject 3 Marks Obtained:</label>
+                                    <input type="text" id="c_8_sub_3_marks_obtained" name="c_8_sub_3_marks_obtained" value="{{ class_8.c_8_sub_3_marks_obtained }}"><br>
+                                    <label for="c_8_sub_3_total_marks">Subject 3 Total Marks:</label>
+                                    <input type="text" id="c_8_sub_3_total_marks" name="c_8_sub_3_total_marks" value="{{ class_8.c_8_sub_3_total_marks }}"><br>
 
-                                <!-- Subject 4 -->
-                                <hr>
-                                <label for="c_8_sub_4_name">Subject 4 Name:</label>
-                                <input type="text" id="c_8_sub_4_name" name="c_8_sub_4_name"><br>
-                                <label for="c_8_sub_4_marks_obtained">Subject 4 Marks Obtained:</label>
-                                <input type="text" id="c_8_sub_4_marks_obtained" name="c_8_sub_4_marks_obtained"><br>
-                                <label for="c_8_sub_4_total_marks">Subject 4 Total Marks:</label>
-                                <input type="text" id="c_8_sub_4_total_marks" name="c_8_sub_4_total_marks"><br>
+                                    <!-- Subject 4 -->
+                                    <hr>
+                                    <label for="c_8_sub_4_name">Subject 4 Name:</label>
+                                    <input type="text" id="c_8_sub_4_name" name="c_8_sub_4_name" value="{{ class_8.c_8_sub_4_name }}"><br>
+                                    <label for="c_8_sub_4_marks_obtained">Subject 4 Marks Obtained:</label>
+                                    <input type="text" id="c_8_sub_4_marks_obtained" name="c_8_sub_4_marks_obtained" value="{{ class_8.c_8_sub_4_marks_obtained }}"><br>
+                                    <label for="c_8_sub_4_total_marks">Subject 4 Total Marks:</label>
+                                    <input type="text" id="c_8_sub_4_total_marks" name="c_8_sub_4_total_marks" value="{{ class_8.c_8_sub_4_total_marks }}"><br>
 
-                                <!-- Subject 5 -->
-                                <hr>
-                                <label for="c_8_sub_5_name">Subject 5 Name:</label>
-                                <input type="text" id="c_8_sub_5_name" name="c_8_sub_5_name"><br>
-                                <label for="c_8_sub_5_marks_obtained">Subject 5 Marks Obtained:</label>
-                                <input type="text" id="c_8_sub_5_marks_obtained" name="c_8_sub_5_marks_obtained"><br>
-                                <label for="c_8_sub_5_total_marks">Subject 5 Total Marks:</label>
-                                <input type="text" id="c_8_sub_5_total_marks" name="c_8_sub_5_total_marks"><br>
+                                    <!-- Subject 5 -->
+                                    <hr>
+                                    <label for="c_8_sub_5_name">Subject 5 Name:</label>
+                                    <input type="text" id="c_8_sub_5_name" name="c_8_sub_5_name" value="{{ class_8.c_8_sub_5_name }}"><br>
+                                    <label for="c_8_sub_5_marks_obtained">Subject 5 Marks Obtained:</label>
+                                    <input type="text" id="c_8_sub_5_marks_obtained" name="c_8_sub_5_marks_obtained" value="{{ class_8.c_8_sub_5_marks_obtained }}"><br>
+                                    <label for="c_8_sub_5_total_marks">Subject 5 Total Marks:</label>
+                                    <input type="text" id="c_8_sub_5_total_marks" name="c_8_sub_5_total_marks" value="{{ class_8.c_8_sub_5_total_marks }}"><br>
 
+                                    <div class="hidden" >
 
-                                <!-- Subject Fields will be added here dynamically -->
+                                    <!-- Subject 6 -->
+                                    <hr class="hidden">
+                                    <label for="c_8_sub_6_name" class="hidden">Subject 6 Name:</label>
+                                    <input type="text" id="c_8_sub_6_name" name="c_8_sub_6_name" value="Eng" class="hidden"><br>
+                                    <label for="c_8_sub_6_marks_obtained" class="hidden">Subject 6 Marks Obtained:</label>
+                                    <input type="text" id="c_8_sub_6_marks_obtained" name="c_8_sub_6_marks_obtained" value="80" class="hidden"><br>
+                                    <label for="c_8_sub_6_total_marks" class="hidden">Subject 6 Total Marks:</label>
+                                    <input type="text" id="c_8_sub_6_total_marks" name="c_8_sub_6_total_marks" value="100" class="hidden"><br>
+
+                                    <!-- Subject 7 -->
+                                    <hr class="hidden">
+                                    <label for="c_8_sub_7_name" class="hidden">Subject 7 Name:</label>
+                                    <input type="text" id="c_8_sub_7_name" name="c_8_sub_7_name" value="Eng" class="hidden"><br>
+                                    <label for="c_8_sub_7_marks_obtained" class="hidden">Subject 7 Marks Obtained:</label>
+                                    <input type="text" id="c_8_sub_7_marks_obtained" name="c_8_sub_7_marks_obtained" value="80" class="hidden"><br>
+                                    <label for="c_8_sub_7_total_marks" class="hidden">Subject 7 Total Marks:</label>
+                                    <input type="text" id="c_8_sub_7_total_marks" name="c_8_sub_7_total_marks" value="100" class="hidden"><br>
+
+                                    <!-- Subject 8 -->
+                                    <hr class="hidden">
+                                    <label for="c_8_sub_8_name" class="hidden">Subject 8 Name:</label>
+                                    <input type="text" id="c_8_sub_8_name" name="c_8_sub_8_name" value="Eng" class="hidden"><br>
+                                    <label for="c_8_sub_8_marks_obtained" class="hidden">Subject 8 Marks Obtained:</label>
+                                    <input type="text" id="c_8_sub_8_marks_obtained" name="c_8_sub_8_marks_obtained" value="80" class="hidden"><br>
+                                    <label for="c_8_sub_8_total_marks" class="hidden">Subject 8 Total Marks:</label>
+                                    <input type="text" id="c_8_sub_8_total_marks" name="c_8_sub_8_total_marks" value="100" class="hidden"><br>
+
+                                    <!-- Subject 9 -->
+                                    <hr class="hidden">
+                                    <label for="c_8_sub_9_name" class="hidden">Subject 9 Name:</label>
+                                    <input type="text" id="c_8_sub_9_name" name="c_8_sub_9_name" value="Eng" class="hidden"><br>
+                                    <label for="c_8_sub_9_marks_obtained" class="hidden">Subject 9 Marks Obtained:</label>
+                                    <input type="text" id="c_8_sub_9_marks_obtained" name="c_8_sub_9_marks_obtained" value="80" class="hidden"><br>
+                                    <label for="c_8_sub_9_total_marks" class="hidden">Subject 9 Total Marks:</label>
+                                    <input type="text" id="c_8_sub_9_total_marks" name="c_8_sub_9_total_marks" value="100" class="hidden"><br>
+
+                                    <!-- Subject 10 -->
+                                    <hr class="hidden">
+                                    <label for="c_8_sub_10_name" class="hidden">Subject 10 Name:</label>
+                                    <input type="text" id="c_8_sub_10_name" name="c_8_sub_10_name" value="Eng" class="hidden"><br>
+                                    <label for="c_8_sub_10_marks_obtained" class="hidden">Subject 10 Marks Obtained:</label>
+                                    <input type="text" id="c_8_sub_10_marks_obtained" name="c_8_sub_10_marks_obtained" value="80" class="hidden"><br>
+                                    <label for="c_8_sub_10_total_marks" class="hidden">Subject 10 Total Marks:</label>
+                                    <input type="text" id="c_8_sub_10_total_marks" name="c_8_sub_10_total_marks" value="100" class="hidden"><br>
+
+                                    <!-- Subject 11 -->
+                                    <hr class="hidden">
+                                    <label for="c_8_sub_11_name" class="hidden">Subject 11 Name:</label>
+                                    <input type="text" id="c_8_sub_11_name" name="c_8_sub_11_name" value="Eng" class="hidden"><br>
+                                    <label for="c_8_sub_11_marks_obtained" class="hidden">Subject 11 Marks Obtained:</label>
+                                    <input type="text" id="c_8_sub_11_marks_obtained" name="c_8_sub_11_marks_obtained" value="80" class="hidden"><br>
+                                    <label for="c_8_sub_11_total_marks" class="hidden">Subject 11 Total Marks:</label>
+                                    <input type="text" id="c_8_sub_11_total_marks" name="c_8_sub_11_total_marks" value="100" class="hidden"><br>
+
+                                    <!-- Subject 12 -->
+                                    <hr class="hidden">
+                                    <label for="c_8_sub_12_name" class="hidden">Subject 12 Name:</label>
+                                    <input type="text" id="c_8_sub_12_name" name="c_8_sub_12_name" value="Eng" class="hidden"><br>
+                                    <label for="c_8_sub_12_marks_obtained" class="hidden">Subject 12 Marks Obtained:</label>
+                                    <input type="text" id="c_8_sub_12_marks_obtained" name="c_8_sub_12_marks_obtained" value="80" class="hidden"><br>
+                                    <label for="c_8_sub_12_total_marks" class="hidden">Subject 12 Total Marks:</label>
+                                    <input type="text" id="c_8_sub_12_total_marks" name="c_8_sub_12_total_marks" value="100" class="hidden"><br>
+
+                                    <!-- Subject 13 -->
+                                    <hr class="hidden">
+                                    <label for="c_8_sub_13_name" class="hidden">Subject 13 Name:</label>
+                                    <input type="text" id="c_8_sub_13_name" name="c_8_sub_13_name" value="Eng" class="hidden"><br>
+                                    <label for="c_8_sub_13_marks_obtained" class="hidden">Subject 13 Marks Obtained:</label>
+                                    <input type="text" id="c_8_sub_13_marks_obtained" name="c_8_sub_13_marks_obtained" value="80" class="hidden"><br>
+                                    <label for="c_8_sub_13_total_marks" class="hidden">Subject 13 Total Marks:</label>
+                                    <input type="text" id="c_8_sub_13_total_marks" name="c_8_sub_13_total_marks" value="100" class="hidden"><br>
+
+                                    <!-- Subject 14 -->
+                                    <hr class="hidden">
+                                    <label for="c_8_sub_14_name" class="hidden">Subject 14 Name:</label>
+                                    <input type="text" id="c_8_sub_14_name" name="c_8_sub_14_name" value="Eng" class="hidden"><br>
+                                    <label for="c_8_sub_14_marks_obtained" class="hidden">Subject 14 Marks Obtained:</label>
+                                    <input type="text" id="c_8_sub_14_marks_obtained" name="c_8_sub_14_marks_obtained" value="80" class="hidden"><br>
+                                    <label for="c_8_sub_14_total_marks" class="hidden">Subject 14 Total Marks:</label>
+                                    <input type="text" id="c_8_sub_14_total_marks" name="c_8_sub_14_total_marks" value="100" class="hidden"><br>
+
+                                    <!-- Subject 15 -->
+                                    <hr class="hidden">
+                                    <label for="c_8_sub_15_name" class="hidden">Subject 15 Name:</label>
+                                    <input type="text" id="c_8_sub_15_name" name="c_8_sub_15_name" value="Eng" class="hidden"><br>
+                                    <label for="c_8_sub_15_marks_obtained" class="hidden">Subject 15 Marks Obtained:</label>
+                                    <input type="text" id="c_8_sub_15_marks_obtained" name="c_8_sub_15_marks_obtained" value="80" class="hidden"><br>
+                                    <label for="c_8_sub_15_total_marks" class="hidden">Subject 15 Total Marks:</label>
+                                    <input type="text" id="c_8_sub_15_total_marks" name="c_8_sub_15_total_marks" value="100" class="hidden"><br>
+                                    </div>
                                 </div>
 
                                 <button type="button" id="add_sub_btn" onclick="addSubject()">Add Subject</button>
-                        </fieldset>
-                        <a href="form_address.html"><button id="prev_btn" type="button" >Previous</button></a>
-                        <button id="next_btn" type="submit"> Next</button>
-                    </form>
+                            </fieldset>
+                            <a href="/form_address"><button id="prev_btn" type="button" >Previous</button></a>
+                            <button id="next_btn" type="submit"> Next</button>
+                        </form>
+                    </div>
                 </div>
             </div>
-        </div>
-    </main>
+        </main>
 
-    <footer>
-		<img src="../../../static/img/smart_india_hackathon_2022_w.png" id="Smart_India_Hackathon_2022_img" alt="Smart India Hackathon 2022 Logo">
-			<p>© 2024 Your Website. All Rights Reserved.</p>
-			<!-- social links, Digital India , help, and support info -->
-            <div class="footer-social">
-                <ul class="footer-social">
-                    <li><a href="https://www.facebook.com/yourwebsite" target="_blank">Facebook</a></li>
-                    <li><a href="https://www.twitter.com/yourwebsite" target="_blank">Twitter</a></li>
-                    <li><a href="https://www.instagram.com/yourwebsite" target="_blank">Instagram</a></li>
-                    <li><a href="https://www.linkedin.com/yourwebsite" target="_blank">LinkedIn</a></li>
-                </ul>
-            </div>
-            <div class="footer-contact">
-                <ul>
-                    <li><a href="mailto:help@iep.com">Email - help@iep.com </a></li>
-                    <li><a href="tel:1234567890">Help Line No. - 1234567890</a></li>
-                    <li><a href="https://www.digitalindia.gov.in" target="_blank">Digital India</a></li>
-                </ul>
-            </div>
-		<img src="../../../static/img/digital_india_logo.png" id="Digital_India_img" alt="Digital India Logo">
-    </footer>
+        <footer>
+            <img src="../../../static/img/smart_india_hackathon_2022_w.png" id="Smart_India_Hackathon_2022_img" alt="Smart India Hackathon 2022 Logo">
+                <p>© 2024 Your Website. All Rights Reserved.</p>
+                <!-- social links, Digital India , help, and support info -->
+                <div class="footer-social">
+                    <ul class="footer-social">
+                        <li><a href="https://www.facebook.com/yourwebsite" target="_blank">Facebook</a></li>
+                        <li><a href="https://www.twitter.com/yourwebsite" target="_blank">Twitter</a></li>
+                        <li><a href="https://www.instagram.com/yourwebsite" target="_blank">Instagram</a></li>
+                        <li><a href="https://www.linkedin.com/yourwebsite" target="_blank">LinkedIn</a></li>
+                    </ul>
+                </div>
+                <div class="footer-contact">
+                    <ul>
+                        <li><a href="mailto:help@iep.com">Email - help@iep.com </a></li>
+                        <li><a href="tel:1234567890">Help Line No. - 1234567890</a></li>
+                        <li><a href="https://www.digitalindia.gov.in" target="_blank">Digital India</a></li>
+                    </ul>
+                </div>
+            <img src="../../../static/img/digital_india_logo.png" id="Digital_India_img" alt="Digital India Logo">
+        </footer>
 
-    <script src="../../../static/js/forms/script_c_8.js"></script>
-</body>
+        <script src="../../../static/js/forms/script_c_8.js"></script>
+    </body>
 </html>

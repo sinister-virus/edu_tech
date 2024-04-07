@@ -9,7 +9,7 @@ import mpld3
 
 #database connection
 conn_str = (r'DRIVER={Microsoft Access Driver (*.mdb, *.accdb)};'
-            r'DBQ=C:\Users\ROG\PycharmProjects\edu_tech\edutech_db.accdb;')
+            r'DBQ=C:\Users\HOME\PycharmProjects\edu_tech\edutech_db.accdb;')
 conn = pyodbc.connect(conn_str)
 cursor = conn.cursor()
 
@@ -317,7 +317,7 @@ def student_dashboard():
 
         # Plot the pie chart
         labels = [data[0] + ' obtained marks', data[0] + ' total marks']
-        sizes = [data[1], data[2]]
+        sizes = [data[1], str(int(data[2])-int(data[1]))]
         fig,ax = plt.subplots(figsize=(5,5))
         ax.pie(sizes, labels=labels, autopct='%1.1f%%')
         ax.set_title(data[0] + ' Marks Distribution')
@@ -657,9 +657,9 @@ def form_c_1_post():
             c_1_sub_9_name = request.form['c_1_sub_9_name']
             c_1_sub_9_marks_obtained = request.form['c_1_sub_9_marks_obtained']
             c_1_sub_9_total_marks = request.form['c_1_sub_9_total_marks']
-            c_1_sub_10_name = request.form['c_1_sub_20_name']
-            c_1_sub_10_marks_obtained = request.form['c_1_sub_20_marks_obtained']
-            c_1_sub_10_total_marks = request.form['c_1_sub_20_total_marks']
+            c_1_sub_10_name = request.form['c_1_sub_10_name']
+            c_1_sub_10_marks_obtained = request.form['c_1_sub_10_marks_obtained']
+            c_1_sub_10_total_marks = request.form['c_1_sub_10_total_marks']
             c_1_sub_11_name = request.form['c_1_sub_11_name']
             c_1_sub_11_marks_obtained = request.form['c_1_sub_11_marks_obtained']
             c_1_sub_11_total_marks = request.form['c_1_sub_11_total_marks']
@@ -675,7 +675,6 @@ def form_c_1_post():
             c_1_sub_15_name = request.form['c_1_sub_15_name']
             c_1_sub_15_marks_obtained = request.form['c_1_sub_15_marks_obtained']
             c_1_sub_15_total_marks = request.form['c_1_sub_15_total_marks']
-
 
             # Update c_1_info in the database
             cursor.execute("""
@@ -701,52 +700,1408 @@ def form_c_1_post():
         app.logger.error(f"Exception occurred: {e}")
         return str(e), 500
 
-@app.route('/form_c_2')
+@app.route('/form_c_2', methods=['GET', 'POST'])
 def form_c_2():
-    return render_template('Student/student_info_forms/form_c_2.html')
+    if request.method == 'POST':
+        return form_c_2_post()
+    else:
+        # Fetch c_2_info from the database
+        cursor.execute("SELECT * FROM class_2 WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+        c_2_info = cursor.fetchone()
 
-@app.route('/form_c_3')
+        # If c_2_info is None, create a default c_2_info object
+        if c_2_info is None:
+            c_2_info = {
+                ' c_2_sub_1_name': '',
+                ' c_2_sub_1_marks_obtained': '',
+                ' c_2_sub_1_total_marks': '',
+                ' c_2_sub_2_name': '',
+                ' c_2_sub_2_marks_obtained': '',
+                ' c_2_sub_2_total_marks': '',
+                ' c_2_sub_3_name': '',
+                ' c_2_sub_3_marks_obtained': '',
+                ' c_2_sub_3_total_marks': '',
+                ' c_2_sub_4_name': '',
+                ' c_2_sub_4_marks_obtained': '',
+                ' c_2_sub_4_total_marks': '',
+                ' c_2_sub_5_name': '',
+                ' c_2_sub_5_marks_obtained': '',
+                ' c_2_sub_5_total_marks': '',
+                ' c_2_sub_6_name': '',
+                ' c_2_sub_6_marks_obtained': '',
+                ' c_2_sub_6_total_marks': '',
+                ' c_2_sub_7_name': '',
+                ' c_2_sub_7_marks_obtained': '',
+                ' c_2_sub_7_total_marks': '',
+                ' c_2_sub_8_name': '',
+                ' c_2_sub_8_marks_obtained': '',
+                ' c_2_sub_8_total_marks': '',
+                ' c_2_sub_9_name': '',
+                ' c_2_sub_9_marks_obtained': '',
+                ' c_2_sub_9_total_marks': '',
+                ' c_2_sub_10_name': '',
+                ' c_2_sub_10_marks_obtained': '',
+                ' c_2_sub_10_total_marks': '',
+                ' c_2_sub_11_name': '',
+                ' c_2_sub_11_marks_obtained': '',
+                ' c_2_sub_11_total_marks': '',
+                ' c_2_sub_12_name': '',
+                ' c_2_sub_12_marks_obtained': '',
+                ' c_2_sub_12_total_marks': '',
+                ' c_2_sub_13_name': '',
+                ' c_2_sub_13_marks_obtained': '',
+                ' c_2_sub_13_total_marks': '',
+                ' c_2_sub_14_name': '',
+                ' c_2_sub_14_marks_obtained': '',
+                ' c_2_sub_14_total_marks': '',
+                ' c_2_sub_15_name': '',
+                ' c_2_sub_15_marks_obtained': '',
+                ' c_2_sub_15_total_marks': ''
+            }
+
+        # Pass the c_2_info to the template
+        return render_template('Student/student_info_forms/form_c_2.html', class_2=c_2_info)
+
+def form_c_2_post():
+    try:
+        if request.method == 'POST':
+            # Get form data
+            aadhaar_no = session['aadhaar_no']
+            c_2_sub_1_name = request.form['c_2_sub_1_name']
+            c_2_sub_1_marks_obtained = request.form['c_2_sub_1_marks_obtained']
+            c_2_sub_1_total_marks = request.form['c_2_sub_1_total_marks']
+            c_2_sub_2_name = request.form['c_2_sub_2_name']
+            c_2_sub_2_marks_obtained = request.form['c_2_sub_2_marks_obtained']
+            c_2_sub_2_total_marks = request.form['c_2_sub_2_total_marks']
+            c_2_sub_3_name = request.form['c_2_sub_3_name']
+            c_2_sub_3_marks_obtained = request.form['c_2_sub_3_marks_obtained']
+            c_2_sub_3_total_marks = request.form['c_2_sub_3_total_marks']
+            c_2_sub_4_name = request.form['c_2_sub_4_name']
+            c_2_sub_4_marks_obtained = request.form['c_2_sub_4_marks_obtained']
+            c_2_sub_4_total_marks = request.form['c_2_sub_4_total_marks']
+            c_2_sub_5_name = request.form['c_2_sub_5_name']
+            c_2_sub_5_marks_obtained = request.form['c_2_sub_5_marks_obtained']
+            c_2_sub_5_total_marks = request.form['c_2_sub_5_total_marks']
+            c_2_sub_6_name = request.form['c_2_sub_6_name']
+            c_2_sub_6_marks_obtained = request.form['c_2_sub_6_marks_obtained']
+            c_2_sub_6_total_marks = request.form['c_2_sub_6_total_marks']
+            c_2_sub_7_name = request.form['c_2_sub_7_name']
+            c_2_sub_7_marks_obtained = request.form['c_2_sub_7_marks_obtained']
+            c_2_sub_7_total_marks = request.form['c_2_sub_7_total_marks']
+            c_2_sub_8_name = request.form['c_2_sub_8_name']
+            c_2_sub_8_marks_obtained = request.form['c_2_sub_8_marks_obtained']
+            c_2_sub_8_total_marks = request.form['c_2_sub_8_total_marks']
+            c_2_sub_9_name = request.form['c_2_sub_9_name']
+            c_2_sub_9_marks_obtained = request.form['c_2_sub_9_marks_obtained']
+            c_2_sub_9_total_marks = request.form['c_2_sub_9_total_marks']
+            c_2_sub_10_name = request.form['c_2_sub_10_name']
+            c_2_sub_10_marks_obtained = request.form['c_2_sub_10_marks_obtained']
+            c_2_sub_10_total_marks = request.form['c_2_sub_10_total_marks']
+            c_2_sub_11_name = request.form['c_2_sub_11_name']
+            c_2_sub_11_marks_obtained = request.form['c_2_sub_11_marks_obtained']
+            c_2_sub_11_total_marks = request.form['c_2_sub_11_total_marks']
+            c_2_sub_12_name = request.form['c_2_sub_12_name']
+            c_2_sub_12_marks_obtained = request.form['c_2_sub_12_marks_obtained']
+            c_2_sub_12_total_marks = request.form['c_2_sub_12_total_marks']
+            c_2_sub_13_name = request.form['c_2_sub_13_name']
+            c_2_sub_13_marks_obtained = request.form['c_2_sub_13_marks_obtained']
+            c_2_sub_13_total_marks = request.form['c_2_sub_13_total_marks']
+            c_2_sub_14_name = request.form['c_2_sub_14_name']
+            c_2_sub_14_marks_obtained = request.form['c_2_sub_14_marks_obtained']
+            c_2_sub_14_total_marks = request.form['c_2_sub_14_total_marks']
+            c_2_sub_15_name = request.form['c_2_sub_15_name']
+            c_2_sub_15_marks_obtained = request.form['c_2_sub_15_marks_obtained']
+            c_2_sub_15_total_marks = request.form['c_2_sub_15_total_marks']
+
+            # Update c_2_info in the database
+            cursor.execute("""
+                UPDATE class_2
+                SET c_2_sub_1_name = ?, c_2_sub_1_marks_obtained = ?, c_2_sub_1_total_marks = ?, c_2_sub_2_name = ?, c_2_sub_2_marks_obtained = ?, c_2_sub_2_total_marks = ?, c_2_sub_3_name = ?, c_2_sub_3_marks_obtained = ?, c_2_sub_3_total_marks = ?, c_2_sub_4_name = ?, c_2_sub_4_marks_obtained = ?, c_2_sub_4_total_marks = ?, c_2_sub_5_name = ?, c_2_sub_5_marks_obtained = ?, c_2_sub_5_total_marks = ?, c_2_sub_6_name = ?, c_2_sub_6_marks_obtained = ?, c_2_sub_6_total_marks = ?, c_2_sub_7_name = ?, c_2_sub_7_marks_obtained = ?, c_2_sub_7_total_marks = ?, c_2_sub_8_name = ?, c_2_sub_8_marks_obtained = ?, c_2_sub_8_total_marks = ?, c_2_sub_9_name = ?, c_2_sub_9_marks_obtained = ?, c_2_sub_9_total_marks = ?, c_2_sub_10_name = ?, c_2_sub_10_marks_obtained = ?, c_2_sub_10_total_marks = ?, c_2_sub_11_name = ?, c_2_sub_11_marks_obtained = ?, c_2_sub_11_total_marks = ?, c_2_sub_12_name = ?, c_2_sub_12_marks_obtained = ?, c_2_sub_12_total_marks = ?, c_2_sub_13_name = ?, c_2_sub_13_marks_obtained = ?, c_2_sub_13_total_marks = ?, c_2_sub_14_name = ?, c_2_sub_14_marks_obtained = ?, c_2_sub_14_total_marks = ?, c_2_sub_15_name = ?, c_2_sub_15_marks_obtained = ?, c_2_sub_15_total_marks = ?
+                WHERE aadhaar_no = ?
+            """, (c_2_sub_1_name, c_2_sub_1_marks_obtained, c_2_sub_1_total_marks, c_2_sub_2_name, c_2_sub_2_marks_obtained, c_2_sub_2_total_marks, c_2_sub_3_name, c_2_sub_3_marks_obtained, c_2_sub_3_total_marks, c_2_sub_4_name, c_2_sub_4_marks_obtained, c_2_sub_4_total_marks, c_2_sub_5_name, c_2_sub_5_marks_obtained, c_2_sub_5_total_marks, c_2_sub_6_name, c_2_sub_6_marks_obtained, c_2_sub_6_total_marks, c_2_sub_7_name, c_2_sub_7_marks_obtained, c_2_sub_7_total_marks, c_2_sub_8_name, c_2_sub_8_marks_obtained, c_2_sub_8_total_marks, c_2_sub_9_name, c_2_sub_9_marks_obtained, c_2_sub_9_total_marks, c_2_sub_10_name, c_2_sub_10_marks_obtained, c_2_sub_10_total_marks, c_2_sub_11_name, c_2_sub_11_marks_obtained, c_2_sub_11_total_marks, c_2_sub_12_name, c_2_sub_12_marks_obtained, c_2_sub_12_total_marks, c_2_sub_13_name, c_2_sub_13_marks_obtained, c_2_sub_13_total_marks, c_2_sub_14_name, c_2_sub_14_marks_obtained, c_2_sub_14_total_marks, c_2_sub_15_name, c_2_sub_15_marks_obtained, c_2_sub_15_total_marks, aadhaar_no))
+
+            # Commit changes
+            conn.commit()
+
+            # Redirect to the next form
+            return redirect(url_for('form_c_3'))  # replace 'next_form' with the actual name of the next form
+
+        else:
+            # Fetch c_2_info from the database
+            cursor.execute("SELECT * FROM class_2 WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+            c_2_info = cursor.fetchone()
+
+            # Pass the c_2_info to the template
+            return render_template('Student/student_info_forms/form_c_2.html', class_2=c_2_info)
+    except Exception as e:
+        app.logger.error(f"Exception occurred: {e}")
+        return str(e), 500
+
+
+@app.route('/form_c_3', methods=['GET', 'POST'])
 def form_c_3():
-    return render_template('Student/student_info_forms/form_c_3.html')
+    if request.method == 'POST':
+        return form_c_3_post()
+    else:
+        # Fetch c_3_info from the database
+        cursor.execute("SELECT * FROM class_3 WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+        c_3_info = cursor.fetchone()
 
-@app.route('/form_c_4')
+        # If c_3_info is None, create a default c_3_info object
+        if c_3_info is None:
+            c_3_info = {
+                ' c_3_sub_1_name': '',
+                ' c_3_sub_1_marks_obtained': '',
+                ' c_3_sub_1_total_marks': '',
+                ' c_3_sub_2_name': '',
+                ' c_3_sub_2_marks_obtained': '',
+                ' c_3_sub_2_total_marks': '',
+                ' c_3_sub_3_name': '',
+                ' c_3_sub_3_marks_obtained': '',
+                ' c_3_sub_3_total_marks': '',
+                ' c_3_sub_4_name': '',
+                ' c_3_sub_4_marks_obtained': '',
+                ' c_3_sub_4_total_marks': '',
+                ' c_3_sub_5_name': '',
+                ' c_3_sub_5_marks_obtained': '',
+                ' c_3_sub_5_total_marks': '',
+                ' c_3_sub_6_name': '',
+                ' c_3_sub_6_marks_obtained': '',
+                ' c_3_sub_6_total_marks': '',
+                ' c_3_sub_7_name': '',
+                ' c_3_sub_7_marks_obtained': '',
+                ' c_3_sub_7_total_marks': '',
+                ' c_3_sub_8_name': '',
+                ' c_3_sub_8_marks_obtained': '',
+                ' c_3_sub_8_total_marks': '',
+                ' c_3_sub_9_name': '',
+                ' c_3_sub_9_marks_obtained': '',
+                ' c_3_sub_9_total_marks': '',
+                ' c_3_sub_10_name': '',
+                ' c_3_sub_10_marks_obtained': '',
+                ' c_3_sub_10_total_marks': '',
+                ' c_3_sub_11_name': '',
+                ' c_3_sub_11_marks_obtained': '',
+                ' c_3_sub_11_total_marks': '',
+                ' c_3_sub_12_name': '',
+                ' c_3_sub_12_marks_obtained': '',
+                ' c_3_sub_12_total_marks': '',
+                ' c_3_sub_13_name': '',
+                ' c_3_sub_13_marks_obtained': '',
+                ' c_3_sub_13_total_marks': '',
+                ' c_3_sub_14_name': '',
+                ' c_3_sub_14_marks_obtained': '',
+                ' c_3_sub_14_total_marks': '',
+                ' c_3_sub_15_name': '',
+                ' c_3_sub_15_marks_obtained': '',
+                ' c_3_sub_15_total_marks': ''
+            }
+
+        # Pass the c_3_info to the template
+        return render_template('Student/student_info_forms/form_c_3.html', class_3=c_3_info)
+
+def form_c_3_post():
+    try:
+        if request.method == 'POST':
+            # Get form data
+            aadhaar_no = session['aadhaar_no']
+            c_3_sub_1_name = request.form['c_3_sub_1_name']
+            c_3_sub_1_marks_obtained = request.form['c_3_sub_1_marks_obtained']
+            c_3_sub_1_total_marks = request.form['c_3_sub_1_total_marks']
+            c_3_sub_2_name = request.form['c_3_sub_2_name']
+            c_3_sub_2_marks_obtained = request.form['c_3_sub_2_marks_obtained']
+            c_3_sub_2_total_marks = request.form['c_3_sub_2_total_marks']
+            c_3_sub_3_name = request.form['c_3_sub_3_name']
+            c_3_sub_3_marks_obtained = request.form['c_3_sub_3_marks_obtained']
+            c_3_sub_3_total_marks = request.form['c_3_sub_3_total_marks']
+            c_3_sub_4_name = request.form['c_3_sub_4_name']
+            c_3_sub_4_marks_obtained = request.form['c_3_sub_4_marks_obtained']
+            c_3_sub_4_total_marks = request.form['c_3_sub_4_total_marks']
+            c_3_sub_5_name = request.form['c_3_sub_5_name']
+            c_3_sub_5_marks_obtained = request.form['c_3_sub_5_marks_obtained']
+            c_3_sub_5_total_marks = request.form['c_3_sub_5_total_marks']
+            c_3_sub_6_name = request.form['c_3_sub_6_name']
+            c_3_sub_6_marks_obtained = request.form['c_3_sub_6_marks_obtained']
+            c_3_sub_6_total_marks = request.form['c_3_sub_6_total_marks']
+            c_3_sub_7_name = request.form['c_3_sub_7_name']
+            c_3_sub_7_marks_obtained = request.form['c_3_sub_7_marks_obtained']
+            c_3_sub_7_total_marks = request.form['c_3_sub_7_total_marks']
+            c_3_sub_8_name = request.form['c_3_sub_8_name']
+            c_3_sub_8_marks_obtained = request.form['c_3_sub_8_marks_obtained']
+            c_3_sub_8_total_marks = request.form['c_3_sub_8_total_marks']
+            c_3_sub_9_name = request.form['c_3_sub_9_name']
+            c_3_sub_9_marks_obtained = request.form['c_3_sub_9_marks_obtained']
+            c_3_sub_9_total_marks = request.form['c_3_sub_9_total_marks']
+            c_3_sub_10_name = request.form['c_3_sub_10_name']
+            c_3_sub_10_marks_obtained = request.form['c_3_sub_10_marks_obtained']
+            c_3_sub_10_total_marks = request.form['c_3_sub_10_total_marks']
+            c_3_sub_11_name = request.form['c_3_sub_11_name']
+            c_3_sub_11_marks_obtained = request.form['c_3_sub_11_marks_obtained']
+            c_3_sub_11_total_marks = request.form['c_3_sub_11_total_marks']
+            c_3_sub_12_name = request.form['c_3_sub_12_name']
+            c_3_sub_12_marks_obtained = request.form['c_3_sub_12_marks_obtained']
+            c_3_sub_12_total_marks = request.form['c_3_sub_12_total_marks']
+            c_3_sub_13_name = request.form['c_3_sub_13_name']
+            c_3_sub_13_marks_obtained = request.form['c_3_sub_13_marks_obtained']
+            c_3_sub_13_total_marks = request.form['c_3_sub_13_total_marks']
+            c_3_sub_14_name = request.form['c_3_sub_14_name']
+            c_3_sub_14_marks_obtained = request.form['c_3_sub_14_marks_obtained']
+            c_3_sub_14_total_marks = request.form['c_3_sub_14_total_marks']
+            c_3_sub_15_name = request.form['c_3_sub_15_name']
+            c_3_sub_15_marks_obtained = request.form['c_3_sub_15_marks_obtained']
+            c_3_sub_15_total_marks = request.form['c_3_sub_15_total_marks']
+
+            # Update c_3_info in the database
+            cursor.execute("""
+                UPDATE class_3
+                SET c_3_sub_1_name = ?, c_3_sub_1_marks_obtained = ?, c_3_sub_1_total_marks = ?, c_3_sub_2_name = ?, c_3_sub_2_marks_obtained = ?, c_3_sub_2_total_marks = ?, c_3_sub_3_name = ?, c_3_sub_3_marks_obtained = ?, c_3_sub_3_total_marks = ?, c_3_sub_4_name = ?, c_3_sub_4_marks_obtained = ?, c_3_sub_4_total_marks = ?, c_3_sub_5_name = ?, c_3_sub_5_marks_obtained = ?, c_3_sub_5_total_marks = ?, c_3_sub_6_name = ?, c_3_sub_6_marks_obtained = ?, c_3_sub_6_total_marks = ?, c_3_sub_7_name = ?, c_3_sub_7_marks_obtained = ?, c_3_sub_7_total_marks = ?, c_3_sub_8_name = ?, c_3_sub_8_marks_obtained = ?, c_3_sub_8_total_marks = ?, c_3_sub_9_name = ?, c_3_sub_9_marks_obtained = ?, c_3_sub_9_total_marks = ?, c_3_sub_10_name = ?, c_3_sub_10_marks_obtained = ?, c_3_sub_10_total_marks = ?, c_3_sub_11_name = ?, c_3_sub_11_marks_obtained = ?, c_3_sub_11_total_marks = ?, c_3_sub_12_name = ?, c_3_sub_12_marks_obtained = ?, c_3_sub_12_total_marks = ?, c_3_sub_13_name = ?, c_3_sub_13_marks_obtained = ?, c_3_sub_13_total_marks = ?, c_3_sub_14_name = ?, c_3_sub_14_marks_obtained = ?, c_3_sub_14_total_marks = ?, c_3_sub_15_name = ?, c_3_sub_15_marks_obtained = ?, c_3_sub_15_total_marks = ?
+                WHERE aadhaar_no = ?
+            """, (c_3_sub_1_name, c_3_sub_1_marks_obtained, c_3_sub_1_total_marks, c_3_sub_2_name, c_3_sub_2_marks_obtained, c_3_sub_2_total_marks, c_3_sub_3_name, c_3_sub_3_marks_obtained, c_3_sub_3_total_marks, c_3_sub_4_name, c_3_sub_4_marks_obtained, c_3_sub_4_total_marks, c_3_sub_5_name, c_3_sub_5_marks_obtained, c_3_sub_5_total_marks, c_3_sub_6_name, c_3_sub_6_marks_obtained, c_3_sub_6_total_marks, c_3_sub_7_name, c_3_sub_7_marks_obtained, c_3_sub_7_total_marks, c_3_sub_8_name, c_3_sub_8_marks_obtained, c_3_sub_8_total_marks, c_3_sub_9_name, c_3_sub_9_marks_obtained, c_3_sub_9_total_marks, c_3_sub_10_name, c_3_sub_10_marks_obtained, c_3_sub_10_total_marks, c_3_sub_11_name, c_3_sub_11_marks_obtained, c_3_sub_11_total_marks, c_3_sub_12_name, c_3_sub_12_marks_obtained, c_3_sub_12_total_marks, c_3_sub_13_name, c_3_sub_13_marks_obtained, c_3_sub_13_total_marks, c_3_sub_14_name, c_3_sub_14_marks_obtained, c_3_sub_14_total_marks, c_3_sub_15_name, c_3_sub_15_marks_obtained, c_3_sub_15_total_marks, aadhaar_no))
+
+            # Commit changes
+            conn.commit()
+
+            # Redirect to the next form
+            return redirect(url_for('form_c_4'))  # replace 'next_form' with the actual name of the next form
+
+        else:
+            # Fetch c_3_info from the database
+            cursor.execute("SELECT * FROM class_3 WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+            c_3_info = cursor.fetchone()
+
+            # Pass the c_3_info to the template
+            return render_template('Student/student_info_forms/form_c_3.html', class_3=c_3_info)
+    except Exception as e:
+        app.logger.error(f"Exception occurred: {e}")
+        return str(e), 500
+
+
+@app.route('/form_c_4', methods=['GET', 'POST'])
 def form_c_4():
-    return render_template('Student/student_info_forms/form_c_4.html')
+    if request.method == 'POST':
+        return form_c_4_post()
+    else:
+        # Fetch c_4_info from the database
+        cursor.execute("SELECT * FROM class_4 WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+        c_4_info = cursor.fetchone()
 
-@app.route('/form_c_5')
+        # If c_4_info is None, create a default c_4_info object
+        if c_4_info is None:
+            c_4_info = {
+                ' c_4_sub_1_name': '',
+                ' c_4_sub_1_marks_obtained': '',
+                ' c_4_sub_1_total_marks': '',
+                ' c_4_sub_2_name': '',
+                ' c_4_sub_2_marks_obtained': '',
+                ' c_4_sub_2_total_marks': '',
+                ' c_4_sub_3_name': '',
+                ' c_4_sub_3_marks_obtained': '',
+                ' c_4_sub_3_total_marks': '',
+                ' c_4_sub_4_name': '',
+                ' c_4_sub_4_marks_obtained': '',
+                ' c_4_sub_4_total_marks': '',
+                ' c_4_sub_5_name': '',
+                ' c_4_sub_5_marks_obtained': '',
+                ' c_4_sub_5_total_marks': '',
+                ' c_4_sub_6_name': '',
+                ' c_4_sub_6_marks_obtained': '',
+                ' c_4_sub_6_total_marks': '',
+                ' c_4_sub_7_name': '',
+                ' c_4_sub_7_marks_obtained': '',
+                ' c_4_sub_7_total_marks': '',
+                ' c_4_sub_8_name': '',
+                ' c_4_sub_8_marks_obtained': '',
+                ' c_4_sub_8_total_marks': '',
+                ' c_4_sub_9_name': '',
+                ' c_4_sub_9_marks_obtained': '',
+                ' c_4_sub_9_total_marks': '',
+                ' c_4_sub_10_name': '',
+                ' c_4_sub_10_marks_obtained': '',
+                ' c_4_sub_10_total_marks': '',
+                ' c_4_sub_11_name': '',
+                ' c_4_sub_11_marks_obtained': '',
+                ' c_4_sub_11_total_marks': '',
+                ' c_4_sub_12_name': '',
+                ' c_4_sub_12_marks_obtained': '',
+                ' c_4_sub_12_total_marks': '',
+                ' c_4_sub_13_name': '',
+                ' c_4_sub_13_marks_obtained': '',
+                ' c_4_sub_13_total_marks': '',
+                ' c_4_sub_14_name': '',
+                ' c_4_sub_14_marks_obtained': '',
+                ' c_4_sub_14_total_marks': '',
+                ' c_4_sub_15_name': '',
+                ' c_4_sub_15_marks_obtained': '',
+                ' c_4_sub_15_total_marks': ''
+            }
+
+        # Pass the c_4_info to the template
+        return render_template('Student/student_info_forms/form_c_4.html', class_4=c_4_info)
+
+def form_c_4_post():
+    try:
+        if request.method == 'POST':
+            # Get form data
+            aadhaar_no = session['aadhaar_no']
+            c_4_sub_1_name = request.form['c_4_sub_1_name']
+            c_4_sub_1_marks_obtained = request.form['c_4_sub_1_marks_obtained']
+            c_4_sub_1_total_marks = request.form['c_4_sub_1_total_marks']
+            c_4_sub_2_name = request.form['c_4_sub_2_name']
+            c_4_sub_2_marks_obtained = request.form['c_4_sub_2_marks_obtained']
+            c_4_sub_2_total_marks = request.form['c_4_sub_2_total_marks']
+            c_4_sub_3_name = request.form['c_4_sub_3_name']
+            c_4_sub_3_marks_obtained = request.form['c_4_sub_3_marks_obtained']
+            c_4_sub_3_total_marks = request.form['c_4_sub_3_total_marks']
+            c_4_sub_4_name = request.form['c_4_sub_4_name']
+            c_4_sub_4_marks_obtained = request.form['c_4_sub_4_marks_obtained']
+            c_4_sub_4_total_marks = request.form['c_4_sub_4_total_marks']
+            c_4_sub_5_name = request.form['c_4_sub_5_name']
+            c_4_sub_5_marks_obtained = request.form['c_4_sub_5_marks_obtained']
+            c_4_sub_5_total_marks = request.form['c_4_sub_5_total_marks']
+            c_4_sub_6_name = request.form['c_4_sub_6_name']
+            c_4_sub_6_marks_obtained = request.form['c_4_sub_6_marks_obtained']
+            c_4_sub_6_total_marks = request.form['c_4_sub_6_total_marks']
+            c_4_sub_7_name = request.form['c_4_sub_7_name']
+            c_4_sub_7_marks_obtained = request.form['c_4_sub_7_marks_obtained']
+            c_4_sub_7_total_marks = request.form['c_4_sub_7_total_marks']
+            c_4_sub_8_name = request.form['c_4_sub_8_name']
+            c_4_sub_8_marks_obtained = request.form['c_4_sub_8_marks_obtained']
+            c_4_sub_8_total_marks = request.form['c_4_sub_8_total_marks']
+            c_4_sub_9_name = request.form['c_4_sub_9_name']
+            c_4_sub_9_marks_obtained = request.form['c_4_sub_9_marks_obtained']
+            c_4_sub_9_total_marks = request.form['c_4_sub_9_total_marks']
+            c_4_sub_10_name = request.form['c_4_sub_10_name']
+            c_4_sub_10_marks_obtained = request.form['c_4_sub_10_marks_obtained']
+            c_4_sub_10_total_marks = request.form['c_4_sub_10_total_marks']
+            c_4_sub_11_name = request.form['c_4_sub_11_name']
+            c_4_sub_11_marks_obtained = request.form['c_4_sub_11_marks_obtained']
+            c_4_sub_11_total_marks = request.form['c_4_sub_11_total_marks']
+            c_4_sub_12_name = request.form['c_4_sub_12_name']
+            c_4_sub_12_marks_obtained = request.form['c_4_sub_12_marks_obtained']
+            c_4_sub_12_total_marks = request.form['c_4_sub_12_total_marks']
+            c_4_sub_13_name = request.form['c_4_sub_13_name']
+            c_4_sub_13_marks_obtained = request.form['c_4_sub_13_marks_obtained']
+            c_4_sub_13_total_marks = request.form['c_4_sub_13_total_marks']
+            c_4_sub_14_name = request.form['c_4_sub_14_name']
+            c_4_sub_14_marks_obtained = request.form['c_4_sub_14_marks_obtained']
+            c_4_sub_14_total_marks = request.form['c_4_sub_14_total_marks']
+            c_4_sub_15_name = request.form['c_4_sub_15_name']
+            c_4_sub_15_marks_obtained = request.form['c_4_sub_15_marks_obtained']
+            c_4_sub_15_total_marks = request.form['c_4_sub_15_total_marks']
+
+            # Update c_4_info in the database
+            cursor.execute("""
+                UPDATE class_4
+                SET c_4_sub_1_name = ?, c_4_sub_1_marks_obtained = ?, c_4_sub_1_total_marks = ?, c_4_sub_2_name = ?, c_4_sub_2_marks_obtained = ?, c_4_sub_2_total_marks = ?, c_4_sub_3_name = ?, c_4_sub_3_marks_obtained = ?, c_4_sub_3_total_marks = ?, c_4_sub_4_name = ?, c_4_sub_4_marks_obtained = ?, c_4_sub_4_total_marks = ?, c_4_sub_5_name = ?, c_4_sub_5_marks_obtained = ?, c_4_sub_5_total_marks = ?, c_4_sub_6_name = ?, c_4_sub_6_marks_obtained = ?, c_4_sub_6_total_marks = ?, c_4_sub_7_name = ?, c_4_sub_7_marks_obtained = ?, c_4_sub_7_total_marks = ?, c_4_sub_8_name = ?, c_4_sub_8_marks_obtained = ?, c_4_sub_8_total_marks = ?, c_4_sub_9_name = ?, c_4_sub_9_marks_obtained = ?, c_4_sub_9_total_marks = ?, c_4_sub_10_name = ?, c_4_sub_10_marks_obtained = ?, c_4_sub_10_total_marks = ?, c_4_sub_11_name = ?, c_4_sub_11_marks_obtained = ?, c_4_sub_11_total_marks = ?, c_4_sub_12_name = ?, c_4_sub_12_marks_obtained = ?, c_4_sub_12_total_marks = ?, c_4_sub_13_name = ?, c_4_sub_13_marks_obtained = ?, c_4_sub_13_total_marks = ?, c_4_sub_14_name = ?, c_4_sub_14_marks_obtained = ?, c_4_sub_14_total_marks = ?, c_4_sub_15_name = ?, c_4_sub_15_marks_obtained = ?, c_4_sub_15_total_marks = ?
+                WHERE aadhaar_no = ?
+            """, (c_4_sub_1_name, c_4_sub_1_marks_obtained, c_4_sub_1_total_marks, c_4_sub_2_name, c_4_sub_2_marks_obtained, c_4_sub_2_total_marks, c_4_sub_3_name, c_4_sub_3_marks_obtained, c_4_sub_3_total_marks, c_4_sub_4_name, c_4_sub_4_marks_obtained, c_4_sub_4_total_marks, c_4_sub_5_name, c_4_sub_5_marks_obtained, c_4_sub_5_total_marks, c_4_sub_6_name, c_4_sub_6_marks_obtained, c_4_sub_6_total_marks, c_4_sub_7_name, c_4_sub_7_marks_obtained, c_4_sub_7_total_marks, c_4_sub_8_name, c_4_sub_8_marks_obtained, c_4_sub_8_total_marks, c_4_sub_9_name, c_4_sub_9_marks_obtained, c_4_sub_9_total_marks, c_4_sub_10_name, c_4_sub_10_marks_obtained, c_4_sub_10_total_marks, c_4_sub_11_name, c_4_sub_11_marks_obtained, c_4_sub_11_total_marks, c_4_sub_12_name, c_4_sub_12_marks_obtained, c_4_sub_12_total_marks, c_4_sub_13_name, c_4_sub_13_marks_obtained, c_4_sub_13_total_marks, c_4_sub_14_name, c_4_sub_14_marks_obtained, c_4_sub_14_total_marks, c_4_sub_15_name, c_4_sub_15_marks_obtained, c_4_sub_15_total_marks, aadhaar_no))
+
+            # Commit changes
+            conn.commit()
+
+            # Redirect to the next form
+            return redirect(url_for('form_c_5'))  # replace 'next_form' with the actual name of the next form
+
+        else:
+            # Fetch c_4_info from the database
+            cursor.execute("SELECT * FROM class_4 WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+            c_4_info = cursor.fetchone()
+
+            # Pass the c_4_info to the template
+            return render_template('Student/student_info_forms/form_c_4.html', class_4=c_4_info)
+    except Exception as e:
+        app.logger.error(f"Exception occurred: {e}")
+        return str(e), 500
+
+
+@app.route('/form_c_5', methods=['GET', 'POST'])
 def form_c_5():
-    return render_template('Student/student_info_forms/form_c_5.html')
+    if request.method == 'POST':
+        return form_c_5_post()
+    else:
+        # Fetch c_5_info from the database
+        cursor.execute("SELECT * FROM class_5 WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+        c_5_info = cursor.fetchone()
 
-@app.route('/form_c_6')
+        # If c_5_info is None, create a default c_5_info object
+        if c_5_info is None:
+            c_5_info = {
+                ' c_5_sub_1_name': '',
+                ' c_5_sub_1_marks_obtained': '',
+                ' c_5_sub_1_total_marks': '',
+                ' c_5_sub_2_name': '',
+                ' c_5_sub_2_marks_obtained': '',
+                ' c_5_sub_2_total_marks': '',
+                ' c_5_sub_3_name': '',
+                ' c_5_sub_3_marks_obtained': '',
+                ' c_5_sub_3_total_marks': '',
+                ' c_5_sub_4_name': '',
+                ' c_5_sub_4_marks_obtained': '',
+                ' c_5_sub_4_total_marks': '',
+                ' c_5_sub_5_name': '',
+                ' c_5_sub_5_marks_obtained': '',
+                ' c_5_sub_5_total_marks': '',
+                ' c_5_sub_6_name': '',
+                ' c_5_sub_6_marks_obtained': '',
+                ' c_5_sub_6_total_marks': '',
+                ' c_5_sub_7_name': '',
+                ' c_5_sub_7_marks_obtained': '',
+                ' c_5_sub_7_total_marks': '',
+                ' c_5_sub_8_name': '',
+                ' c_5_sub_8_marks_obtained': '',
+                ' c_5_sub_8_total_marks': '',
+                ' c_5_sub_9_name': '',
+                ' c_5_sub_9_marks_obtained': '',
+                ' c_5_sub_9_total_marks': '',
+                ' c_5_sub_10_name': '',
+                ' c_5_sub_10_marks_obtained': '',
+                ' c_5_sub_10_total_marks': '',
+                ' c_5_sub_11_name': '',
+                ' c_5_sub_11_marks_obtained': '',
+                ' c_5_sub_11_total_marks': '',
+                ' c_5_sub_12_name': '',
+                ' c_5_sub_12_marks_obtained': '',
+                ' c_5_sub_12_total_marks': '',
+                ' c_5_sub_13_name': '',
+                ' c_5_sub_13_marks_obtained': '',
+                ' c_5_sub_13_total_marks': '',
+                ' c_5_sub_14_name': '',
+                ' c_5_sub_14_marks_obtained': '',
+                ' c_5_sub_14_total_marks': '',
+                ' c_5_sub_15_name': '',
+                ' c_5_sub_15_marks_obtained': '',
+                ' c_5_sub_15_total_marks': ''
+            }
+
+        # Pass the c_5_info to the template
+        return render_template('Student/student_info_forms/form_c_5.html', class_5=c_5_info)
+
+def form_c_5_post():
+    try:
+        if request.method == 'POST':
+            # Get form data
+            aadhaar_no = session['aadhaar_no']
+            c_5_sub_1_name = request.form['c_5_sub_1_name']
+            c_5_sub_1_marks_obtained = request.form['c_5_sub_1_marks_obtained']
+            c_5_sub_1_total_marks = request.form['c_5_sub_1_total_marks']
+            c_5_sub_2_name = request.form['c_5_sub_2_name']
+            c_5_sub_2_marks_obtained = request.form['c_5_sub_2_marks_obtained']
+            c_5_sub_2_total_marks = request.form['c_5_sub_2_total_marks']
+            c_5_sub_3_name = request.form['c_5_sub_3_name']
+            c_5_sub_3_marks_obtained = request.form['c_5_sub_3_marks_obtained']
+            c_5_sub_3_total_marks = request.form['c_5_sub_3_total_marks']
+            c_5_sub_4_name = request.form['c_5_sub_4_name']
+            c_5_sub_4_marks_obtained = request.form['c_5_sub_4_marks_obtained']
+            c_5_sub_4_total_marks = request.form['c_5_sub_4_total_marks']
+            c_5_sub_5_name = request.form['c_5_sub_5_name']
+            c_5_sub_5_marks_obtained = request.form['c_5_sub_5_marks_obtained']
+            c_5_sub_5_total_marks = request.form['c_5_sub_5_total_marks']
+            c_5_sub_6_name = request.form['c_5_sub_6_name']
+            c_5_sub_6_marks_obtained = request.form['c_5_sub_6_marks_obtained']
+            c_5_sub_6_total_marks = request.form['c_5_sub_6_total_marks']
+            c_5_sub_7_name = request.form['c_5_sub_7_name']
+            c_5_sub_7_marks_obtained = request.form['c_5_sub_7_marks_obtained']
+            c_5_sub_7_total_marks = request.form['c_5_sub_7_total_marks']
+            c_5_sub_8_name = request.form['c_5_sub_8_name']
+            c_5_sub_8_marks_obtained = request.form['c_5_sub_8_marks_obtained']
+            c_5_sub_8_total_marks = request.form['c_5_sub_8_total_marks']
+            c_5_sub_9_name = request.form['c_5_sub_9_name']
+            c_5_sub_9_marks_obtained = request.form['c_5_sub_9_marks_obtained']
+            c_5_sub_9_total_marks = request.form['c_5_sub_9_total_marks']
+            c_5_sub_10_name = request.form['c_5_sub_10_name']
+            c_5_sub_10_marks_obtained = request.form['c_5_sub_10_marks_obtained']
+            c_5_sub_10_total_marks = request.form['c_5_sub_10_total_marks']
+            c_5_sub_11_name = request.form['c_5_sub_11_name']
+            c_5_sub_11_marks_obtained = request.form['c_5_sub_11_marks_obtained']
+            c_5_sub_11_total_marks = request.form['c_5_sub_11_total_marks']
+            c_5_sub_12_name = request.form['c_5_sub_12_name']
+            c_5_sub_12_marks_obtained = request.form['c_5_sub_12_marks_obtained']
+            c_5_sub_12_total_marks = request.form['c_5_sub_12_total_marks']
+            c_5_sub_13_name = request.form['c_5_sub_13_name']
+            c_5_sub_13_marks_obtained = request.form['c_5_sub_13_marks_obtained']
+            c_5_sub_13_total_marks = request.form['c_5_sub_13_total_marks']
+            c_5_sub_14_name = request.form['c_5_sub_14_name']
+            c_5_sub_14_marks_obtained = request.form['c_5_sub_14_marks_obtained']
+            c_5_sub_14_total_marks = request.form['c_5_sub_14_total_marks']
+            c_5_sub_15_name = request.form['c_5_sub_15_name']
+            c_5_sub_15_marks_obtained = request.form['c_5_sub_15_marks_obtained']
+            c_5_sub_15_total_marks = request.form['c_5_sub_15_total_marks']
+
+            # Update c_5_info in the database
+            cursor.execute("""
+                UPDATE class_5
+                SET c_5_sub_1_name = ?, c_5_sub_1_marks_obtained = ?, c_5_sub_1_total_marks = ?, c_5_sub_2_name = ?, c_5_sub_2_marks_obtained = ?, c_5_sub_2_total_marks = ?, c_5_sub_3_name = ?, c_5_sub_3_marks_obtained = ?, c_5_sub_3_total_marks = ?, c_5_sub_4_name = ?, c_5_sub_4_marks_obtained = ?, c_5_sub_4_total_marks = ?, c_5_sub_5_name = ?, c_5_sub_5_marks_obtained = ?, c_5_sub_5_total_marks = ?, c_5_sub_6_name = ?, c_5_sub_6_marks_obtained = ?, c_5_sub_6_total_marks = ?, c_5_sub_7_name = ?, c_5_sub_7_marks_obtained = ?, c_5_sub_7_total_marks = ?, c_5_sub_8_name = ?, c_5_sub_8_marks_obtained = ?, c_5_sub_8_total_marks = ?, c_5_sub_9_name = ?, c_5_sub_9_marks_obtained = ?, c_5_sub_9_total_marks = ?, c_5_sub_10_name = ?, c_5_sub_10_marks_obtained = ?, c_5_sub_10_total_marks = ?, c_5_sub_11_name = ?, c_5_sub_11_marks_obtained = ?, c_5_sub_11_total_marks = ?, c_5_sub_12_name = ?, c_5_sub_12_marks_obtained = ?, c_5_sub_12_total_marks = ?, c_5_sub_13_name = ?, c_5_sub_13_marks_obtained = ?, c_5_sub_13_total_marks = ?, c_5_sub_14_name = ?, c_5_sub_14_marks_obtained = ?, c_5_sub_14_total_marks = ?, c_5_sub_15_name = ?, c_5_sub_15_marks_obtained = ?, c_5_sub_15_total_marks = ?
+                WHERE aadhaar_no = ?
+            """, (c_5_sub_1_name, c_5_sub_1_marks_obtained, c_5_sub_1_total_marks, c_5_sub_2_name, c_5_sub_2_marks_obtained, c_5_sub_2_total_marks, c_5_sub_3_name, c_5_sub_3_marks_obtained, c_5_sub_3_total_marks, c_5_sub_4_name, c_5_sub_4_marks_obtained, c_5_sub_4_total_marks, c_5_sub_5_name, c_5_sub_5_marks_obtained, c_5_sub_5_total_marks, c_5_sub_6_name, c_5_sub_6_marks_obtained, c_5_sub_6_total_marks, c_5_sub_7_name, c_5_sub_7_marks_obtained, c_5_sub_7_total_marks, c_5_sub_8_name, c_5_sub_8_marks_obtained, c_5_sub_8_total_marks, c_5_sub_9_name, c_5_sub_9_marks_obtained, c_5_sub_9_total_marks, c_5_sub_10_name, c_5_sub_10_marks_obtained, c_5_sub_10_total_marks, c_5_sub_11_name, c_5_sub_11_marks_obtained, c_5_sub_11_total_marks, c_5_sub_12_name, c_5_sub_12_marks_obtained, c_5_sub_12_total_marks, c_5_sub_13_name, c_5_sub_13_marks_obtained, c_5_sub_13_total_marks, c_5_sub_14_name, c_5_sub_14_marks_obtained, c_5_sub_14_total_marks, c_5_sub_15_name, c_5_sub_15_marks_obtained, c_5_sub_15_total_marks, aadhaar_no))
+
+            # Commit changes
+            conn.commit()
+
+            # Redirect to the next form
+            return redirect(url_for('form_c_6'))  # replace 'next_form' with the actual name of the next form
+
+        else:
+            # Fetch c_5_info from the database
+            cursor.execute("SELECT * FROM class_5 WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+            c_5_info = cursor.fetchone()
+
+            # Pass the c_5_info to the template
+            return render_template('Student/student_info_forms/form_c_5.html', class_5=c_5_info)
+    except Exception as e:
+        app.logger.error(f"Exception occurred: {e}")
+        return str(e), 500
+
+@app.route('/form_c_6', methods=['GET', 'POST'])
 def form_c_6():
-    return render_template('Student/student_info_forms/form_c_6.html')
+    if request.method == 'POST':
+        return form_c_6_post()
+    else:
+        # Fetch c_6_info from the database
+        cursor.execute("SELECT * FROM class_6 WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+        c_6_info = cursor.fetchone()
 
-@app.route('/form_c_7')
+        # If c_6_info is None, create a default c_6_info object
+        if c_6_info is None:
+            c_6_info = {
+                ' c_6_sub_1_name': '',
+                ' c_6_sub_1_marks_obtained': '',
+                ' c_6_sub_1_total_marks': '',
+                ' c_6_sub_2_name': '',
+                ' c_6_sub_2_marks_obtained': '',
+                ' c_6_sub_2_total_marks': '',
+                ' c_6_sub_3_name': '',
+                ' c_6_sub_3_marks_obtained': '',
+                ' c_6_sub_3_total_marks': '',
+                ' c_6_sub_4_name': '',
+                ' c_6_sub_4_marks_obtained': '',
+                ' c_6_sub_4_total_marks': '',
+                ' c_6_sub_5_name': '',
+                ' c_6_sub_5_marks_obtained': '',
+                ' c_6_sub_5_total_marks': '',
+                ' c_6_sub_6_name': '',
+                ' c_6_sub_6_marks_obtained': '',
+                ' c_6_sub_6_total_marks': '',
+                ' c_6_sub_7_name': '',
+                ' c_6_sub_7_marks_obtained': '',
+                ' c_6_sub_7_total_marks': '',
+                ' c_6_sub_8_name': '',
+                ' c_6_sub_8_marks_obtained': '',
+                ' c_6_sub_8_total_marks': '',
+                ' c_6_sub_9_name': '',
+                ' c_6_sub_9_marks_obtained': '',
+                ' c_6_sub_9_total_marks': '',
+                ' c_6_sub_10_name': '',
+                ' c_6_sub_10_marks_obtained': '',
+                ' c_6_sub_10_total_marks': '',
+                ' c_6_sub_11_name': '',
+                ' c_6_sub_11_marks_obtained': '',
+                ' c_6_sub_11_total_marks': '',
+                ' c_6_sub_12_name': '',
+                ' c_6_sub_12_marks_obtained': '',
+                ' c_6_sub_12_total_marks': '',
+                ' c_6_sub_13_name': '',
+                ' c_6_sub_13_marks_obtained': '',
+                ' c_6_sub_13_total_marks': '',
+                ' c_6_sub_14_name': '',
+                ' c_6_sub_14_marks_obtained': '',
+                ' c_6_sub_14_total_marks': '',
+                ' c_6_sub_15_name': '',
+                ' c_6_sub_15_marks_obtained': '',
+                ' c_6_sub_15_total_marks': ''
+            }
+
+        # Pass the c_6_info to the template
+        return render_template('Student/student_info_forms/form_c_6.html', class_6=c_6_info)
+
+def form_c_6_post():
+    try:
+        if request.method == 'POST':
+            # Get form data
+            aadhaar_no = session['aadhaar_no']
+            c_6_sub_1_name = request.form['c_6_sub_1_name']
+            c_6_sub_1_marks_obtained = request.form['c_6_sub_1_marks_obtained']
+            c_6_sub_1_total_marks = request.form['c_6_sub_1_total_marks']
+            c_6_sub_2_name = request.form['c_6_sub_2_name']
+            c_6_sub_2_marks_obtained = request.form['c_6_sub_2_marks_obtained']
+            c_6_sub_2_total_marks = request.form['c_6_sub_2_total_marks']
+            c_6_sub_3_name = request.form['c_6_sub_3_name']
+            c_6_sub_3_marks_obtained = request.form['c_6_sub_3_marks_obtained']
+            c_6_sub_3_total_marks = request.form['c_6_sub_3_total_marks']
+            c_6_sub_4_name = request.form['c_6_sub_4_name']
+            c_6_sub_4_marks_obtained = request.form['c_6_sub_4_marks_obtained']
+            c_6_sub_4_total_marks = request.form['c_6_sub_4_total_marks']
+            c_6_sub_5_name = request.form['c_6_sub_5_name']
+            c_6_sub_5_marks_obtained = request.form['c_6_sub_5_marks_obtained']
+            c_6_sub_5_total_marks = request.form['c_6_sub_5_total_marks']
+            c_6_sub_6_name = request.form['c_6_sub_6_name']
+            c_6_sub_6_marks_obtained = request.form['c_6_sub_6_marks_obtained']
+            c_6_sub_6_total_marks = request.form['c_6_sub_6_total_marks']
+            c_6_sub_7_name = request.form['c_6_sub_7_name']
+            c_6_sub_7_marks_obtained = request.form['c_6_sub_7_marks_obtained']
+            c_6_sub_7_total_marks = request.form['c_6_sub_7_total_marks']
+            c_6_sub_8_name = request.form['c_6_sub_8_name']
+            c_6_sub_8_marks_obtained = request.form['c_6_sub_8_marks_obtained']
+            c_6_sub_8_total_marks = request.form['c_6_sub_8_total_marks']
+            c_6_sub_9_name = request.form['c_6_sub_9_name']
+            c_6_sub_9_marks_obtained = request.form['c_6_sub_9_marks_obtained']
+            c_6_sub_9_total_marks = request.form['c_6_sub_9_total_marks']
+            c_6_sub_10_name = request.form['c_6_sub_10_name']
+            c_6_sub_10_marks_obtained = request.form['c_6_sub_10_marks_obtained']
+            c_6_sub_10_total_marks = request.form['c_6_sub_10_total_marks']
+            c_6_sub_11_name = request.form['c_6_sub_11_name']
+            c_6_sub_11_marks_obtained = request.form['c_6_sub_11_marks_obtained']
+            c_6_sub_11_total_marks = request.form['c_6_sub_11_total_marks']
+            c_6_sub_12_name = request.form['c_6_sub_12_name']
+            c_6_sub_12_marks_obtained = request.form['c_6_sub_12_marks_obtained']
+            c_6_sub_12_total_marks = request.form['c_6_sub_12_total_marks']
+            c_6_sub_13_name = request.form['c_6_sub_13_name']
+            c_6_sub_13_marks_obtained = request.form['c_6_sub_13_marks_obtained']
+            c_6_sub_13_total_marks = request.form['c_6_sub_13_total_marks']
+            c_6_sub_14_name = request.form['c_6_sub_14_name']
+            c_6_sub_14_marks_obtained = request.form['c_6_sub_14_marks_obtained']
+            c_6_sub_14_total_marks = request.form['c_6_sub_14_total_marks']
+            c_6_sub_15_name = request.form['c_6_sub_15_name']
+            c_6_sub_15_marks_obtained = request.form['c_6_sub_15_marks_obtained']
+            c_6_sub_15_total_marks = request.form['c_6_sub_15_total_marks']
+
+            # Update c_6_info in the database
+            cursor.execute("""
+                UPDATE class_6
+                SET c_6_sub_1_name = ?, c_6_sub_1_marks_obtained = ?, c_6_sub_1_total_marks = ?, c_6_sub_2_name = ?, c_6_sub_2_marks_obtained = ?, c_6_sub_2_total_marks = ?, c_6_sub_3_name = ?, c_6_sub_3_marks_obtained = ?, c_6_sub_3_total_marks = ?, c_6_sub_4_name = ?, c_6_sub_4_marks_obtained = ?, c_6_sub_4_total_marks = ?, c_6_sub_5_name = ?, c_6_sub_5_marks_obtained = ?, c_6_sub_5_total_marks = ?, c_6_sub_6_name = ?, c_6_sub_6_marks_obtained = ?, c_6_sub_6_total_marks = ?, c_6_sub_7_name = ?, c_6_sub_7_marks_obtained = ?, c_6_sub_7_total_marks = ?, c_6_sub_8_name = ?, c_6_sub_8_marks_obtained = ?, c_6_sub_8_total_marks = ?, c_6_sub_9_name = ?, c_6_sub_9_marks_obtained = ?, c_6_sub_9_total_marks = ?, c_6_sub_10_name = ?, c_6_sub_10_marks_obtained = ?, c_6_sub_10_total_marks = ?, c_6_sub_11_name = ?, c_6_sub_11_marks_obtained = ?, c_6_sub_11_total_marks = ?, c_6_sub_12_name = ?, c_6_sub_12_marks_obtained = ?, c_6_sub_12_total_marks = ?, c_6_sub_13_name = ?, c_6_sub_13_marks_obtained = ?, c_6_sub_13_total_marks = ?, c_6_sub_14_name = ?, c_6_sub_14_marks_obtained = ?, c_6_sub_14_total_marks = ?, c_6_sub_15_name = ?, c_6_sub_15_marks_obtained = ?, c_6_sub_15_total_marks = ?
+                WHERE aadhaar_no = ?
+            """, (c_6_sub_1_name, c_6_sub_1_marks_obtained, c_6_sub_1_total_marks, c_6_sub_2_name, c_6_sub_2_marks_obtained, c_6_sub_2_total_marks, c_6_sub_3_name, c_6_sub_3_marks_obtained, c_6_sub_3_total_marks, c_6_sub_4_name, c_6_sub_4_marks_obtained, c_6_sub_4_total_marks, c_6_sub_5_name, c_6_sub_5_marks_obtained, c_6_sub_5_total_marks, c_6_sub_6_name, c_6_sub_6_marks_obtained, c_6_sub_6_total_marks, c_6_sub_7_name, c_6_sub_7_marks_obtained, c_6_sub_7_total_marks, c_6_sub_8_name, c_6_sub_8_marks_obtained, c_6_sub_8_total_marks, c_6_sub_9_name, c_6_sub_9_marks_obtained, c_6_sub_9_total_marks, c_6_sub_10_name, c_6_sub_10_marks_obtained, c_6_sub_10_total_marks, c_6_sub_11_name, c_6_sub_11_marks_obtained, c_6_sub_11_total_marks, c_6_sub_12_name, c_6_sub_12_marks_obtained, c_6_sub_12_total_marks, c_6_sub_13_name, c_6_sub_13_marks_obtained, c_6_sub_13_total_marks, c_6_sub_14_name, c_6_sub_14_marks_obtained, c_6_sub_14_total_marks, c_6_sub_15_name, c_6_sub_15_marks_obtained, c_6_sub_15_total_marks, aadhaar_no))
+
+            # Commit changes
+            conn.commit()
+
+            # Redirect to the next form
+            return redirect(url_for('form_c_7'))  # replace 'next_form' with the actual name of the next form
+
+        else:
+            # Fetch c_6_info from the database
+            cursor.execute("SELECT * FROM class_6 WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+            c_6_info = cursor.fetchone()
+
+            # Pass the c_6_info to the template
+            return render_template('Student/student_info_forms/form_c_6.html', class_6=c_6_info)
+    except Exception as e:
+        app.logger.error(f"Exception occurred: {e}")
+        return str(e), 500
+
+
+@app.route('/form_c_7', methods=['GET', 'POST'])
 def form_c_7():
-    return render_template('Student/student_info_forms/form_c_7.html')
+    if request.method == 'POST':
+        return form_c_7_post()
+    else:
+        # Fetch c_7_info from the database
+        cursor.execute("SELECT * FROM class_7 WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+        c_7_info = cursor.fetchone()
 
-@app.route('/form_c_8')
+        # If c_7_info is None, create a default c_7_info object
+        if c_7_info is None:
+            c_7_info = {
+                ' c_7_sub_1_name': '',
+                ' c_7_sub_1_marks_obtained': '',
+                ' c_7_sub_1_total_marks': '',
+                ' c_7_sub_2_name': '',
+                ' c_7_sub_2_marks_obtained': '',
+                ' c_7_sub_2_total_marks': '',
+                ' c_7_sub_3_name': '',
+                ' c_7_sub_3_marks_obtained': '',
+                ' c_7_sub_3_total_marks': '',
+                ' c_7_sub_4_name': '',
+                ' c_7_sub_4_marks_obtained': '',
+                ' c_7_sub_4_total_marks': '',
+                ' c_7_sub_5_name': '',
+                ' c_7_sub_5_marks_obtained': '',
+                ' c_7_sub_5_total_marks': '',
+                ' c_7_sub_6_name': '',
+                ' c_7_sub_6_marks_obtained': '',
+                ' c_7_sub_6_total_marks': '',
+                ' c_7_sub_7_name': '',
+                ' c_7_sub_7_marks_obtained': '',
+                ' c_7_sub_7_total_marks': '',
+                ' c_7_sub_8_name': '',
+                ' c_7_sub_8_marks_obtained': '',
+                ' c_7_sub_8_total_marks': '',
+                ' c_7_sub_9_name': '',
+                ' c_7_sub_9_marks_obtained': '',
+                ' c_7_sub_9_total_marks': '',
+                ' c_7_sub_10_name': '',
+                ' c_7_sub_10_marks_obtained': '',
+                ' c_7_sub_10_total_marks': '',
+                ' c_7_sub_11_name': '',
+                ' c_7_sub_11_marks_obtained': '',
+                ' c_7_sub_11_total_marks': '',
+                ' c_7_sub_12_name': '',
+                ' c_7_sub_12_marks_obtained': '',
+                ' c_7_sub_12_total_marks': '',
+                ' c_7_sub_13_name': '',
+                ' c_7_sub_13_marks_obtained': '',
+                ' c_7_sub_13_total_marks': '',
+                ' c_7_sub_14_name': '',
+                ' c_7_sub_14_marks_obtained': '',
+                ' c_7_sub_14_total_marks': '',
+                ' c_7_sub_15_name': '',
+                ' c_7_sub_15_marks_obtained': '',
+                ' c_7_sub_15_total_marks': ''
+            }
+
+        # Pass the c_7_info to the template
+        return render_template('Student/student_info_forms/form_c_7.html', class_7=c_7_info)
+
+def form_c_7_post():
+    try:
+        if request.method == 'POST':
+            # Get form data
+            aadhaar_no = session['aadhaar_no']
+            c_7_sub_1_name = request.form['c_7_sub_1_name']
+            c_7_sub_1_marks_obtained = request.form['c_7_sub_1_marks_obtained']
+            c_7_sub_1_total_marks = request.form['c_7_sub_1_total_marks']
+            c_7_sub_2_name = request.form['c_7_sub_2_name']
+            c_7_sub_2_marks_obtained = request.form['c_7_sub_2_marks_obtained']
+            c_7_sub_2_total_marks = request.form['c_7_sub_2_total_marks']
+            c_7_sub_3_name = request.form['c_7_sub_3_name']
+            c_7_sub_3_marks_obtained = request.form['c_7_sub_3_marks_obtained']
+            c_7_sub_3_total_marks = request.form['c_7_sub_3_total_marks']
+            c_7_sub_4_name = request.form['c_7_sub_4_name']
+            c_7_sub_4_marks_obtained = request.form['c_7_sub_4_marks_obtained']
+            c_7_sub_4_total_marks = request.form['c_7_sub_4_total_marks']
+            c_7_sub_5_name = request.form['c_7_sub_5_name']
+            c_7_sub_5_marks_obtained = request.form['c_7_sub_5_marks_obtained']
+            c_7_sub_5_total_marks = request.form['c_7_sub_5_total_marks']
+            c_7_sub_6_name = request.form['c_7_sub_6_name']
+            c_7_sub_6_marks_obtained = request.form['c_7_sub_6_marks_obtained']
+            c_7_sub_6_total_marks = request.form['c_7_sub_6_total_marks']
+            c_7_sub_7_name = request.form['c_7_sub_7_name']
+            c_7_sub_7_marks_obtained = request.form['c_7_sub_7_marks_obtained']
+            c_7_sub_7_total_marks = request.form['c_7_sub_7_total_marks']
+            c_7_sub_8_name = request.form['c_7_sub_8_name']
+            c_7_sub_8_marks_obtained = request.form['c_7_sub_8_marks_obtained']
+            c_7_sub_8_total_marks = request.form['c_7_sub_8_total_marks']
+            c_7_sub_9_name = request.form['c_7_sub_9_name']
+            c_7_sub_9_marks_obtained = request.form['c_7_sub_9_marks_obtained']
+            c_7_sub_9_total_marks = request.form['c_7_sub_9_total_marks']
+            c_7_sub_10_name = request.form['c_7_sub_10_name']
+            c_7_sub_10_marks_obtained = request.form['c_7_sub_10_marks_obtained']
+            c_7_sub_10_total_marks = request.form['c_7_sub_10_total_marks']
+            c_7_sub_11_name = request.form['c_7_sub_11_name']
+            c_7_sub_11_marks_obtained = request.form['c_7_sub_11_marks_obtained']
+            c_7_sub_11_total_marks = request.form['c_7_sub_11_total_marks']
+            c_7_sub_12_name = request.form['c_7_sub_12_name']
+            c_7_sub_12_marks_obtained = request.form['c_7_sub_12_marks_obtained']
+            c_7_sub_12_total_marks = request.form['c_7_sub_12_total_marks']
+            c_7_sub_13_name = request.form['c_7_sub_13_name']
+            c_7_sub_13_marks_obtained = request.form['c_7_sub_13_marks_obtained']
+            c_7_sub_13_total_marks = request.form['c_7_sub_13_total_marks']
+            c_7_sub_14_name = request.form['c_7_sub_14_name']
+            c_7_sub_14_marks_obtained = request.form['c_7_sub_14_marks_obtained']
+            c_7_sub_14_total_marks = request.form['c_7_sub_14_total_marks']
+            c_7_sub_15_name = request.form['c_7_sub_15_name']
+            c_7_sub_15_marks_obtained = request.form['c_7_sub_15_marks_obtained']
+            c_7_sub_15_total_marks = request.form['c_7_sub_15_total_marks']
+
+            # Update c_7_info in the database
+            cursor.execute("""
+                UPDATE class_7
+                SET c_7_sub_1_name = ?, c_7_sub_1_marks_obtained = ?, c_7_sub_1_total_marks = ?, c_7_sub_2_name = ?, c_7_sub_2_marks_obtained = ?, c_7_sub_2_total_marks = ?, c_7_sub_3_name = ?, c_7_sub_3_marks_obtained = ?, c_7_sub_3_total_marks = ?, c_7_sub_4_name = ?, c_7_sub_4_marks_obtained = ?, c_7_sub_4_total_marks = ?, c_7_sub_5_name = ?, c_7_sub_5_marks_obtained = ?, c_7_sub_5_total_marks = ?, c_7_sub_6_name = ?, c_7_sub_6_marks_obtained = ?, c_7_sub_6_total_marks = ?, c_7_sub_7_name = ?, c_7_sub_7_marks_obtained = ?, c_7_sub_7_total_marks = ?, c_7_sub_8_name = ?, c_7_sub_8_marks_obtained = ?, c_7_sub_8_total_marks = ?, c_7_sub_9_name = ?, c_7_sub_9_marks_obtained = ?, c_7_sub_9_total_marks = ?, c_7_sub_10_name = ?, c_7_sub_10_marks_obtained = ?, c_7_sub_10_total_marks = ?, c_7_sub_11_name = ?, c_7_sub_11_marks_obtained = ?, c_7_sub_11_total_marks = ?, c_7_sub_12_name = ?, c_7_sub_12_marks_obtained = ?, c_7_sub_12_total_marks = ?, c_7_sub_13_name = ?, c_7_sub_13_marks_obtained = ?, c_7_sub_13_total_marks = ?, c_7_sub_14_name = ?, c_7_sub_14_marks_obtained = ?, c_7_sub_14_total_marks = ?, c_7_sub_15_name = ?, c_7_sub_15_marks_obtained = ?, c_7_sub_15_total_marks = ?
+                WHERE aadhaar_no = ?
+            """, (c_7_sub_1_name, c_7_sub_1_marks_obtained, c_7_sub_1_total_marks, c_7_sub_2_name, c_7_sub_2_marks_obtained, c_7_sub_2_total_marks, c_7_sub_3_name, c_7_sub_3_marks_obtained, c_7_sub_3_total_marks, c_7_sub_4_name, c_7_sub_4_marks_obtained, c_7_sub_4_total_marks, c_7_sub_5_name, c_7_sub_5_marks_obtained, c_7_sub_5_total_marks, c_7_sub_6_name, c_7_sub_6_marks_obtained, c_7_sub_6_total_marks, c_7_sub_7_name, c_7_sub_7_marks_obtained, c_7_sub_7_total_marks, c_7_sub_8_name, c_7_sub_8_marks_obtained, c_7_sub_8_total_marks, c_7_sub_9_name, c_7_sub_9_marks_obtained, c_7_sub_9_total_marks, c_7_sub_10_name, c_7_sub_10_marks_obtained, c_7_sub_10_total_marks, c_7_sub_11_name, c_7_sub_11_marks_obtained, c_7_sub_11_total_marks, c_7_sub_12_name, c_7_sub_12_marks_obtained, c_7_sub_12_total_marks, c_7_sub_13_name, c_7_sub_13_marks_obtained, c_7_sub_13_total_marks, c_7_sub_14_name, c_7_sub_14_marks_obtained, c_7_sub_14_total_marks, c_7_sub_15_name, c_7_sub_15_marks_obtained, c_7_sub_15_total_marks, aadhaar_no))
+
+            # Commit changes
+            conn.commit()
+
+            # Redirect to the next form
+            return redirect(url_for('form_c_8'))  # replace 'next_form' with the actual name of the next form
+
+        else:
+            # Fetch c_7_info from the database
+            cursor.execute("SELECT * FROM class_7 WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+            c_7_info = cursor.fetchone()
+
+            # Pass the c_7_info to the template
+            return render_template('Student/student_info_forms/form_c_7.html', class_7=c_7_info)
+    except Exception as e:
+        app.logger.error(f"Exception occurred: {e}")
+        return str(e), 500
+
+
+@app.route('/form_c_8', methods=['GET', 'POST'])
 def form_c_8():
-    return render_template('Student/student_info_forms/form_c_8.html')
+    if request.method == 'POST':
+        return form_c_8_post()
+    else:
+        # Fetch c_8_info from the database
+        cursor.execute("SELECT * FROM class_8 WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+        c_8_info = cursor.fetchone()
 
-@app.route('/form_c_9')
+        # If c_8_info is None, create a default c_8_info object
+        if c_8_info is None:
+            c_8_info = {
+                ' c_8_sub_1_name': '',
+                ' c_8_sub_1_marks_obtained': '',
+                ' c_8_sub_1_total_marks': '',
+                ' c_8_sub_2_name': '',
+                ' c_8_sub_2_marks_obtained': '',
+                ' c_8_sub_2_total_marks': '',
+                ' c_8_sub_3_name': '',
+                ' c_8_sub_3_marks_obtained': '',
+                ' c_8_sub_3_total_marks': '',
+                ' c_8_sub_4_name': '',
+                ' c_8_sub_4_marks_obtained': '',
+                ' c_8_sub_4_total_marks': '',
+                ' c_8_sub_5_name': '',
+                ' c_8_sub_5_marks_obtained': '',
+                ' c_8_sub_5_total_marks': '',
+                ' c_8_sub_6_name': '',
+                ' c_8_sub_6_marks_obtained': '',
+                ' c_8_sub_6_total_marks': '',
+                ' c_8_sub_7_name': '',
+                ' c_8_sub_7_marks_obtained': '',
+                ' c_8_sub_7_total_marks': '',
+                ' c_8_sub_8_name': '',
+                ' c_8_sub_8_marks_obtained': '',
+                ' c_8_sub_8_total_marks': '',
+                ' c_8_sub_9_name': '',
+                ' c_8_sub_9_marks_obtained': '',
+                ' c_8_sub_9_total_marks': '',
+                ' c_8_sub_10_name': '',
+                ' c_8_sub_10_marks_obtained': '',
+                ' c_8_sub_10_total_marks': '',
+                ' c_8_sub_11_name': '',
+                ' c_8_sub_11_marks_obtained': '',
+                ' c_8_sub_11_total_marks': '',
+                ' c_8_sub_12_name': '',
+                ' c_8_sub_12_marks_obtained': '',
+                ' c_8_sub_12_total_marks': '',
+                ' c_8_sub_13_name': '',
+                ' c_8_sub_13_marks_obtained': '',
+                ' c_8_sub_13_total_marks': '',
+                ' c_8_sub_14_name': '',
+                ' c_8_sub_14_marks_obtained': '',
+                ' c_8_sub_14_total_marks': '',
+                ' c_8_sub_15_name': '',
+                ' c_8_sub_15_marks_obtained': '',
+                ' c_8_sub_15_total_marks': ''
+            }
+
+        # Pass the c_8_info to the template
+        return render_template('Student/student_info_forms/form_c_8.html', class_8=c_8_info)
+
+def form_c_8_post():
+    try:
+        if request.method == 'POST':
+            # Get form data
+            aadhaar_no = session['aadhaar_no']
+            c_8_sub_1_name = request.form['c_8_sub_1_name']
+            c_8_sub_1_marks_obtained = request.form['c_8_sub_1_marks_obtained']
+            c_8_sub_1_total_marks = request.form['c_8_sub_1_total_marks']
+            c_8_sub_2_name = request.form['c_8_sub_2_name']
+            c_8_sub_2_marks_obtained = request.form['c_8_sub_2_marks_obtained']
+            c_8_sub_2_total_marks = request.form['c_8_sub_2_total_marks']
+            c_8_sub_3_name = request.form['c_8_sub_3_name']
+            c_8_sub_3_marks_obtained = request.form['c_8_sub_3_marks_obtained']
+            c_8_sub_3_total_marks = request.form['c_8_sub_3_total_marks']
+            c_8_sub_4_name = request.form['c_8_sub_4_name']
+            c_8_sub_4_marks_obtained = request.form['c_8_sub_4_marks_obtained']
+            c_8_sub_4_total_marks = request.form['c_8_sub_4_total_marks']
+            c_8_sub_5_name = request.form['c_8_sub_5_name']
+            c_8_sub_5_marks_obtained = request.form['c_8_sub_5_marks_obtained']
+            c_8_sub_5_total_marks = request.form['c_8_sub_5_total_marks']
+            c_8_sub_6_name = request.form['c_8_sub_6_name']
+            c_8_sub_6_marks_obtained = request.form['c_8_sub_6_marks_obtained']
+            c_8_sub_6_total_marks = request.form['c_8_sub_6_total_marks']
+            c_8_sub_7_name = request.form['c_8_sub_7_name']
+            c_8_sub_7_marks_obtained = request.form['c_8_sub_7_marks_obtained']
+            c_8_sub_7_total_marks = request.form['c_8_sub_7_total_marks']
+            c_8_sub_8_name = request.form['c_8_sub_8_name']
+            c_8_sub_8_marks_obtained = request.form['c_8_sub_8_marks_obtained']
+            c_8_sub_8_total_marks = request.form['c_8_sub_8_total_marks']
+            c_8_sub_9_name = request.form['c_8_sub_9_name']
+            c_8_sub_9_marks_obtained = request.form['c_8_sub_9_marks_obtained']
+            c_8_sub_9_total_marks = request.form['c_8_sub_9_total_marks']
+            c_8_sub_10_name = request.form['c_8_sub_10_name']
+            c_8_sub_10_marks_obtained = request.form['c_8_sub_10_marks_obtained']
+            c_8_sub_10_total_marks = request.form['c_8_sub_10_total_marks']
+            c_8_sub_11_name = request.form['c_8_sub_11_name']
+            c_8_sub_11_marks_obtained = request.form['c_8_sub_11_marks_obtained']
+            c_8_sub_11_total_marks = request.form['c_8_sub_11_total_marks']
+            c_8_sub_12_name = request.form['c_8_sub_12_name']
+            c_8_sub_12_marks_obtained = request.form['c_8_sub_12_marks_obtained']
+            c_8_sub_12_total_marks = request.form['c_8_sub_12_total_marks']
+            c_8_sub_13_name = request.form['c_8_sub_13_name']
+            c_8_sub_13_marks_obtained = request.form['c_8_sub_13_marks_obtained']
+            c_8_sub_13_total_marks = request.form['c_8_sub_13_total_marks']
+            c_8_sub_14_name = request.form['c_8_sub_14_name']
+            c_8_sub_14_marks_obtained = request.form['c_8_sub_14_marks_obtained']
+            c_8_sub_14_total_marks = request.form['c_8_sub_14_total_marks']
+            c_8_sub_15_name = request.form['c_8_sub_15_name']
+            c_8_sub_15_marks_obtained = request.form['c_8_sub_15_marks_obtained']
+            c_8_sub_15_total_marks = request.form['c_8_sub_15_total_marks']
+
+            # Update c_8_info in the database
+            cursor.execute("""
+                UPDATE class_8
+                SET c_8_sub_1_name = ?, c_8_sub_1_marks_obtained = ?, c_8_sub_1_total_marks = ?, c_8_sub_2_name = ?, c_8_sub_2_marks_obtained = ?, c_8_sub_2_total_marks = ?, c_8_sub_3_name = ?, c_8_sub_3_marks_obtained = ?, c_8_sub_3_total_marks = ?, c_8_sub_4_name = ?, c_8_sub_4_marks_obtained = ?, c_8_sub_4_total_marks = ?, c_8_sub_5_name = ?, c_8_sub_5_marks_obtained = ?, c_8_sub_5_total_marks = ?, c_8_sub_6_name = ?, c_8_sub_6_marks_obtained = ?, c_8_sub_6_total_marks = ?, c_8_sub_7_name = ?, c_8_sub_7_marks_obtained = ?, c_8_sub_7_total_marks = ?, c_8_sub_8_name = ?, c_8_sub_8_marks_obtained = ?, c_8_sub_8_total_marks = ?, c_8_sub_9_name = ?, c_8_sub_9_marks_obtained = ?, c_8_sub_9_total_marks = ?, c_8_sub_10_name = ?, c_8_sub_10_marks_obtained = ?, c_8_sub_10_total_marks = ?, c_8_sub_11_name = ?, c_8_sub_11_marks_obtained = ?, c_8_sub_11_total_marks = ?, c_8_sub_12_name = ?, c_8_sub_12_marks_obtained = ?, c_8_sub_12_total_marks = ?, c_8_sub_13_name = ?, c_8_sub_13_marks_obtained = ?, c_8_sub_13_total_marks = ?, c_8_sub_14_name = ?, c_8_sub_14_marks_obtained = ?, c_8_sub_14_total_marks = ?, c_8_sub_15_name = ?, c_8_sub_15_marks_obtained = ?, c_8_sub_15_total_marks = ?
+                WHERE aadhaar_no = ?
+            """, (c_8_sub_1_name, c_8_sub_1_marks_obtained, c_8_sub_1_total_marks, c_8_sub_2_name, c_8_sub_2_marks_obtained, c_8_sub_2_total_marks, c_8_sub_3_name, c_8_sub_3_marks_obtained, c_8_sub_3_total_marks, c_8_sub_4_name, c_8_sub_4_marks_obtained, c_8_sub_4_total_marks, c_8_sub_5_name, c_8_sub_5_marks_obtained, c_8_sub_5_total_marks, c_8_sub_6_name, c_8_sub_6_marks_obtained, c_8_sub_6_total_marks, c_8_sub_7_name, c_8_sub_7_marks_obtained, c_8_sub_7_total_marks, c_8_sub_8_name, c_8_sub_8_marks_obtained, c_8_sub_8_total_marks, c_8_sub_9_name, c_8_sub_9_marks_obtained, c_8_sub_9_total_marks, c_8_sub_10_name, c_8_sub_10_marks_obtained, c_8_sub_10_total_marks, c_8_sub_11_name, c_8_sub_11_marks_obtained, c_8_sub_11_total_marks, c_8_sub_12_name, c_8_sub_12_marks_obtained, c_8_sub_12_total_marks, c_8_sub_13_name, c_8_sub_13_marks_obtained, c_8_sub_13_total_marks, c_8_sub_14_name, c_8_sub_14_marks_obtained, c_8_sub_14_total_marks, c_8_sub_15_name, c_8_sub_15_marks_obtained, c_8_sub_15_total_marks, aadhaar_no))
+
+            # Commit changes
+            conn.commit()
+
+            # Redirect to the next form
+            return redirect(url_for('form_c_9'))  # replace 'next_form' with the actual name of the next form
+
+        else:
+            # Fetch c_8_info from the database
+            cursor.execute("SELECT * FROM class_8 WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+            c_8_info = cursor.fetchone()
+
+            # Pass the c_8_info to the template
+            return render_template('Student/student_info_forms/form_c_8.html', class_8=c_8_info)
+    except Exception as e:
+        app.logger.error(f"Exception occurred: {e}")
+        return str(e), 500
+
+
+@app.route('/form_c_9', methods=['GET', 'POST'])
 def form_c_9():
-    return render_template('Student/student_info_forms/form_c_9.html')
+    if request.method == 'POST':
+        return form_c_9_post()
+    else:
+        # Fetch c_9_info from the database
+        cursor.execute("SELECT * FROM class_9 WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+        c_9_info = cursor.fetchone()
 
-@app.route('/form_c_10')
+        # If c_9_info is None, create a default c_9_info object
+        if c_9_info is None:
+            c_9_info = {
+                ' c_9_sub_1_name': '',
+                ' c_9_sub_1_marks_obtained': '',
+                ' c_9_sub_1_total_marks': '',
+                ' c_9_sub_2_name': '',
+                ' c_9_sub_2_marks_obtained': '',
+                ' c_9_sub_2_total_marks': '',
+                ' c_9_sub_3_name': '',
+                ' c_9_sub_3_marks_obtained': '',
+                ' c_9_sub_3_total_marks': '',
+                ' c_9_sub_4_name': '',
+                ' c_9_sub_4_marks_obtained': '',
+                ' c_9_sub_4_total_marks': '',
+                ' c_9_sub_5_name': '',
+                ' c_9_sub_5_marks_obtained': '',
+                ' c_9_sub_5_total_marks': '',
+                ' c_9_sub_6_name': '',
+                ' c_9_sub_6_marks_obtained': '',
+                ' c_9_sub_6_total_marks': '',
+                ' c_9_sub_7_name': '',
+                ' c_9_sub_7_marks_obtained': '',
+                ' c_9_sub_7_total_marks': '',
+                ' c_9_sub_8_name': '',
+                ' c_9_sub_8_marks_obtained': '',
+                ' c_9_sub_8_total_marks': '',
+                ' c_9_sub_9_name': '',
+                ' c_9_sub_9_marks_obtained': '',
+                ' c_9_sub_9_total_marks': '',
+                ' c_9_sub_10_name': '',
+                ' c_9_sub_10_marks_obtained': '',
+                ' c_9_sub_10_total_marks': '',
+                ' c_9_sub_11_name': '',
+                ' c_9_sub_11_marks_obtained': '',
+                ' c_9_sub_11_total_marks': '',
+                ' c_9_sub_12_name': '',
+                ' c_9_sub_12_marks_obtained': '',
+                ' c_9_sub_12_total_marks': '',
+                ' c_9_sub_13_name': '',
+                ' c_9_sub_13_marks_obtained': '',
+                ' c_9_sub_13_total_marks': '',
+                ' c_9_sub_14_name': '',
+                ' c_9_sub_14_marks_obtained': '',
+                ' c_9_sub_14_total_marks': '',
+                ' c_9_sub_15_name': '',
+                ' c_9_sub_15_marks_obtained': '',
+                ' c_9_sub_15_total_marks': ''
+            }
+
+        # Pass the c_9_info to the template
+        return render_template('Student/student_info_forms/form_c_9.html', class_9=c_9_info)
+
+def form_c_9_post():
+    try:
+        if request.method == 'POST':
+            # Get form data
+            aadhaar_no = session['aadhaar_no']
+            c_9_sub_1_name = request.form['c_9_sub_1_name']
+            c_9_sub_1_marks_obtained = request.form['c_9_sub_1_marks_obtained']
+            c_9_sub_1_total_marks = request.form['c_9_sub_1_total_marks']
+            c_9_sub_2_name = request.form['c_9_sub_2_name']
+            c_9_sub_2_marks_obtained = request.form['c_9_sub_2_marks_obtained']
+            c_9_sub_2_total_marks = request.form['c_9_sub_2_total_marks']
+            c_9_sub_3_name = request.form['c_9_sub_3_name']
+            c_9_sub_3_marks_obtained = request.form['c_9_sub_3_marks_obtained']
+            c_9_sub_3_total_marks = request.form['c_9_sub_3_total_marks']
+            c_9_sub_4_name = request.form['c_9_sub_4_name']
+            c_9_sub_4_marks_obtained = request.form['c_9_sub_4_marks_obtained']
+            c_9_sub_4_total_marks = request.form['c_9_sub_4_total_marks']
+            c_9_sub_5_name = request.form['c_9_sub_5_name']
+            c_9_sub_5_marks_obtained = request.form['c_9_sub_5_marks_obtained']
+            c_9_sub_5_total_marks = request.form['c_9_sub_5_total_marks']
+            c_9_sub_6_name = request.form['c_9_sub_6_name']
+            c_9_sub_6_marks_obtained = request.form['c_9_sub_6_marks_obtained']
+            c_9_sub_6_total_marks = request.form['c_9_sub_6_total_marks']
+            c_9_sub_7_name = request.form['c_9_sub_7_name']
+            c_9_sub_7_marks_obtained = request.form['c_9_sub_7_marks_obtained']
+            c_9_sub_7_total_marks = request.form['c_9_sub_7_total_marks']
+            c_9_sub_8_name = request.form['c_9_sub_8_name']
+            c_9_sub_8_marks_obtained = request.form['c_9_sub_8_marks_obtained']
+            c_9_sub_8_total_marks = request.form['c_9_sub_8_total_marks']
+            c_9_sub_9_name = request.form['c_9_sub_9_name']
+            c_9_sub_9_marks_obtained = request.form['c_9_sub_9_marks_obtained']
+            c_9_sub_9_total_marks = request.form['c_9_sub_9_total_marks']
+            c_9_sub_10_name = request.form['c_9_sub_10_name']
+            c_9_sub_10_marks_obtained = request.form['c_9_sub_10_marks_obtained']
+            c_9_sub_10_total_marks = request.form['c_9_sub_10_total_marks']
+            c_9_sub_11_name = request.form['c_9_sub_11_name']
+            c_9_sub_11_marks_obtained = request.form['c_9_sub_11_marks_obtained']
+            c_9_sub_11_total_marks = request.form['c_9_sub_11_total_marks']
+            c_9_sub_12_name = request.form['c_9_sub_12_name']
+            c_9_sub_12_marks_obtained = request.form['c_9_sub_12_marks_obtained']
+            c_9_sub_12_total_marks = request.form['c_9_sub_12_total_marks']
+            c_9_sub_13_name = request.form['c_9_sub_13_name']
+            c_9_sub_13_marks_obtained = request.form['c_9_sub_13_marks_obtained']
+            c_9_sub_13_total_marks = request.form['c_9_sub_13_total_marks']
+            c_9_sub_14_name = request.form['c_9_sub_14_name']
+            c_9_sub_14_marks_obtained = request.form['c_9_sub_14_marks_obtained']
+            c_9_sub_14_total_marks = request.form['c_9_sub_14_total_marks']
+            c_9_sub_15_name = request.form['c_9_sub_15_name']
+            c_9_sub_15_marks_obtained = request.form['c_9_sub_15_marks_obtained']
+            c_9_sub_15_total_marks = request.form['c_9_sub_15_total_marks']
+
+            # Update c_9_info in the database
+            cursor.execute("""
+                UPDATE class_9
+                SET c_9_sub_1_name = ?, c_9_sub_1_marks_obtained = ?, c_9_sub_1_total_marks = ?, c_9_sub_2_name = ?, c_9_sub_2_marks_obtained = ?, c_9_sub_2_total_marks = ?, c_9_sub_3_name = ?, c_9_sub_3_marks_obtained = ?, c_9_sub_3_total_marks = ?, c_9_sub_4_name = ?, c_9_sub_4_marks_obtained = ?, c_9_sub_4_total_marks = ?, c_9_sub_5_name = ?, c_9_sub_5_marks_obtained = ?, c_9_sub_5_total_marks = ?, c_9_sub_6_name = ?, c_9_sub_6_marks_obtained = ?, c_9_sub_6_total_marks = ?, c_9_sub_7_name = ?, c_9_sub_7_marks_obtained = ?, c_9_sub_7_total_marks = ?, c_9_sub_8_name = ?, c_9_sub_8_marks_obtained = ?, c_9_sub_8_total_marks = ?, c_9_sub_9_name = ?, c_9_sub_9_marks_obtained = ?, c_9_sub_9_total_marks = ?, c_9_sub_10_name = ?, c_9_sub_10_marks_obtained = ?, c_9_sub_10_total_marks = ?, c_9_sub_11_name = ?, c_9_sub_11_marks_obtained = ?, c_9_sub_11_total_marks = ?, c_9_sub_12_name = ?, c_9_sub_12_marks_obtained = ?, c_9_sub_12_total_marks = ?, c_9_sub_13_name = ?, c_9_sub_13_marks_obtained = ?, c_9_sub_13_total_marks = ?, c_9_sub_14_name = ?, c_9_sub_14_marks_obtained = ?, c_9_sub_14_total_marks = ?, c_9_sub_15_name = ?, c_9_sub_15_marks_obtained = ?, c_9_sub_15_total_marks = ?
+                WHERE aadhaar_no = ?
+            """, (c_9_sub_1_name, c_9_sub_1_marks_obtained, c_9_sub_1_total_marks, c_9_sub_2_name, c_9_sub_2_marks_obtained, c_9_sub_2_total_marks, c_9_sub_3_name, c_9_sub_3_marks_obtained, c_9_sub_3_total_marks, c_9_sub_4_name, c_9_sub_4_marks_obtained, c_9_sub_4_total_marks, c_9_sub_5_name, c_9_sub_5_marks_obtained, c_9_sub_5_total_marks, c_9_sub_6_name, c_9_sub_6_marks_obtained, c_9_sub_6_total_marks, c_9_sub_7_name, c_9_sub_7_marks_obtained, c_9_sub_7_total_marks, c_9_sub_8_name, c_9_sub_8_marks_obtained, c_9_sub_8_total_marks, c_9_sub_9_name, c_9_sub_9_marks_obtained, c_9_sub_9_total_marks, c_9_sub_10_name, c_9_sub_10_marks_obtained, c_9_sub_10_total_marks, c_9_sub_11_name, c_9_sub_11_marks_obtained, c_9_sub_11_total_marks, c_9_sub_12_name, c_9_sub_12_marks_obtained, c_9_sub_12_total_marks, c_9_sub_13_name, c_9_sub_13_marks_obtained, c_9_sub_13_total_marks, c_9_sub_14_name, c_9_sub_14_marks_obtained, c_9_sub_14_total_marks, c_9_sub_15_name, c_9_sub_15_marks_obtained, c_9_sub_15_total_marks, aadhaar_no))
+
+            # Commit changes
+            conn.commit()
+
+            # Redirect to the next form
+            return redirect(url_for('form_c_10'))  # replace 'next_form' with the actual name of the next form
+
+        else:
+            # Fetch c_9_info from the database
+            cursor.execute("SELECT * FROM class_9 WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+            c_9_info = cursor.fetchone()
+
+            # Pass the c_9_info to the template
+            return render_template('Student/student_info_forms/form_c_9.html', class_9=c_9_info)
+    except Exception as e:
+        app.logger.error(f"Exception occurred: {e}")
+        return str(e), 500
+
+
+@app.route('/form_c_10', methods=['GET', 'POST'])
 def form_c_10():
-    return render_template('Student/student_info_forms/form_c_10.html')
+    if request.method == 'POST':
+        return form_c_10_post()
+    else:
+        # Fetch c_10_info from the database
+        cursor.execute("SELECT * FROM class_10 WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+        c_10_info = cursor.fetchone()
 
-@app.route('/form_c_11')
+        # If c_10_info is None, create a default c_10_info object
+        if c_10_info is None:
+            c_10_info = {
+                ' c_10_sub_1_name': '',
+                ' c_10_sub_1_marks_obtained': '',
+                ' c_10_sub_1_total_marks': '',
+                ' c_10_sub_2_name': '',
+                ' c_10_sub_2_marks_obtained': '',
+                ' c_10_sub_2_total_marks': '',
+                ' c_10_sub_3_name': '',
+                ' c_10_sub_3_marks_obtained': '',
+                ' c_10_sub_3_total_marks': '',
+                ' c_10_sub_4_name': '',
+                ' c_10_sub_4_marks_obtained': '',
+                ' c_10_sub_4_total_marks': '',
+                ' c_10_sub_5_name': '',
+                ' c_10_sub_5_marks_obtained': '',
+                ' c_10_sub_5_total_marks': '',
+                ' c_10_sub_6_name': '',
+                ' c_10_sub_6_marks_obtained': '',
+                ' c_10_sub_6_total_marks': '',
+                ' c_10_sub_7_name': '',
+                ' c_10_sub_7_marks_obtained': '',
+                ' c_10_sub_7_total_marks': '',
+                ' c_10_sub_8_name': '',
+                ' c_10_sub_8_marks_obtained': '',
+                ' c_10_sub_8_total_marks': '',
+                ' c_10_sub_9_name': '',
+                ' c_10_sub_9_marks_obtained': '',
+                ' c_10_sub_9_total_marks': '',
+                ' c_10_sub_10_name': '',
+                ' c_10_sub_10_marks_obtained': '',
+                ' c_10_sub_10_total_marks': '',
+                ' c_10_sub_11_name': '',
+                ' c_10_sub_11_marks_obtained': '',
+                ' c_10_sub_11_total_marks': '',
+                ' c_10_sub_12_name': '',
+                ' c_10_sub_12_marks_obtained': '',
+                ' c_10_sub_12_total_marks': '',
+                ' c_10_sub_13_name': '',
+                ' c_10_sub_13_marks_obtained': '',
+                ' c_10_sub_13_total_marks': '',
+                ' c_10_sub_14_name': '',
+                ' c_10_sub_14_marks_obtained': '',
+                ' c_10_sub_14_total_marks': '',
+                ' c_10_sub_15_name': '',
+                ' c_10_sub_15_marks_obtained': '',
+                ' c_10_sub_15_total_marks': ''
+            }
+
+        # Pass the c_10_info to the template
+        return render_template('Student/student_info_forms/form_c_10.html', class_10=c_10_info)
+
+def form_c_10_post():
+    try:
+        if request.method == 'POST':
+            # Get form data
+            aadhaar_no = session['aadhaar_no']
+            c_10_sub_1_name = request.form['c_10_sub_1_name']
+            c_10_sub_1_marks_obtained = request.form['c_10_sub_1_marks_obtained']
+            c_10_sub_1_total_marks = request.form['c_10_sub_1_total_marks']
+            c_10_sub_2_name = request.form['c_10_sub_2_name']
+            c_10_sub_2_marks_obtained = request.form['c_10_sub_2_marks_obtained']
+            c_10_sub_2_total_marks = request.form['c_10_sub_2_total_marks']
+            c_10_sub_3_name = request.form['c_10_sub_3_name']
+            c_10_sub_3_marks_obtained = request.form['c_10_sub_3_marks_obtained']
+            c_10_sub_3_total_marks = request.form['c_10_sub_3_total_marks']
+            c_10_sub_4_name = request.form['c_10_sub_4_name']
+            c_10_sub_4_marks_obtained = request.form['c_10_sub_4_marks_obtained']
+            c_10_sub_4_total_marks = request.form['c_10_sub_4_total_marks']
+            c_10_sub_5_name = request.form['c_10_sub_5_name']
+            c_10_sub_5_marks_obtained = request.form['c_10_sub_5_marks_obtained']
+            c_10_sub_5_total_marks = request.form['c_10_sub_5_total_marks']
+            c_10_sub_6_name = request.form['c_10_sub_6_name']
+            c_10_sub_6_marks_obtained = request.form['c_10_sub_6_marks_obtained']
+            c_10_sub_6_total_marks = request.form['c_10_sub_6_total_marks']
+            c_10_sub_7_name = request.form['c_10_sub_7_name']
+            c_10_sub_7_marks_obtained = request.form['c_10_sub_7_marks_obtained']
+            c_10_sub_7_total_marks = request.form['c_10_sub_7_total_marks']
+            c_10_sub_8_name = request.form['c_10_sub_8_name']
+            c_10_sub_8_marks_obtained = request.form['c_10_sub_8_marks_obtained']
+            c_10_sub_8_total_marks = request.form['c_10_sub_8_total_marks']
+            c_10_sub_9_name = request.form['c_10_sub_9_name']
+            c_10_sub_9_marks_obtained = request.form['c_10_sub_9_marks_obtained']
+            c_10_sub_9_total_marks = request.form['c_10_sub_9_total_marks']
+            c_10_sub_10_name = request.form['c_10_sub_10_name']
+            c_10_sub_10_marks_obtained = request.form['c_10_sub_10_marks_obtained']
+            c_10_sub_10_total_marks = request.form['c_10_sub_10_total_marks']
+            c_10_sub_11_name = request.form['c_10_sub_11_name']
+            c_10_sub_11_marks_obtained = request.form['c_10_sub_11_marks_obtained']
+            c_10_sub_11_total_marks = request.form['c_10_sub_11_total_marks']
+            c_10_sub_12_name = request.form['c_10_sub_12_name']
+            c_10_sub_12_marks_obtained = request.form['c_10_sub_12_marks_obtained']
+            c_10_sub_12_total_marks = request.form['c_10_sub_12_total_marks']
+            c_10_sub_13_name = request.form['c_10_sub_13_name']
+            c_10_sub_13_marks_obtained = request.form['c_10_sub_13_marks_obtained']
+            c_10_sub_13_total_marks = request.form['c_10_sub_13_total_marks']
+            c_10_sub_14_name = request.form['c_10_sub_14_name']
+            c_10_sub_14_marks_obtained = request.form['c_10_sub_14_marks_obtained']
+            c_10_sub_14_total_marks = request.form['c_10_sub_14_total_marks']
+            c_10_sub_15_name = request.form['c_10_sub_15_name']
+            c_10_sub_15_marks_obtained = request.form['c_10_sub_15_marks_obtained']
+            c_10_sub_15_total_marks = request.form['c_10_sub_15_total_marks']
+
+            # Update c_10_info in the database
+            cursor.execute("""
+                UPDATE class_10
+                SET c_10_sub_1_name = ?, c_10_sub_1_marks_obtained = ?, c_10_sub_1_total_marks = ?, c_10_sub_2_name = ?, c_10_sub_2_marks_obtained = ?, c_10_sub_2_total_marks = ?, c_10_sub_3_name = ?, c_10_sub_3_marks_obtained = ?, c_10_sub_3_total_marks = ?, c_10_sub_4_name = ?, c_10_sub_4_marks_obtained = ?, c_10_sub_4_total_marks = ?, c_10_sub_5_name = ?, c_10_sub_5_marks_obtained = ?, c_10_sub_5_total_marks = ?, c_10_sub_6_name = ?, c_10_sub_6_marks_obtained = ?, c_10_sub_6_total_marks = ?, c_10_sub_7_name = ?, c_10_sub_7_marks_obtained = ?, c_10_sub_7_total_marks = ?, c_10_sub_8_name = ?, c_10_sub_8_marks_obtained = ?, c_10_sub_8_total_marks = ?, c_10_sub_9_name = ?, c_10_sub_9_marks_obtained = ?, c_10_sub_9_total_marks = ?, c_10_sub_10_name = ?, c_10_sub_10_marks_obtained = ?, c_10_sub_10_total_marks = ?, c_10_sub_11_name = ?, c_10_sub_11_marks_obtained = ?, c_10_sub_11_total_marks = ?, c_10_sub_12_name = ?, c_10_sub_12_marks_obtained = ?, c_10_sub_12_total_marks = ?, c_10_sub_13_name = ?, c_10_sub_13_marks_obtained = ?, c_10_sub_13_total_marks = ?, c_10_sub_14_name = ?, c_10_sub_14_marks_obtained = ?, c_10_sub_14_total_marks = ?, c_10_sub_15_name = ?, c_10_sub_15_marks_obtained = ?, c_10_sub_15_total_marks = ?
+                WHERE aadhaar_no = ?
+            """, (c_10_sub_1_name, c_10_sub_1_marks_obtained, c_10_sub_1_total_marks, c_10_sub_2_name, c_10_sub_2_marks_obtained, c_10_sub_2_total_marks, c_10_sub_3_name, c_10_sub_3_marks_obtained, c_10_sub_3_total_marks, c_10_sub_4_name, c_10_sub_4_marks_obtained, c_10_sub_4_total_marks, c_10_sub_5_name, c_10_sub_5_marks_obtained, c_10_sub_5_total_marks, c_10_sub_6_name, c_10_sub_6_marks_obtained, c_10_sub_6_total_marks, c_10_sub_7_name, c_10_sub_7_marks_obtained, c_10_sub_7_total_marks, c_10_sub_8_name, c_10_sub_8_marks_obtained, c_10_sub_8_total_marks, c_10_sub_9_name, c_10_sub_9_marks_obtained, c_10_sub_9_total_marks, c_10_sub_10_name, c_10_sub_10_marks_obtained, c_10_sub_10_total_marks, c_10_sub_11_name, c_10_sub_11_marks_obtained, c_10_sub_11_total_marks, c_10_sub_12_name, c_10_sub_12_marks_obtained, c_10_sub_12_total_marks, c_10_sub_13_name, c_10_sub_13_marks_obtained, c_10_sub_13_total_marks, c_10_sub_14_name, c_10_sub_14_marks_obtained, c_10_sub_14_total_marks, c_10_sub_15_name, c_10_sub_15_marks_obtained, c_10_sub_15_total_marks, aadhaar_no))
+
+            # Commit changes
+            conn.commit()
+
+            # Redirect to the next form
+            return redirect(url_for('form_c_11'))  # replace 'next_form' with the actual name of the next form
+
+        else:
+            # Fetch c_10_info from the database
+            cursor.execute("SELECT * FROM class_10 WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+            c_10_info = cursor.fetchone()
+
+            # Pass the c_10_info to the template
+            return render_template('Student/student_info_forms/form_c_10.html', class_10=c_10_info)
+    except Exception as e:
+        app.logger.error(f"Exception occurred: {e}")
+        return str(e), 500
+
+
+@app.route('/form_c_11', methods=['GET', 'POST'])
 def form_c_11():
-    return render_template('Student/student_info_forms/form_c_11.html')
+    if request.method == 'POST':
+        return form_c_11_post()
+    else:
+        # Fetch c_11_info from the database
+        cursor.execute("SELECT * FROM class_11 WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+        c_11_info = cursor.fetchone()
 
-@app.route('/form_c_12')
+        # If c_11_info is None, create a default c_11_info object
+        if c_11_info is None:
+            c_11_info = {
+                ' c_11_sub_1_name': '',
+                ' c_11_sub_1_marks_obtained': '',
+                ' c_11_sub_1_total_marks': '',
+                ' c_11_sub_2_name': '',
+                ' c_11_sub_2_marks_obtained': '',
+                ' c_11_sub_2_total_marks': '',
+                ' c_11_sub_3_name': '',
+                ' c_11_sub_3_marks_obtained': '',
+                ' c_11_sub_3_total_marks': '',
+                ' c_11_sub_4_name': '',
+                ' c_11_sub_4_marks_obtained': '',
+                ' c_11_sub_4_total_marks': '',
+                ' c_11_sub_5_name': '',
+                ' c_11_sub_5_marks_obtained': '',
+                ' c_11_sub_5_total_marks': ''
+            }
+
+        # Pass the c_11_info to the template
+        return render_template('Student/student_info_forms/form_c_11.html', class_11=c_11_info)
+
+def form_c_11_post():
+    try:
+        if request.method == 'POST':
+            # Get form data
+            aadhaar_no = session['aadhaar_no']
+            c_11_sub_1_name = request.form['c_11_sub_1_name']
+            c_11_sub_1_marks_obtained = request.form['c_11_sub_1_marks_obtained']
+            c_11_sub_1_total_marks = request.form['c_11_sub_1_total_marks']
+            c_11_sub_2_name = request.form['c_11_sub_2_name']
+            c_11_sub_2_marks_obtained = request.form['c_11_sub_2_marks_obtained']
+            c_11_sub_2_total_marks = request.form['c_11_sub_2_total_marks']
+            c_11_sub_3_name = request.form['c_11_sub_3_name']
+            c_11_sub_3_marks_obtained = request.form['c_11_sub_3_marks_obtained']
+            c_11_sub_3_total_marks = request.form['c_11_sub_3_total_marks']
+            c_11_sub_4_name = request.form['c_11_sub_4_name']
+            c_11_sub_4_marks_obtained = request.form['c_11_sub_4_marks_obtained']
+            c_11_sub_4_total_marks = request.form['c_11_sub_4_total_marks']
+            c_11_sub_5_name = request.form['c_11_sub_5_name']
+            c_11_sub_5_marks_obtained = request.form['c_11_sub_5_marks_obtained']
+            c_11_sub_5_total_marks = request.form['c_11_sub_5_total_marks']
+
+
+            # Update c_11_info in the database
+            cursor.execute("""
+                UPDATE class_11
+                SET c_11_sub_1_name = ?, c_11_sub_1_marks_obtained = ?, c_11_sub_1_total_marks = ?, c_11_sub_2_name = ?, c_11_sub_2_marks_obtained = ?, c_11_sub_2_total_marks = ?, c_11_sub_3_name = ?, c_11_sub_3_marks_obtained = ?, c_11_sub_3_total_marks = ?, c_11_sub_4_name = ?, c_11_sub_4_marks_obtained = ?, c_11_sub_4_total_marks = ?, c_11_sub_5_name = ?, c_11_sub_5_marks_obtained = ?, c_11_sub_5_total_marks = ?
+                WHERE aadhaar_no = ?
+            """, (c_11_sub_1_name, c_11_sub_1_marks_obtained, c_11_sub_1_total_marks, c_11_sub_2_name, c_11_sub_2_marks_obtained, c_11_sub_2_total_marks, c_11_sub_3_name, c_11_sub_3_marks_obtained, c_11_sub_3_total_marks, c_11_sub_4_name, c_11_sub_4_marks_obtained, c_11_sub_4_total_marks, c_11_sub_5_name, c_11_sub_5_marks_obtained, c_11_sub_5_total_marks, aadhaar_no))
+
+            # Commit changes
+            conn.commit()
+
+            # Redirect to the next form
+            return redirect(url_for('form_c_12'))  # replace 'next_form' with the actual name of the next form
+
+        else:
+            # Fetch c_11_info from the database
+            cursor.execute("SELECT * FROM class_11 WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+            c_11_info = cursor.fetchone()
+
+            # Pass the c_11_info to the template
+            return render_template('Student/student_info_forms/form_c_11.html', class_11=c_11_info)
+    except Exception as e:
+        app.logger.error(f"Exception occurred: {e}")
+        return str(e), 500
+
+
+@app.route('/form_c_12', methods=['GET', 'POST'])
 def form_c_12():
-    return render_template('Student/student_info_forms/form_c_12.html')
+    if request.method == 'POST':
+        return form_c_12_post()
+    else:
+        # Fetch c_12_info from the database
+        cursor.execute("SELECT * FROM class_12 WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+        c_12_info = cursor.fetchone()
+
+        # If c_12_info is None, create a default c_12_info object
+        if c_12_info is None:
+            c_12_info = {
+                ' c_12_sub_1_name': '',
+                ' c_12_sub_1_marks_obtained': '',
+                ' c_12_sub_1_total_marks': '',
+                ' c_12_sub_2_name': '',
+                ' c_12_sub_2_marks_obtained': '',
+                ' c_12_sub_2_total_marks': '',
+                ' c_12_sub_3_name': '',
+                ' c_12_sub_3_marks_obtained': '',
+                ' c_12_sub_3_total_marks': '',
+                ' c_12_sub_4_name': '',
+                ' c_12_sub_4_marks_obtained': '',
+                ' c_12_sub_4_total_marks': '',
+                ' c_12_sub_5_name': '',
+                ' c_12_sub_5_marks_obtained': '',
+                ' c_12_sub_5_total_marks': ''
+            }
+
+        # Pass the c_12_info to the template
+        return render_template('Student/student_info_forms/form_c_12.html', class_12=c_12_info)
+
+def form_c_12_post():
+    try:
+        if request.method == 'POST':
+            # Get form data
+            aadhaar_no = session['aadhaar_no']
+            c_12_sub_1_name = request.form['c_12_sub_1_name']
+            c_12_sub_1_marks_obtained = request.form['c_12_sub_1_marks_obtained']
+            c_12_sub_1_total_marks = request.form['c_12_sub_1_total_marks']
+            c_12_sub_2_name = request.form['c_12_sub_2_name']
+            c_12_sub_2_marks_obtained = request.form['c_12_sub_2_marks_obtained']
+            c_12_sub_2_total_marks = request.form['c_12_sub_2_total_marks']
+            c_12_sub_3_name = request.form['c_12_sub_3_name']
+            c_12_sub_3_marks_obtained = request.form['c_12_sub_3_marks_obtained']
+            c_12_sub_3_total_marks = request.form['c_12_sub_3_total_marks']
+            c_12_sub_4_name = request.form['c_12_sub_4_name']
+            c_12_sub_4_marks_obtained = request.form['c_12_sub_4_marks_obtained']
+            c_12_sub_4_total_marks = request.form['c_12_sub_4_total_marks']
+            c_12_sub_5_name = request.form['c_12_sub_5_name']
+            c_12_sub_5_marks_obtained = request.form['c_12_sub_5_marks_obtained']
+            c_12_sub_5_total_marks = request.form['c_12_sub_5_total_marks']
+
+
+            # Update c_12_info in the database
+            cursor.execute("""
+                UPDATE class_12
+                SET c_12_sub_1_name = ?, c_12_sub_1_marks_obtained = ?, c_12_sub_1_total_marks = ?, c_12_sub_2_name = ?, c_12_sub_2_marks_obtained = ?, c_12_sub_2_total_marks = ?, c_12_sub_3_name = ?, c_12_sub_3_marks_obtained = ?, c_12_sub_3_total_marks = ?, c_12_sub_4_name = ?, c_12_sub_4_marks_obtained = ?, c_12_sub_4_total_marks = ?, c_12_sub_5_name = ?, c_12_sub_5_marks_obtained = ?, c_12_sub_5_total_marks = ?
+                WHERE aadhaar_no = ?
+            """, (c_12_sub_1_name, c_12_sub_1_marks_obtained, c_12_sub_1_total_marks, c_12_sub_2_name, c_12_sub_2_marks_obtained, c_12_sub_2_total_marks, c_12_sub_3_name, c_12_sub_3_marks_obtained, c_12_sub_3_total_marks, c_12_sub_4_name, c_12_sub_4_marks_obtained, c_12_sub_4_total_marks, c_12_sub_5_name, c_12_sub_5_marks_obtained, c_12_sub_5_total_marks, aadhaar_no))
+
+            # Commit changes
+            conn.commit()
+
+            # Redirect to the next form
+            return redirect(url_for('form_c_12'))  # replace 'next_form' with the actual name of the next form
+
+        else:
+            # Fetch c_12_info from the database
+            cursor.execute("SELECT * FROM class_12 WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+            c_12_info = cursor.fetchone()
+
+            # Pass the c_12_info to the template
+            return render_template('Student/student_info_forms/form_c_12.html', class_12=c_12_info)
+    except Exception as e:
+        app.logger.error(f"Exception occurred: {e}")
+        return str(e), 500
+
 
 @app.route('/form_ug_details')
 def form_ug_details():
+
     return render_template('Student/student_info_forms/form_ug_details.html')
 
 @app.route('/form_pg_details')
@@ -769,7 +2124,7 @@ def gc1():
 
         # Plot the pie chart
         labels = [data[0] + ' obtained marks', data[0] + ' total marks']
-        sizes = [data[1], data[2]]
+        sizes = [data[1], str(int(data[2])-int(data[1]))]
         fig,ax = plt.subplots(figsize=(5,5))
         ax.pie(sizes, labels=labels, autopct='%1.1f%%')
         ax.set_title(data[0] + ' Marks Distribution')
@@ -796,7 +2151,7 @@ def gc2():
 
         # Plot the pie chart
         labels = [data[0] + ' obtained marks', data[0] + ' total marks']
-        sizes = [data[1], data[2]]
+        sizes = [data[1], str(int(data[2])-int(data[1]))]
         fig,ax = plt.subplots(figsize=(5,5))
         ax.pie(sizes, labels=labels, autopct='%1.1f%%')
         ax.set_title(data[0] + ' Marks Distribution')
@@ -823,7 +2178,7 @@ def gc3():
 
         # Plot the pie chart
         labels = [data[0] + ' obtained marks', data[0] + ' total marks']
-        sizes = [data[1], data[2]]
+        sizes = [data[1], str(int(data[2])-int(data[1]))]
         fig,ax = plt.subplots(figsize=(5,5))
         ax.pie(sizes, labels=labels, autopct='%1.1f%%')
         ax.set_title(data[0] + ' Marks Distribution')
@@ -850,7 +2205,7 @@ def gc4():
 
         # Plot the pie chart
         labels = [data[0] + ' obtained marks', data[0] + ' total marks']
-        sizes = [data[1], data[2]]
+        sizes = [data[1], str(int(data[2])-int(data[1]))]
         fig,ax = plt.subplots(figsize=(5,5))
         ax.pie(sizes, labels=labels, autopct='%1.1f%%')
         ax.set_title(data[0] + ' Marks Distribution')
@@ -877,7 +2232,7 @@ def gc5():
 
         # Plot the pie chart
         labels = [data[0] + ' obtained marks', data[0] + ' total marks']
-        sizes = [data[1], data[2]]
+        sizes = [data[1], str(int(data[2])-int(data[1]))]
         fig,ax = plt.subplots(figsize=(5,5))
         ax.pie(sizes, labels=labels, autopct='%1.1f%%')
         ax.set_title(data[0] + ' Marks Distribution')
@@ -904,7 +2259,7 @@ def gc6():
 
         # Plot the pie chart
         labels = [data[0] + ' obtained marks', data[0] + ' total marks']
-        sizes = [data[1], data[2]]
+        sizes = [data[1], str(int(data[2])-int(data[1]))]
         fig,ax = plt.subplots(figsize=(5,5))
         ax.pie(sizes, labels=labels, autopct='%1.1f%%')
         ax.set_title(data[0] + ' Marks Distribution')
@@ -931,7 +2286,7 @@ def gc7():
 
         # Plot the pie chart
         labels = [data[0] + ' obtained marks', data[0] + ' total marks']
-        sizes = [data[1], data[2]]
+        sizes = [data[1], str(int(data[2])-int(data[1]))]
         fig,ax = plt.subplots(figsize=(5,5))
         ax.pie(sizes, labels=labels, autopct='%1.1f%%')
         ax.set_title(data[0] + ' Marks Distribution')
@@ -958,7 +2313,7 @@ def gc8():
 
         # Plot the pie chart
         labels = [data[0] + ' obtained marks', data[0] + ' total marks']
-        sizes = [data[1], data[2]]
+        sizes = [data[1], str(int(data[2])-int(data[1]))]
         fig,ax = plt.subplots(figsize=(5,5))
         ax.pie(sizes, labels=labels, autopct='%1.1f%%')
         ax.set_title(data[0] + ' Marks Distribution')
@@ -985,7 +2340,7 @@ def gc9():
 
         # Plot the pie chart
         labels = [data[0] + ' obtained marks', data[0] + ' total marks']
-        sizes = [data[1], data[2]]
+        sizes = [data[1], str(int(data[2])-int(data[1]))]
         fig,ax = plt.subplots(figsize=(5,5))
         ax.pie(sizes, labels=labels, autopct='%1.1f%%')
         ax.set_title(data[0] + ' Marks Distribution')
@@ -1017,7 +2372,7 @@ def gc10():
 
         # Plot the pie chart
         labels = [data[0] + ' obtained marks', data[0] + ' total marks']
-        sizes = [data[1], data[2]]
+        sizes = [data[1], str(int(data[2])-int(data[1]))]
         fig,ax = plt.subplots(figsize=(5,5))
         ax.pie(sizes, labels=labels, autopct='%1.1f%%')
         ax.set_title(data[0] + ' Marks Distribution')
@@ -1044,7 +2399,7 @@ def gc11():
 
         # Plot the pie chart
         labels = [data[0] + ' obtained marks', data[0] + ' total marks']
-        sizes = [data[1], data[2]]
+        sizes = [data[1], str(int(data[2])-int(data[1]))]
         fig,ax = plt.subplots(figsize=(5,5))
         ax.pie(sizes, labels=labels, autopct='%1.1f%%')
         ax.set_title(data[0] + ' Marks Distribution')
@@ -1071,7 +2426,7 @@ def gc12():
 
         # Plot the pie chart
         labels = [data[0] + ' obtained marks', data[0] + ' total marks']
-        sizes = [data[1], data[2]]
+        sizes = [data[1], str(int(data[2])-int(data[1]))]
         fig,ax = plt.subplots(figsize=(5,5))
         ax.pie(sizes, labels=labels, autopct='%1.1f%%')
         ax.set_title(data[0] + ' Marks Distribution')

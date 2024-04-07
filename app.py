@@ -1011,6 +1011,10 @@ def gc10():
         # Fetch the data
         data = cursor.fetchone()
 
+        # If data is None, replace it with a default value
+        if data is None:
+            data = ('No Data', 0, 0)
+
         # Plot the pie chart
         labels = [data[0] + ' obtained marks', data[0] + ' total marks']
         sizes = [data[1], data[2]]

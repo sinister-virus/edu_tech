@@ -123,3 +123,7 @@ input[type="submit"] {
     color: #fff;
     cursor: pointer;
 }
+
+.hidden {
+    display: none;
+}

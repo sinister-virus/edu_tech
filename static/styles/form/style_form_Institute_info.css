@@ -1,0 +1,129 @@
+/* Path: front_end/css/style_form_student_info.css */
+main {
+    flex-grow: 1; /* Takes up remaining space */
+    display: flex;
+    justify-content: center; /* Centers content horizontally */
+    align-items: center; /* Centers content vertically */
+}
+.title {
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    text-align: center;
+    color: #007ea7;
+}
+.container {
+    display: flex;
+    width: 100%;
+    max-width: 800px;
+    border-radius: 50px;
+    margin: 0 auto;
+    padding: 0 1rem;
+    align-self: center;
+}
+.content {
+    width: 150%;
+    background-color: #fff;
+    padding: 2rem;
+    margin: 25px auto;
+    border-radius: 25px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+form{
+    width: 100%;
+    max-width: 60%;
+    margin: 0 auto;
+    padding: 1rem;
+    border-radius: 5px;
+    background-color: #ffffff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+fieldset {
+    margin-bottom: 1rem;
+    padding: 20px 3rem 20px 3rem ;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+legend {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #007bff;
+}
+label {
+    display: inline-block;
+    margin-bottom: 0.5rem;
+}
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="date"],
+select {
+    width: 100%;
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+input[type="submit"] {
+    align-items: center;
+    width: 200px;
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+    border: none;
+    border-radius: 5px;
+    background-color: #007bff;
+    color: #fff;
+    cursor: pointer;
+}
+
+#next_btn:hover , #prev_btn:hover , #add_sub_btn:hover{
+    background-color: #0056b3;
+}
+#next_btn
+{
+    font-size: 15px;
+    font-weight: bold;
+    align-items: center;
+    width: 100px;
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+    border: none;
+    border-radius: 5px;
+    background-color: #007bff;
+    color: #fff;
+    cursor: pointer;
+}
+
+#prev_btn
+{
+    font-size: 15px;
+    font-weight: bold;
+    align-items: center;
+    width: 100px;
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+    border: none;
+    border-radius: 5px;
+    background-color: #007bff;
+    color: #fff;
+    cursor: pointer;
+}
+
+#add_sub_btn
+{
+    font-size: 15px;
+    font-weight: bold;
+    align-items: center;
+    width: auto;
+    padding: 0.5rem 1rem 0.5rem 01rem;
+    margin-bottom: 1rem;
+    border: none;
+    border-radius: 5px;
+    background-color: #007bff;
+    color: #fff;
+    cursor: pointer;
+}
+
+.hidden {
+    display: none;
+}

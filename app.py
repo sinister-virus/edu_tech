@@ -9,7 +9,7 @@ import mpld3
 
 #database connection
 conn_str = (r'DRIVER={Microsoft Access Driver (*.mdb, *.accdb)};'
-            r'DBQ=C:\Users\HOME\PycharmProjects\edu_tech\edutech_db.accdb;')
+            r'DBQ=C:\Users\ROG\PycharmProjects\edu_tech\edutech_db.accdb;')
 conn = pyodbc.connect(conn_str)
 cursor = conn.cursor()
 
@@ -159,6 +159,150 @@ def admin_profile():
     # Pass the admin details to the template
     return render_template('admin/admin_profile.html', admin=admin_details)
 
+@app.route('/form_admin_info', methods=['GET', 'POST'])
+def form_admin_info():
+    if request.method == 'POST':
+        return form_admin_info_post()
+    else:
+        # Fetch admin info from the database
+        cursor.execute("SELECT * FROM admin_info WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+        admin_info = cursor.fetchone()
+
+        # assuming admin_info.date_of_birth is a datetime object
+        if admin_info.date_of_birth:
+            admin_info.date_of_birth = admin_info.date_of_birth.date()
+
+        # If admin_info is None, create a default admin_info object
+        if admin_info is None:
+            admin_info = {
+                'aadhaar_no': '',
+                'pan_no': '',
+                'first_name': '',
+                'middle_name': '',
+                'last_name': '',
+                'date_of_birth': '',
+                'gender': '',
+                'phone_no': '',
+                'email': ''
+            }
+
+        # Pass the admin info to the template
+        return render_template('admin/form_admin_info.html', admin_info=admin_info)
+
+def form_admin_info_post():
+    try:
+        if request.method == 'POST':
+            # Get form data
+            aadhaar_no = request.form['aadhaar_no']
+            pan_no = request.form['pan_no']
+            first_name = request.form['first_name']
+            middle_name = request.form['middle_name']
+            last_name = request.form['last_name']
+            date_of_birth = request.form['date_of_birth']
+            gender = request.form['gender']
+            phone_no = request.form['phone_no']
+            email = request.form['email']
+
+            # Update admin info in the database
+            cursor.execute("""
+                UPDATE admin_info
+                SET pan_no = ?, first_name = ?, middle_name = ?, last_name = ?, date_of_birth = ?, gender = ?, phone_no = ?, email = ?
+                WHERE aadhaar_no = ?
+            """, (pan_no, first_name, middle_name, last_name, date_of_birth, gender, phone_no, email, aadhaar_no))
+
+            # Commit changes
+            conn.commit()
+
+            # Redirect to the next form
+            return redirect(url_for('form_admin_address'))
+
+        else:
+            # Fetch admin info from the database
+            cursor.execute("SELECT * FROM admin_info WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+            admin_info = cursor.fetchone()
+
+            # Pass the admin info to the template
+            return render_template('admin/form_admin_info.html', admin_info=admin_info)
+    except Exception as e:
+        app.logger.error(f"Exception occurred: {e}")
+        return str(e),500
+
+@app.route('/form_admin_address', methods=['GET', 'POST'])
+def form_admin_address():
+    if request.method == 'POST':
+        return form_admin_address_post()
+    else:
+        # Fetch address info from the database
+        cursor.execute("SELECT * FROM admin_info WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+        address_info = cursor.fetchone()
+
+        # If address_info is None, create a default address_info object
+        if address_info is None:
+            address_info = {
+                'ca_line_1': '',
+                'ca_line_2': '',
+                'ca_line_3': '',
+                'ca_city': '',
+                'ca_district': '',
+                'ca_state': '',
+                'ca_pincode': '',
+                'pa_line_1': '',
+                'pa_line_2': '',
+                'pa_line_3': '',
+                'pa_city': '',
+                'pa_district': '',
+                'pa_state': '',
+                'pa_pincode': ''
+            }
+
+        # Pass the address info to the template
+        return render_template('Admin/form_admin_address.html',admin_info=address_info)
+
+def form_admin_address_post():
+    try:
+        if request.method == 'POST':
+            # Get form data
+            aadhaar_no = session['aadhaar_no']
+            ca_line_1 = request.form['ca_line_1']
+            ca_line_2 = request.form['ca_line_2']
+            ca_line_3 = request.form['ca_line_3']
+            ca_city = request.form['ca_city']
+            ca_district = request.form['ca_district']
+            ca_state = request.form['ca_state']
+            ca_pincode = request.form['ca_pincode']
+            pa_line_1 = request.form['pa_line_1']
+            pa_line_2 = request.form['pa_line_2']
+            pa_line_3 = request.form['pa_line_3']
+            pa_city = request.form['pa_city']
+            pa_district = request.form['pa_district']
+            pa_state = request.form['pa_state']
+            pa_pincode = request.form['pa_pincode']
+
+            # Update address info in the database
+            cursor.execute("""
+                UPDATE admin_info
+                SET ca_line_1 = ?, ca_line_2 = ?, ca_line_3 = ?, ca_city = ?, ca_district = ?, ca_state = ?, ca_pincode = ?, pa_line_1 = ?, pa_line_2 = ?, pa_line_3 = ?, pa_city = ?, pa_district = ?, pa_state = ?, pa_pincode = ?
+                WHERE aadhaar_no = ?
+            """, (ca_line_1, ca_line_2, ca_line_3, ca_city, ca_district, ca_state, ca_pincode, pa_line_1, pa_line_2, pa_line_3, pa_city, pa_district, pa_state, pa_pincode, aadhaar_no))
+
+            # Commit changes
+            conn.commit()
+
+            # Redirect to the next form
+            return redirect(url_for('form_admin_address'))  # replace 'next_form' with the actual name of the next form
+
+        else:
+            # Fetch address info from the database
+            cursor.execute("SELECT * FROM admin_info WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+            address_info = cursor.fetchone()
+
+            # Pass the address info to the template
+            return render_template('Admin/form_admin_address.html',admin_info=address_info)
+    except Exception as e:
+        app.logger.error(f"Exception occurred: {e}")
+        return str(e), 500
+
+
 # Routes for admin
 ############################################
 
@@ -242,6 +386,151 @@ def institute_profile():
 
     # Pass the institute details to the template
     return render_template('Institute/institute_profile.html', institute=institute_details)
+
+@app.route('/form_institute_info', methods=['GET', 'POST'])
+def form_institute_info():
+    if request.method == 'POST':
+        return form_institute_info_post()
+    else:
+        # Fetch institute info from the database
+        cursor.execute("SELECT * FROM institute_info WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+        institute_info = cursor.fetchone()
+
+        # assuming institute_info.date_of_birth is a datetime object
+        if institute_info.date_of_birth:
+            institute_info.date_of_birth = institute_info.date_of_birth.date()
+
+        # If institute_info is None, create a default institute_info object
+        if institute_info is None:
+            institute_info = {
+                'aadhaar_no': '',
+                'pan_no': '',
+                'first_name': '',
+                'middle_name': '',
+                'last_name': '',
+                'date_of_birth': '',
+                'gender': '',
+                'phone_no': '',
+                'email': ''
+            }
+
+        # Pass the institute info to the template
+        return render_template('Institute/form_institute_info.html', institute_info=institute_info)
+
+def form_institute_info_post():
+    try:
+        if request.method == 'POST':
+            # Get form data
+            aadhaar_no = request.form['aadhaar_no']
+            pan_no = request.form['pan_no']
+            first_name = request.form['first_name']
+            middle_name = request.form['middle_name']
+            last_name = request.form['last_name']
+            date_of_birth = request.form['date_of_birth']
+            gender = request.form['gender']
+            phone_no = request.form['phone_no']
+            email = request.form['email']
+
+            # Update institute info in the database
+            cursor.execute("""
+                UPDATE institute_info
+                SET pan_no = ?, first_name = ?, middle_name = ?, last_name = ?, date_of_birth = ?, gender = ?, phone_no = ?, email = ?
+                WHERE aadhaar_no = ?
+            """, (pan_no, first_name, middle_name, last_name, date_of_birth, gender, phone_no, email, aadhaar_no))
+
+            # Commit changes
+            conn.commit()
+
+            # Redirect to the next form
+            return redirect(url_for('form_institute_address'))
+
+        else:
+            # Fetch institute info from the database
+            cursor.execute("SELECT * FROM institute_info WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+            institute_info = cursor.fetchone()
+
+            # Pass the institute info to the template
+            return render_template('Institute/form_institute_info.html', institute_info=institute_info)
+    except Exception as e:
+        app.logger.error(f"Exception occurred: {e}")
+        return str(e),500
+
+
+@app.route('/form_institute_address', methods=['GET', 'POST'])
+def form_institute_address():
+    if request.method == 'POST':
+        return form_institute_address_post()
+    else:
+        # Fetch address info from the database
+        cursor.execute("SELECT * FROM institute_info WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+        address_info = cursor.fetchone()
+
+        # If address_info is None, create a default address_info object
+        if address_info is None:
+            address_info = {
+                'ca_line_1': '',
+                'ca_line_2': '',
+                'ca_line_3': '',
+                'ca_city': '',
+                'ca_district': '',
+                'ca_state': '',
+                'ca_pincode': '',
+                'pa_line_1': '',
+                'pa_line_2': '',
+                'pa_line_3': '',
+                'pa_city': '',
+                'pa_district': '',
+                'pa_state': '',
+                'pa_pincode': ''
+            }
+
+        # Pass the address info to the template
+        return render_template('Institute/form_institute_address.html',institute_info=address_info)
+
+def form_institute_address_post():
+    try:
+        if request.method == 'POST':
+            # Get form data
+            aadhaar_no = session['aadhaar_no']
+            ca_line_1 = request.form['ca_line_1']
+            ca_line_2 = request.form['ca_line_2']
+            ca_line_3 = request.form['ca_line_3']
+            ca_city = request.form['ca_city']
+            ca_district = request.form['ca_district']
+            ca_state = request.form['ca_state']
+            ca_pincode = request.form['ca_pincode']
+            pa_line_1 = request.form['pa_line_1']
+            pa_line_2 = request.form['pa_line_2']
+            pa_line_3 = request.form['pa_line_3']
+            pa_city = request.form['pa_city']
+            pa_district = request.form['pa_district']
+            pa_state = request.form['pa_state']
+            pa_pincode = request.form['pa_pincode']
+
+            # Update address info in the database
+            cursor.execute("""
+                UPDATE institute_info
+                SET ca_line_1 = ?, ca_line_2 = ?, ca_line_3 = ?, ca_city = ?, ca_district = ?, ca_state = ?, ca_pincode = ?, pa_line_1 = ?, pa_line_2 = ?, pa_line_3 = ?, pa_city = ?, pa_district = ?, pa_state = ?, pa_pincode = ?
+                WHERE aadhaar_no = ?
+            """, (ca_line_1, ca_line_2, ca_line_3, ca_city, ca_district, ca_state, ca_pincode, pa_line_1, pa_line_2, pa_line_3, pa_city, pa_district, pa_state, pa_pincode, aadhaar_no))
+
+            # Commit changes
+            conn.commit()
+
+            # Redirect to the next form
+            return redirect(url_for('form_institute_address'))  # replace 'next_form' with the actual name of the next form
+
+        else:
+            # Fetch address info from the database
+            cursor.execute("SELECT * FROM institute_info WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+            address_info = cursor.fetchone()
+
+            # Pass the address info to the template
+            return render_template('Institute/form_institute_address.html',institute_info=address_info)
+    except Exception as e:
+        app.logger.error(f"Exception occurred: {e}")
+        return str(e), 500
+
 
 # Routes for institute
 ############################################
@@ -475,7 +764,7 @@ def form_parents_info_post():
             conn.commit()
 
             # Redirect to the next form
-            return redirect('/form_address')
+            return redirect('/form_student_address')
 
         else:
             # Fetch parents info from the database
@@ -488,10 +777,10 @@ def form_parents_info_post():
         app.logger.error(f"Exception occurred: {e}")
         return str(e), 500
 
-@app.route('/form_address', methods=['GET', 'POST'])
-def form_address():
+@app.route('/form_student_address', methods=['GET', 'POST'])
+def form_student_address():
     if request.method == 'POST':
-        return form_address_post()
+        return form_student_address_post()
     else:
         # Fetch address info from the database
         cursor.execute("SELECT * FROM student_info WHERE aadhaar_no = ?", (session['aadhaar_no'],))
@@ -517,9 +806,9 @@ def form_address():
             }
 
         # Pass the address info to the template
-        return render_template('Student/student_info_forms/form_address.html', student_info=address_info)
+        return render_template('Student/student_info_forms/form_student_address.html',student_info=address_info)
 
-def form_address_post():
+def form_student_address_post():
     try:
         if request.method == 'POST':
             # Get form data
@@ -558,7 +847,7 @@ def form_address_post():
             address_info = cursor.fetchone()
 
             # Pass the address info to the template
-            return render_template('Student/student_info_forms/form_address.html', student_info=address_info)
+            return render_template('Student/student_info_forms/form_student_address.html',student_info=address_info)
     except Exception as e:
         app.logger.error(f"Exception occurred: {e}")
         return str(e), 500

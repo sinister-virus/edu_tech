@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+		<link rel="stylesheet" href="../../static/styles/form/style_form_admin_info.css">
+		<link rel="stylesheet" href="../../static/styles/footer.css">
+		<link rel="stylesheet" href="../../static/styles/nav.css">
+    	<link rel="icon" type="image/x-icon" href="../../static/img/et_logo.png">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Admin Registration Form</title>
+    </head>
+
+    <body>
+        <header>
+            <img id="et_logo" src="../../static/img/et_logo.png" height="50px" width="50px"/>
+
+
+            <nav class="main-nav">
+
+                <a href="/admin_profile">Profile</a>
+                <a href="/admin_dashboard">Dashboard</a>
+                <a href="/admin_manage">Manage</a>
+                <a href="/login">Logout</a>
+
+            </nav>
+        </header>
+
+    <main>
+        <div class="container">
+                <div class="content">
+                    <div class="title">Admin Registration Form</div>
+                    <form action="/form_admin_info" method="POST">
+                        <fieldset>
+                            <legend>Admin Information:</legend>
+                            <p>
+                                <label for="aadhaar_no">Aadhaar Number:</label>
+                                <input type="text" id="aadhaar_no" name="aadhaar_no" value="{{ admin_info.aadhaar_no }}" required><br>
+                            </p>
+                            <p>
+                                <label for="pan_no">PAN Number:</label>
+                                <input type="text" id="pan_no" name="pan_no" value="{{ admin_info.pan_no }}"><br>
+                            </p>
+                            <p>
+                                <label for="first_name">Admin First Name:</label>
+                                <input type="text" id="first_name" name="first_name" value="{{ admin_info.first_name }}" required><br>
+                            </p>
+                            <p>
+                                <label for="middle_name">Admin Middle Name:</label>
+                                <input type="text" id="middle_name" name="middle_name" value="{{ admin_info.middle_name }}"><br>
+                            </p>
+                            <p>
+                                <label for="last_name">Admin Last Name:</label>
+                                <input type="text" id="last_name" name="last_name" value="{{ admin_info.last_name }}" required><br>
+                            </p>
+                            <p>
+                                <label for="date_of_birth">Date of Birth:</label>
+                                <input type="date" id="date_of_birth" name="date_of_birth" value="{{ admin_info.date_of_birth }}" required><br>
+                            </p>
+                            <p>
+                                <label for="gender">Gender:</label>
+                                <select id="gender" name="gender" required>
+                                    <option value="male">Male</option>
+                                    <option value="female">Female</option>
+                                    <option value="other">Other</option>
+                                </select><br>
+                            </p>
+                            <p>
+                                <label for="phone_no">Admin Phone Number:</label>
+                                <input type="tel" id="phone_no" name="phone_no" value="{{ admin_info.phone_no }}" pattern="[0-9]{10}" required><br>
+                            </p>
+                            <p>
+                                <label for="email">Admin Email:</label>
+                                <input type="email" id="email" name="email" value="{{ admin_info.email }}" required><br>
+                            </p>
+                        </fieldset>
+                        <button id="next_btn" type="submit">Next</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+		<img src="../../static/img/smart_india_hackathon_2022_w.png" id="Smart_India_Hackathon_2022_img" alt="Smart India Hackathon 2022 Logo">
+			<p>© 2024 Your Website. All Rights Reserved.</p>
+			<!-- social links, Digital India , help, and support info -->
+            <div class="footer-social">
+                <ul class="footer-social">
+                    <li><a href="https://www.facebook.com/yourwebsite" target="_blank">Facebook</a></li>
+                    <li><a href="https://www.twitter.com/yourwebsite" target="_blank">Twitter</a></li>
+                    <li><a href="https://www.instagram.com/yourwebsite" target="_blank">Instagram</a></li>
+                    <li><a href="https://www.linkedin.com/yourwebsite" target="_blank">LinkedIn</a></li>
+                </ul>
+            </div>
+            <div class="footer-contact">
+                <ul>
+                    <li><a href="mailto:help@iep.com">Email - help@iep.com </a></li>
+                    <li><a href="tel:1234567890">Help Line No. - 1234567890</a></li>
+                    <li><a href="https://www.digitalindia.gov.in" target="_blank">Digital India</a></li>
+                </ul>
+            </div>
+		<img src="../../static/img/digital_india_logo.png" id="Digital_India_img" alt="Digital India Logo">
+    </footer>
+
+    <script src="../../static/js/forms/script_form_admin_info.js"></script>
+</body>
+</html>

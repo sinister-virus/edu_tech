@@ -2,7 +2,7 @@
 
 ## Description
 
-Background: As of now, we don’t have master data base regarding students at various levels, without which framing policies with regard to education and upliftment of student community is difficult. Provision of common platform in which the entire data base of school education, higher education and technical education are interlinked, which will help the government to identify the grey areas where actual concentration is needed. 
+Background: As of now, we don’t have master database regarding students at various levels, without which framing policies with regard to education and upliftment of student community is difficult. Provision of common platform in which the entire data base of school education, higher education and technical education are interlinked, which will help the government to identify the grey areas where actual concentration is needed. 
 
 Further, the percentage of students entering various fields of education and percentage of student drop outs also can be identified and also State/District wise drop outs can be identified and thereby these places can be targeted for improvement. 
 
@@ -52,8 +52,17 @@ A list of the contributors to the project.
 
 ## License
 
-The license under which the project is released.
+GNU General Public License v3.0
 
 ## Contact
 
-Contact information for the project team.
+Contact information for the project.
+
+<a href="https://t.me/sinister_virus">
+    Telegram : @sinister_virus 
+</a>
+
+<a href="mailto:sinister-virus@outlook.com">
+    Email : sinister-virus@outlook.com
+</a>
+

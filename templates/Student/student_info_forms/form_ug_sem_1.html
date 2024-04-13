@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+		<link rel="stylesheet" href="../../../static/styles/form/style_form_student_info.css">
+		<link rel="stylesheet" href="../../../static/styles/footer.css">
+		<link rel="stylesheet" href="../../../static/styles/nav.css">
+    	<link rel="icon" type="image/x-icon" href="../../../static/img/et_logo.png">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Student Registration Form</title>
+    </head>
+
+    <body>
+        <header>
+            <img id="et_logo" src="../../../static/img/et_logo.png" alt="Edu Tech Logo"/>
+
+            <nav class="main-nav">
+
+                <a href="/student_profile">Profile</a>
+                <a href="/student_dashboard" id="selected">Dashboard</a>
+                <a href="/student_manage">Manage</a>
+                <a href="/login">Logout</a>
+
+            </nav>
+        </header>
+        <main>
+            <div class="container">
+                <div>
+                    <div class="content">
+                        <div class="title">Student Registration Form</div>
+                        <form action="/form_ug_sem_1" method="POST">
+                            <fieldset>
+                                <legend>UG Sem 1 Information:</legend>
+
+                                <label for="aadhaar_no">Aadhaar Number:</label>
+                                <input type="text" id="aadhaar_no" name="aadhaar_no" value="{{ ug_sem_1.aadhaar_no }}"><br>
+
+                                <label for="ug_enrollment_no">Enrollment Number:</label>
+                                <input type="text" id="ug_enrollment_no" name="ug_enrollment_no" value="{{ ug_sem_1.ug_enrollment_no }}" ><br>
+
+                                <label for="ug_sem_1_session">Sem 1 Session</label>
+                                <input type="text" id="ug_sem_1_session" name="ug_sem_1_session" value="{{ ug_sem_1.ug_sem_1_session }}" ><br>
+
+                                <label for="ug_sem_1_roll_no">Sem 1 Roll Number:</label>
+                                <input type="text" id="ug_sem_1_roll_no" name="ug_sem_1_roll_no" value="{{ ug_sem_1.ug_sem_1_roll_no }}"><br>
+
+                                <label for="ug_sem_1_result">Sem 1 Result:</label>
+                                <input type="text" id="ug_sem_1_result" name="ug_sem_1_result" value="{{ ug_sem_1.ug_sem_1_result }}"><br>
+
+                                <div id="subjectFields">
+
+                                    <!-- Subject 1 -->
+                                    <hr>
+                                    <label for="ug_sem_1_sub_1_name">Subject 1 Name:</label>
+                                    <input type="text" id="ug_sem_1_sub_1_name" name="ug_sem_1_sub_1_name" value="{{ ug_sem_1.ug_sem_1_sub_1_name }}"><br>
+                                    <label for="ug_sem_1_sub_1_marks_obtained">Subject 1 Marks Obtained:</label>
+                                    <input type="text" id="ug_sem_1_sub_1_marks_obtained" name="ug_sem_1_sub_1_marks_obtained" value="{{ ug_sem_1.ug_sem_1_sub_1_marks_obtained }}"><br>
+                                    <label for="ug_sem_1_sub_1_total_marks">Subject 1 Total Marks:</label>
+                                    <input type="text" id="ug_sem_1_sub_1_total_marks" name="ug_sem_1_sub_1_total_marks" value="{{ ug_sem_1.ug_sem_1_sub_1_total_marks }}"><br>
+
+                                    <!-- Subject 2 -->
+                                    <hr>
+                                    <label for="ug_sem_1_sub_2_name">Subject 2 Name:</label>
+                                    <input type="text" id="ug_sem_1_sub_2_name" name="ug_sem_1_sub_2_name" value="{{ ug_sem_1.ug_sem_1_sub_2_name }}"><br>
+                                    <label for="ug_sem_1_sub_2_marks_obtained">Subject 2 Marks Obtained:</label>
+                                    <input type="text" id="ug_sem_1_sub_2_marks_obtained" name="ug_sem_1_sub_2_marks_obtained" value="{{ ug_sem_1.ug_sem_1_sub_2_marks_obtained }}"><br>
+                                    <label for="ug_sem_1_sub_2_total_marks">Subject 2 Total Marks:</label>
+                                    <input type="text" id="ug_sem_1_sub_2_total_marks" name="ug_sem_1_sub_2_total_marks" value="{{ ug_sem_1.ug_sem_1_sub_2_total_marks }}"><br>
+
+                                    <!-- Subject 3 -->
+                                    <hr>
+                                    <label for="ug_sem_1_sub_3_name">Subject 3 Name:</label>
+                                    <input type="text" id="ug_sem_1_sub_3_name" name="ug_sem_1_sub_3_name" value="{{ ug_sem_1.ug_sem_1_sub_3_name }}"><br>
+                                    <label for="ug_sem_1_sub_3_marks_obtained">Subject 3 Marks Obtained:</label>
+                                    <input type="text" id="ug_sem_1_sub_3_marks_obtained" name="ug_sem_1_sub_3_marks_obtained" value="{{ ug_sem_1.ug_sem_1_sub_3_marks_obtained }}"><br>
+                                    <label for="ug_sem_1_sub_3_total_marks">Subject 3 Total Marks:</label>
+                                    <input type="text" id="ug_sem_1_sub_3_total_marks" name="ug_sem_1_sub_3_total_marks" value="{{ ug_sem_1.ug_sem_1_sub_3_total_marks }}"><br>
+
+                                    <!-- Subject 4 -->
+                                    <hr>
+                                    <label for="ug_sem_1_sub_4_name">Subject 4 Name:</label>
+                                    <input type="text" id="ug_sem_1_sub_4_name" name="ug_sem_1_sub_4_name" value="{{ ug_sem_1.ug_sem_1_sub_4_name }}"><br>
+                                    <label for="ug_sem_1_sub_4_marks_obtained">Subject 4 Marks Obtained:</label>
+                                    <input type="text" id="ug_sem_1_sub_4_marks_obtained" name="ug_sem_1_sub_4_marks_obtained" value="{{ ug_sem_1.ug_sem_1_sub_4_marks_obtained }}"><br>
+                                    <label for="ug_sem_1_sub_4_total_marks">Subject 4 Total Marks:</label>
+                                    <input type="text" id="ug_sem_1_sub_4_total_marks" name="ug_sem_1_sub_4_total_marks" value="{{ ug_sem_1.ug_sem_1_sub_4_total_marks }}"><br>
+
+                                    <!-- Subject 5 -->
+                                    <hr>
+                                    <label for="ug_sem_1_sub_5_name">Subject 5 Name:</label>
+                                    <input type="text" id="ug_sem_1_sub_5_name" name="ug_sem_1_sub_5_name" value="{{ ug_sem_1.ug_sem_1_sub_5_name }}"><br>
+                                    <label for="ug_sem_1_sub_5_marks_obtained">Subject 5 Marks Obtained:</label>
+                                    <input type="text" id="ug_sem_1_sub_5_marks_obtained" name="ug_sem_1_sub_5_marks_obtained" value="{{ ug_sem_1.ug_sem_1_sub_5_marks_obtained }}"><br>
+                                    <label for="ug_sem_1_sub_5_total_marks">Subject 5 Total Marks:</label>
+                                    <input type="text" id="ug_sem_1_sub_5_total_marks" name="ug_sem_1_sub_5_total_marks" value="{{ ug_sem_1.ug_sem_1_sub_5_total_marks }}"><br>
+
+
+                                    <!-- Subject 6 -->
+                                    <div id="sub_6" class="hidden">
+                                    <hr>
+                                    <label for="ug_sem_1_sub_6_name" >Subject 6 Name:</label>
+                                    <input type="text" id="ug_sem_1_sub_6_name" name="ug_sem_1_sub_6_name" value="{{ ug_sem_1.ug_sem_1_sub_6_name }}" ><br>
+                                    <label for="ug_sem_1_sub_6_marks_obtained" >Subject 6 Marks Obtained:</label>
+                                    <input type="text" id="ug_sem_1_sub_6_marks_obtained" name="ug_sem_1_sub_6_marks_obtained" value="{{ ug_sem_1.ug_sem_1_sub_6_marks_obtained }}" ><br>
+                                    <label for="ug_sem_1_sub_6_total_marks" >Subject 6 Total Marks:</label>
+                                    <input type="text" id="ug_sem_1_sub_6_total_marks" name="ug_sem_1_sub_6_total_marks" value="{{ ug_sem_1.ug_sem_1_sub_6_total_marks }}" ><br>
+                                    </div>
+
+                                    <!-- Subject 7 -->
+                                    <div id="sub_7" class="hidden">
+                                    <hr>
+                                    <label for="ug_sem_1_sub_7_name" >Subject 7 Name:</label>
+                                    <input type="text" id="ug_sem_1_sub_7_name" name="ug_sem_1_sub_7_name" value="{{ ug_sem_1.ug_sem_1_sub_7_name }}" ><br>
+                                    <label for="ug_sem_1_sub_7_marks_obtained" >Subject 7 Marks Obtained:</label>
+                                    <input type="text" id="ug_sem_1_sub_7_marks_obtained" name="ug_sem_1_sub_7_marks_obtained" value="{{ ug_sem_1.ug_sem_1_sub_7_marks_obtained }}" ><br>
+                                    <label for="ug_sem_1_sub_7_total_marks" >Subject 7 Total Marks:</label>
+                                    <input type="text" id="ug_sem_1_sub_7_total_marks" name="ug_sem_1_sub_7_total_marks" value="{{ ug_sem_1.ug_sem_1_sub_7_total_marks }}" ><br>
+                                    </div>
+
+                                    <!-- Subject 8 -->
+                                    <div id="sub_8" class="hidden">
+                                    <hr>
+                                    <label for="ug_sem_1_sub_8_name" >Subject 8 Name:</label>
+                                    <input type="text" id="ug_sem_1_sub_8_name" name="ug_sem_1_sub_8_name" value="{{ ug_sem_1.ug_sem_1_sub_8_name }}" ><br>
+                                    <label for="ug_sem_1_sub_8_marks_obtained" >Subject 8 Marks Obtained:</label>
+                                    <input type="text" id="ug_sem_1_sub_8_marks_obtained" name="ug_sem_1_sub_8_marks_obtained" value="{{ ug_sem_1.ug_sem_1_sub_8_marks_obtained }}" ><br>
+                                    <label for="ug_sem_1_sub_8_total_marks" >Subject 8 Total Marks:</label>
+                                    <input type="text" id="ug_sem_1_sub_8_total_marks" name="ug_sem_1_sub_8_total_marks" value="{{ ug_sem_1.ug_sem_1_sub_8_total_marks }}" ><br>
+                                    </div>
+
+                                    <!-- Subject 9 -->
+                                    <div id="sub_9" class="hidden">
+                                    <hr>
+                                    <label for="ug_sem_1_sub_9_name" >Subject 9 Name:</label>
+                                    <input type="text" id="ug_sem_1_sub_9_name" name="ug_sem_1_sub_9_name" value="{{ ug_sem_1.ug_sem_1_sub_9_name }}" ><br>
+                                    <label for="ug_sem_1_sub_9_marks_obtained" >Subject 9 Marks Obtained:</label>
+                                    <input type="text" id="ug_sem_1_sub_9_marks_obtained" name="ug_sem_1_sub_9_marks_obtained" value="{{ ug_sem_1.ug_sem_1_sub_9_marks_obtained }}" ><br>
+                                    <label for="ug_sem_1_sub_9_total_marks" >Subject 9 Total Marks:</label>
+                                    <input type="text" id="ug_sem_1_sub_9_total_marks" name="ug_sem_1_sub_9_total_marks" value="{{ ug_sem_1.ug_sem_1_sub_9_total_marks }}" ><br>
+                                    </div>
+
+                                    <!-- Subject 10 -->
+                                    <div id="sub_10" class="hidden">
+                                    <hr>
+                                    <label for="ug_sem_1_sub_10_name" >Subject 10 Name:</label>
+                                    <input type="text" id="ug_sem_1_sub_10_name" name="ug_sem_1_sub_10_name" value="{{ ug_sem_1.ug_sem_1_sub_10_name }}" ><br>
+                                    <label for="ug_sem_1_sub_10_marks_obtained" >Subject 10 Marks Obtained:</label>
+                                    <input type="text" id="ug_sem_1_sub_10_marks_obtained" name="ug_sem_1_sub_10_marks_obtained" value="{{ ug_sem_1.ug_sem_1_sub_10_marks_obtained }}" ><br>
+                                    <label for="ug_sem_1_sub_10_total_marks" >Subject 10 Total Marks:</label>
+                                    <input type="text" id="ug_sem_1_sub_10_total_marks" name="ug_sem_1_sub_10_total_marks" value="{{ ug_sem_1.ug_sem_1_sub_10_total_marks }}" ><br>
+                                    </div>
+
+                                    <!-- Subject 11 -->
+                                    <div id="sub_11" class="hidden">
+                                    <hr>
+                                    <label for="ug_sem_1_sub_11_name" >Subject 11 Name:</label>
+                                    <input type="text" id="ug_sem_1_sub_11_name" name="ug_sem_1_sub_11_name" value="{{ ug_sem_1.ug_sem_1_sub_11_name }}" ><br>
+                                    <label for="ug_sem_1_sub_11_marks_obtained" >Subject 11 Marks Obtained:</label>
+                                    <input type="text" id="ug_sem_1_sub_11_marks_obtained" name="ug_sem_1_sub_11_marks_obtained" value="{{ ug_sem_1.ug_sem_1_sub_11_marks_obtained }}" ><br>
+                                    <label for="ug_sem_1_sub_11_total_marks" >Subject 11 Total Marks:</label>
+                                    <input type="text" id="ug_sem_1_sub_11_total_marks" name="ug_sem_1_sub_11_total_marks" value="{{ ug_sem_1.ug_sem_1_sub_11_total_marks }}" ><br>
+                                    </div>
+
+                                    <!-- Subject 12 -->
+                                    <div id="sub_12" class="hidden">
+                                    <hr>
+                                    <label for="ug_sem_1_sub_12_name" >Subject 12 Name:</label>
+                                    <input type="text" id="ug_sem_1_sub_12_name" name="ug_sem_1_sub_12_name" value="{{ ug_sem_1.ug_sem_1_sub_12_name }}" ><br>
+                                    <label for="ug_sem_1_sub_12_marks_obtained" >Subject 12 Marks Obtained:</label>
+                                    <input type="text" id="ug_sem_1_sub_12_marks_obtained" name="ug_sem_1_sub_12_marks_obtained" value="{{ ug_sem_1.ug_sem_1_sub_12_marks_obtained }}" ><br>
+                                    <label for="ug_sem_1_sub_12_total_marks" >Subject 12 Total Marks:</label>
+                                    <input type="text" id="ug_sem_1_sub_12_total_marks" name="ug_sem_1_sub_12_total_marks" value="{{ ug_sem_1.ug_sem_1_sub_12_total_marks }}" ><br>
+                                    </div>
+
+                                    <!-- Subject 13 -->
+                                    <div id="sub_13" class="hidden">
+                                    <hr>
+                                    <label for="ug_sem_1_sub_13_name" >Subject 13 Name:</label>
+                                    <input type="text" id="ug_sem_1_sub_13_name" name="ug_sem_1_sub_13_name" value="{{ ug_sem_1.ug_sem_1_sub_13_name }}" ><br>
+                                    <label for="ug_sem_1_sub_13_marks_obtained" >Subject 13 Marks Obtained:</label>
+                                    <input type="text" id="ug_sem_1_sub_13_marks_obtained" name="ug_sem_1_sub_13_marks_obtained" value="{{ ug_sem_1.ug_sem_1_sub_13_marks_obtained }}" ><br>
+                                    <label for="ug_sem_1_sub_13_total_marks" >Subject 13 Total Marks:</label>
+                                    <input type="text" id="ug_sem_1_sub_13_total_marks" name="ug_sem_1_sub_13_total_marks" value="{{ ug_sem_1.ug_sem_1_sub_13_total_marks }}" ><br>
+                                    </div>
+
+                                    <!-- Subject 14 -->
+                                    <div id="sub_14" class="hidden">
+                                    <hr>
+                                    <label for="ug_sem_1_sub_14_name" >Subject 14 Name:</label>
+                                    <input type="text" id="ug_sem_1_sub_14_name" name="ug_sem_1_sub_14_name" value="{{ ug_sem_1.ug_sem_1_sub_14_name }}" ><br>
+                                    <label for="ug_sem_1_sub_14_marks_obtained" >Subject 14 Marks Obtained:</label>
+                                    <input type="text" id="ug_sem_1_sub_14_marks_obtained" name="ug_sem_1_sub_14_marks_obtained" value="{{ ug_sem_1.ug_sem_1_sub_14_marks_obtained }}" ><br>
+                                    <label for="ug_sem_1_sub_14_total_marks" >Subject 14 Total Marks:</label>
+                                    <input type="text" id="ug_sem_1_sub_14_total_marks" name="ug_sem_1_sub_14_total_marks" value="{{ ug_sem_1.ug_sem_1_sub_14_total_marks }}" ><br>
+                                    </div>
+
+                                    <!-- Subject 15 -->
+                                    <div id="sub_15" class="hidden">
+                                    <hr>
+                                    <label for="ug_sem_1_sub_15_name" >Subject 15 Name:</label>
+                                    <input type="text" id="ug_sem_1_sub_15_name" name="ug_sem_1_sub_15_name" value="{{ ug_sem_1.ug_sem_1_sub_15_name }}" ><br>
+                                    <label for="ug_sem_1_sub_15_marks_obtained" >Subject 15 Marks Obtained:</label>
+                                    <input type="text" id="ug_sem_1_sub_15_marks_obtained" name="ug_sem_1_sub_15_marks_obtained" value="{{ ug_sem_1.ug_sem_1_sub_15_marks_obtained }}" ><br>
+                                    <label for="ug_sem_1_sub_15_total_marks" >Subject 15 Total Marks:</label>
+                                    <input type="text" id="ug_sem_1_sub_15_total_marks" name="ug_sem_1_sub_15_total_marks" value="{{ ug_sem_1.ug_sem_1_sub_15_total_marks }}" ><br>
+                                    </div>
+
+                                    <!-- Subject 16 -->
+                                    <div id="sub_16" class="hidden">
+                                    <hr>
+                                    <label for="ug_sem_1_sub_16_name" >Subject 16 Name:</label>
+                                    <input type="text" id="ug_sem_1_sub_16_name" name="ug_sem_1_sub_16_name" value="{{ ug_sem_1.ug_sem_1_sub_16_name }}" ><br>
+                                    <label for="ug_sem_1_sub_16_marks_obtained" >Subject 16 Marks Obtained:</label>
+                                    <input type="text" id="ug_sem_1_sub_16_marks_obtained" name="ug_sem_1_sub_16_marks_obtained" value="{{ ug_sem_1.ug_sem_1_sub_16_marks_obtained }}" ><br>
+                                    <label for="ug_sem_1_sub_16_total_marks" >Subject 16 Total Marks:</label>
+                                    <input type="text" id="ug_sem_1_sub_16_total_marks" name="ug_sem_1_sub_16_total_marks" value="{{ ug_sem_1.ug_sem_1_sub_16_total_marks }}" ><br>
+                                    </div>
+
+                                    <!-- Subject 17 -->
+                                    <div id="sub_17" class="hidden">
+                                    <hr>
+                                    <label for="ug_sem_1_sub_17_name" >Subject 17 Name:</label>
+                                    <input type="text" id="ug_sem_1_sub_17_name" name="ug_sem_1_sub_17_name" value="{{ ug_sem_1.ug_sem_1_sub_17_name }}" ><br>
+                                    <label for="ug_sem_1_sub_17_marks_obtained" >Subject 17 Marks Obtained:</label>
+                                    <input type="text" id="ug_sem_1_sub_17_marks_obtained" name="ug_sem_1_sub_17_marks_obtained" value="{{ ug_sem_1.ug_sem_1_sub_17_marks_obtained }}" ><br>
+                                    <label for="ug_sem_1_sub_17_total_marks" >Subject 17 Total Marks:</label>
+                                    <input type="text" id="ug_sem_1_sub_17_total_marks" name="ug_sem_1_sub_17_total_marks" value="{{ ug_sem_1.ug_sem_1_sub_17_total_marks }}" ><br>
+                                    </div>
+
+                                    <!-- Subject 18 -->
+                                    <div id="sub_18" class="hidden">
+                                    <hr>
+                                    <label for="ug_sem_1_sub_18_name" >Subject 18 Name:</label>
+                                    <input type="text" id="ug_sem_1_sub_18_name" name="ug_sem_1_sub_18_name" value="{{ ug_sem_1.ug_sem_1_sub_18_name }}" ><br>
+                                    <label for="ug_sem_1_sub_18_marks_obtained" >Subject 18 Marks Obtained:</label>
+                                    <input type="text" id="ug_sem_1_sub_18_marks_obtained" name="ug_sem_1_sub_18_marks_obtained" value="{{ ug_sem_1.ug_sem_1_sub_18_marks_obtained }}" ><br>
+                                    <label for="ug_sem_1_sub_18_total_marks" >Subject 18 Total Marks:</label>
+                                    <input type="text" id="ug_sem_1_sub_18_total_marks" name="ug_sem_1_sub_18_total_marks" value="{{ ug_sem_1.ug_sem_1_sub_18_total_marks }}" ><br>
+                                    </div>
+
+                                    <!-- Subject 19 -->
+                                    <div id="sub_19" class="hidden">
+                                    <hr>
+                                    <label for="ug_sem_1_sub_19_name" >Subject 19 Name:</label>
+                                    <input type="text" id="ug_sem_1_sub_19_name" name="ug_sem_1_sub_19_name" value="{{ ug_sem_1.ug_sem_1_sub_19_name }}" ><br>
+                                    <label for="ug_sem_1_sub_19_marks_obtained" >Subject 19 Marks Obtained:</label>
+                                    <input type="text" id="ug_sem_1_sub_19_marks_obtained" name="ug_sem_1_sub_19_marks_obtained" value="{{ ug_sem_1.ug_sem_1_sub_19_marks_obtained }}" ><br>
+                                    <label for="ug_sem_1_sub_19_total_marks" >Subject 19 Total Marks:</label>
+                                    <input type="text" id="ug_sem_1_sub_19_total_marks" name="ug_sem_1_sub_19_total_marks" value="{{ ug_sem_1.ug_sem_1_sub_19_total_marks }}" ><br>
+                                    </div>
+
+                                    <!-- Subject 20 -->
+                                    <div id="sub_20" class="hidden">
+                                    <hr>
+                                    <label for="ug_sem_1_sub_20_name" >Subject 20 Name:</label>
+                                    <input type="text" id="ug_sem_1_sub_20_name" name="ug_sem_1_sub_20_name" value="{{ ug_sem_1.ug_sem_1_sub_20_name }}" ><br>
+                                    <label for="ug_sem_1_sub_20_marks_obtained" >Subject 20 Marks Obtained:</label>
+                                    <input type="text" id="ug_sem_1_sub_20_marks_obtained" name="ug_sem_1_sub_20_marks_obtained" value="{{ ug_sem_1.ug_sem_1_sub_20_marks_obtained }}" ><br>
+                                    <label for="ug_sem_1_sub_20_total_marks" >Subject 20 Total Marks:</label>
+                                    <input type="text" id="ug_sem_1_sub_20_total_marks" name="ug_sem_1_sub_20_total_marks" value="{{ ug_sem_1.ug_sem_1_sub_20_total_marks }}" ><br>
+                                    </div>
+                                    
+                                </div>
+
+                                <button type="button" id="add_sub_btn" onclick="addSubject()">Add Subject</button>
+                            </fieldset>
+                            <a href="/form_ug_details"><button id="prev_btn" type="button" >Previous</button></a>
+                            <button id="next_btn" type="submit"> Next</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <img src="../../../static/img/smart_india_hackathon_2022_w.png" id="Smart_India_Hackathon_2022_img" alt="Smart India Hackathon 2022 Logo">
+                <p>© 2024 Your Website. All Rights Reserved.</p>
+                <!-- social links, Digital India , help, and support info -->
+                <div class="footer-social">
+                    <ul class="footer-social">
+                        <li><a href="https://www.facebook.com/yourwebsite" target="_blank">Facebook</a></li>
+                        <li><a href="https://www.twitter.com/yourwebsite" target="_blank">Twitter</a></li>
+                        <li><a href="https://www.instagram.com/yourwebsite" target="_blank">Instagram</a></li>
+                        <li><a href="https://www.linkedin.com/yourwebsite" target="_blank">LinkedIn</a></li>
+                    </ul>
+                </div>
+                <div class="footer-contact">
+                    <ul>
+                        <li><a href="mailto:help@iep.com">Email - help@iep.com </a></li>
+                        <li><a href="tel:1234567890">Help Line No. - 1234567890</a></li>
+                        <li><a href="https://www.digitalindia.gov.in" target="_blank">Digital India</a></li>
+                    </ul>
+                </div>
+            <img src="../../../static/img/digital_india_logo.png" id="Digital_India_img" alt="Digital India Logo">
+        </footer>
+
+        <script src="../../../static/js/forms/script_ug_add_subject.js"></script>
+    </body>
+</html>

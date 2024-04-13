@@ -61,8 +61,9 @@ Contact information for the project.
 <a href="https://t.me/sinister_virus">
     Telegram : @sinister_virus 
 </a>
+<br/>
 
 <a href="mailto:sinister-virus@outlook.com">
     Email : sinister-virus@outlook.com
 </a>
-
+<br/>

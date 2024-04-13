@@ -1,27 +1,26 @@
-import matplotlib
-from flask import Flask, render_template, request, redirect, url_for, session, jsonify
+import os
 import pyodbc
+from flask import Flask, render_template, request, redirect, url_for, session
 from werkzeug.security import generate_password_hash,check_password_hash
+import matplotlib
 import matplotlib.pyplot as plt
-import numpy as np
 import mpld3
+# import numpy as np
 
+############### database connection ###############
+# Get the current script's directory
+current_dir = os.path.dirname(os.path.realpath(__file__))
 
-#database connection
+# Construct the database path
+db_path = os.path.join(current_dir, 'edutech_db.accdb')
+
+# Construct the connection string
 conn_str = (r'DRIVER={Microsoft Access Driver (*.mdb, *.accdb)};'
-            r'DBQ=C:\Users\ROG\PycharmProjects\edu_tech\edutech_db.accdb;')
+            rf'DBQ={db_path};')
+
 conn = pyodbc.connect(conn_str)
 cursor = conn.cursor()
-
-# for i in cursor.tables(tableType='VIEW'):
-#     print(i.table_name)
-#
-# for i in cursor.tables(tableType='TABLE'):
-#     print(i.table_name)
-#
-# cursor.execute("SELECT * FROM class_10")
-# columns = [column[0] for column in cursor.description]
-# print(columns)
+############### database connection ###############
 
 app = Flask(__name__)
 app.secret_key = 'keygen'
@@ -2374,7 +2373,7 @@ def form_c_12_post():
             conn.commit()
 
             # Redirect to the next form
-            return redirect(url_for('form_c_12'))  # replace 'next_form' with the actual name of the next form
+            return redirect(url_for('form_ug_details'))  # replace 'next_form' with the actual name of the next form
 
         else:
             # Fetch c_12_info from the database
@@ -2388,14 +2387,4403 @@ def form_c_12_post():
         return str(e), 500
 
 
-@app.route('/form_ug_details')
+@app.route('/form_ug_details', methods=['GET', 'POST'])
 def form_ug_details():
+    if request.method == 'POST':
+        return form_ug_details_post()
+    else:
+        # Fetch ug_details from the database
+        cursor.execute("SELECT * FROM ug_details WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+        ug_details = cursor.fetchone()
 
-    return render_template('Student/student_info_forms/form_ug_details.html')
+        # If ug_details is None, create a default ug_details object
+        if ug_details is None:
+            ug_details = {
+                'aadhaar_no': '',
+                'ug_enrollment_no': '',
+                'ug_admission_year': '',
+                'ug_state': '',
+                'ug_district': '',
+                'ug_qualification_level': '',
+                'ug_stream': '',
+                'ug_institute_name': '',
+                'ug_institute_code': '',
+                'ug_board_university': '',
+                'ug_course_name': '',
+                'ug_course_duration': '',
+                'ug_year_of_study': '',
+                'ug_year_1_status': '',
+                'ug_year_1_admission_year': '',
+                'ug_sem_1_status': '',
+                'ug_sem_1_session': '',
+                'ug_sem_1_roll_no': '',
+                'ug_sem_2_status': '',
+                'ug_sem_2_session': '',
+                'ug_sem_2_roll_no': '',
+                'ug_year_2_status': '',
+                'ug_year_2_admission_year': '',
+                'ug_sem_3_status': '',
+                'ug_sem_3_session': '',
+                'ug_sem_3_roll_no': '',
+                'ug_sem_4_status': '',
+                'ug_sem_4_session': '',
+                'ug_sem_4_roll_no': '',
+                'ug_year_3_status': '',
+                'ug_year_3_admission_year': '',
+                'ug_sem_5_status': '',
+                'ug_sem_5_session': '',
+                'ug_sem_5_roll_no': '',
+                'ug_year_4_status': '',
+                'ug_year_4_admission_year': '',
+                'ug_sem_6_status': '',
+                'ug_sem_6_session': '',
+                'ug_sem_6_roll_no': '',
+                'ug_year_5_status': '',
+                'ug_year_5_admission_year': '',
+                'ug_sem_7_status': '',
+                'ug_sem_7_session': '',
+                'ug_sem_7_roll_no': '',
+                'ug_sem_8_status': '',
+                'ug_sem_8_session': '',
+                'ug_sem_8_roll_no': '',
+                'ug_sem_9_status': '',
+                'ug_sem_9_session': '',
+                'ug_sem_9_roll_no': '',
+                'ug_sem_10_status': '',
+                'ug_sem_10_session': '',
+                'ug_sem_10_roll_no': ''
+            }
 
-@app.route('/form_pg_details')
+        # Pass the ug_details to the template
+        return render_template('Student/student_info_forms/form_ug_details.html', ug_details=ug_details)
+
+def form_ug_details_post():
+    try:
+        if request.method == 'POST':
+            # Get form data
+            aadhaar_no = request.form.get('aadhaar_no')
+            ug_enrollment_no = request.form.get('ug_enrollment_no')
+            ug_admission_year = request.form.get('ug_admission_year')
+            ug_state = request.form.get('ug_state')
+            ug_district = request.form.get('ug_district')
+            ug_qualification_level = request.form.get('ug_qualification_level')
+            ug_stream = request.form.get('ug_stream')
+            ug_institute_name = request.form.get('ug_institute_name')
+            ug_institute_code = request.form.get('ug_institute_code')
+            ug_board_university = request.form.get('ug_board_university')
+            ug_course_name = request.form.get('ug_course_name')
+            ug_course_duration = request.form.get('ug_course_duration')
+            ug_year_of_study = request.form.get('ug_year_of_study')
+            ug_year_1_status = request.form.get('ug_year_1_status')
+            ug_year_1_admission_year = request.form.get('ug_year_1_admission_year')
+            ug_sem_1_status = request.form.get('ug_sem_1_status')
+            ug_sem_1_session = request.form.get('ug_sem_1_session')
+            ug_sem_1_roll_no = request.form.get('ug_sem_1_roll_no')
+            ug_sem_2_status = request.form.get('ug_sem_2_status')
+            ug_sem_2_session = request.form.get('ug_sem_2_session')
+            ug_sem_2_roll_no = request.form.get('ug_sem_2_roll_no')
+            ug_year_2_status = request.form.get('ug_year_2_status')
+            ug_year_2_admission_year = request.form.get('ug_year_2_admission_year')
+            ug_sem_3_status = request.form.get('ug_sem_3_status')
+            ug_sem_3_session = request.form.get('ug_sem_3_session')
+            ug_sem_3_roll_no = request.form.get('ug_sem_3_roll_no')
+            ug_sem_4_status = request.form.get('ug_sem_4_status')
+            ug_sem_4_session = request.form.get('ug_sem_4_session')
+            ug_sem_4_roll_no = request.form.get('ug_sem_4_roll_no')
+            ug_year_3_status = request.form.get('ug_year_3_status')
+            ug_year_3_admission_year = request.form.get('ug_year_3_admission_year')
+            ug_sem_5_status = request.form.get('ug_sem_5_status')
+            ug_sem_5_session = request.form.get('ug_sem_5_session')
+            ug_sem_5_roll_no = request.form.get('ug_sem_5_roll_no')
+            ug_sem_6_status = request.form.get('ug_sem_6_status')
+            ug_sem_6_session = request.form.get('ug_sem_6_session')
+            ug_sem_6_roll_no = request.form.get('ug_sem_6_roll_no')
+            ug_year_4_status = request.form.get('ug_year_4_status')
+            ug_year_4_admission_year = request.form.get('ug_year_4_admission_year')
+            ug_sem_7_status = request.form.get('ug_sem_7_status')
+            ug_sem_7_session = request.form.get('ug_sem_7_session')
+            ug_sem_7_roll_no = request.form.get('ug_sem_7_roll_no')
+            ug_sem_8_status = request.form.get('ug_sem_8_status')
+            ug_sem_8_session = request.form.get('ug_sem_8_session')
+            ug_sem_8_roll_no = request.form.get('ug_sem_8_roll_no')
+            ug_year_5_status = request.form.get('ug_year_5_status')
+            ug_year_5_admission_year = request.form.get('ug_year_5_admission_year')
+            ug_sem_9_status = request.form.get('ug_sem_9_status')
+            ug_sem_9_session = request.form.get('ug_sem_9_session')
+            ug_sem_9_roll_no = request.form.get('ug_sem_9_roll_no')
+            ug_sem_10_status = request.form.get('ug_sem_10_status')
+            ug_sem_10_session = request.form.get('ug_sem_10_session')
+            ug_sem_10_roll_no = request.form.get('ug_sem_10_roll_no')
+
+            # Update ug_details in the database
+            cursor.execute("""
+                UPDATE ug_details
+                SET ug_enrollment_no = ?, ug_admission_year = ?, ug_state = ?, ug_district = ?,
+                    ug_qualification_level = ?, ug_stream = ?, ug_institute_name = ?, ug_institute_code = ?,
+                    ug_board_university = ?, ug_course_name = ?, ug_course_duration = ?, ug_year_of_study = ?,
+                    ug_year_1_status = ?, ug_year_1_admission_year = ?, ug_sem_1_status = ?, ug_sem_1_session = ?,
+                    ug_sem_1_roll_no = ?, ug_sem_2_status = ?, ug_sem_2_session = ?, ug_sem_2_roll_no = ?,
+                    ug_year_2_status = ?, ug_year_2_admission_year = ?, ug_sem_3_status = ?, ug_sem_3_session = ?,
+                    ug_sem_3_roll_no = ?, ug_sem_4_status = ?, ug_sem_4_session = ?, ug_sem_4_roll_no = ?,
+                    ug_year_3_status = ?, ug_year_3_admission_year = ?, ug_sem_5_status = ?, ug_sem_5_session = ?,
+                    ug_sem_5_roll_no = ?, ug_sem_6_status = ?, ug_sem_6_session = ?, ug_sem_6_roll_no = ?,
+                    ug_year_4_status = ?, ug_year_4_admission_year = ?, ug_sem_7_status = ?, ug_sem_7_session = ?,
+                    ug_sem_7_roll_no = ?, ug_sem_8_status = ?, ug_sem_8_session = ?, ug_sem_8_roll_no = ?,
+                    ug_year_5_status = ?, ug_year_5_admission_year = ?, ug_sem_9_status = ?, ug_sem_9_session = ?,
+                    ug_sem_9_roll_no = ?, ug_sem_10_status = ?, ug_sem_10_session = ?, ug_sem_10_roll_no = ?
+                WHERE aadhaar_no = ?
+            """, (ug_enrollment_no, ug_admission_year, ug_state, ug_district, ug_qualification_level,
+                  ug_stream, ug_institute_name, ug_institute_code, ug_board_university, ug_course_name,
+                  ug_course_duration, ug_year_of_study, ug_year_1_status, ug_year_1_admission_year,
+                  ug_sem_1_status, ug_sem_1_session, ug_sem_1_roll_no, ug_sem_2_status, ug_sem_2_session,
+                  ug_sem_2_roll_no, ug_year_2_status, ug_year_2_admission_year, ug_sem_3_status, ug_sem_3_session,
+                  ug_sem_3_roll_no, ug_sem_4_status, ug_sem_4_session, ug_sem_4_roll_no, ug_year_3_status,
+                  ug_year_3_admission_year, ug_sem_5_status, ug_sem_5_session, ug_sem_5_roll_no, ug_sem_6_status,
+                  ug_sem_6_session, ug_sem_6_roll_no, ug_year_4_status, ug_year_4_admission_year,
+                  ug_sem_7_status, ug_sem_7_session, ug_sem_7_roll_no, ug_sem_8_status, ug_sem_8_session,
+                  ug_sem_8_roll_no, ug_year_5_status, ug_year_5_admission_year, ug_sem_9_status, ug_sem_9_session,
+                  ug_sem_9_roll_no, ug_sem_10_status, ug_sem_10_session, ug_sem_10_roll_no, aadhaar_no))
+
+            # Commit changes
+            conn.commit()
+
+            # Redirect to the next form
+            return redirect(url_for('form_ug_sem_1'))  # replace 'next_form' with the actual name of the next form
+
+        else:
+            # Fetch c_12_info from the database
+            cursor.execute("SELECT * FROM ug_details WHERE aadhaar_no = ?",(session['aadhaar_no'],))
+            ug_details = cursor.fetchone()
+
+            # Pass the ug_details to the template
+            return render_template('Student/student_info_forms/form_ug_details.html', ug_details=ug_details)
+
+    except Exception as e:
+        app.logger.error(f"Exception occurred: {e}")
+        return str(e), 500
+
+
+@app.route('/form_ug_sem_1', methods=['GET', 'POST'])
+def form_ug_sem_1():
+    try:
+        if request.method == 'POST':
+            return form_ug_sem_1_post()
+        else:
+            # Fetch ug_sem_1_info from the database
+            cursor.execute("SELECT * FROM ug_sem_1 WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+            ug_sem_1_info = cursor.fetchone()
+
+            # If ug_sem_1_info is None, create a default ug_sem_1_info object
+            if ug_sem_1_info is None:
+                ug_sem_1_info = {
+                    'ug_enrollment_no': '',
+                    'ug_sem_1_session': '',
+                    'ug_sem_1_roll_no': '',
+                    'ug_sem_1_result': '',
+                    'ug_sem_1_sub_1_name': '',
+                    'ug_sem_1_sub_1_marks_obtained': '',
+                    'ug_sem_1_sub_1_total_marks': '',
+                    'ug_sem_1_sub_2_name': '',
+                    'ug_sem_1_sub_2_marks_obtained': '',
+                    'ug_sem_1_sub_2_total_marks': '',
+                    'ug_sem_1_sub_3_name': '',
+                    'ug_sem_1_sub_3_marks_obtained': '',
+                    'ug_sem_1_sub_3_total_marks': '',
+                    'ug_sem_1_sub_4_name': '',
+                    'ug_sem_1_sub_4_marks_obtained': '',
+                    'ug_sem_1_sub_4_total_marks': '',
+                    'ug_sem_1_sub_5_name': '',
+                    'ug_sem_1_sub_5_marks_obtained': '',
+                    'ug_sem_1_sub_5_total_marks': '',
+                    'ug_sem_1_sub_6_name': '',
+                    'ug_sem_1_sub_6_marks_obtained': '',
+                    'ug_sem_1_sub_6_total_marks': '',
+                    'ug_sem_1_sub_7_name': '',
+                    'ug_sem_1_sub_7_marks_obtained': '',
+                    'ug_sem_1_sub_7_total_marks': '',
+                    'ug_sem_1_sub_8_name': '',
+                    'ug_sem_1_sub_8_marks_obtained': '',
+                    'ug_sem_1_sub_8_total_marks': '',
+                    'ug_sem_1_sub_9_name': '',
+                    'ug_sem_1_sub_9_marks_obtained': '',
+                    'ug_sem_1_sub_9_total_marks': '',
+                    'ug_sem_1_sub_10_name': '',
+                    'ug_sem_1_sub_10_marks_obtained': '',
+                    'ug_sem_1_sub_10_total_marks': '',
+                    'ug_sem_1_sub_11_name': '',
+                    'ug_sem_1_sub_11_marks_obtained': '',
+                    'ug_sem_1_sub_11_total_marks': '',
+                    'ug_sem_1_sub_12_name': '',
+                    'ug_sem_1_sub_12_marks_obtained': '',
+                    'ug_sem_1_sub_12_total_marks': '',
+                    'ug_sem_1_sub_13_name': '',
+                    'ug_sem_1_sub_13_marks_obtained': '',
+                    'ug_sem_1_sub_13_total_marks': '',
+                    'ug_sem_1_sub_14_name': '',
+                    'ug_sem_1_sub_14_marks_obtained': '',
+                    'ug_sem_1_sub_14_total_marks': '',
+                    'ug_sem_1_sub_15_name': '',
+                    'ug_sem_1_sub_15_marks_obtained': '',
+                    'ug_sem_1_sub_15_total_marks': '',
+                    'ug_sem_1_sub_16_name': '',
+                    'ug_sem_1_sub_16_marks_obtained': '',
+                    'ug_sem_1_sub_16_total_marks': '',
+                    'ug_sem_1_sub_17_name': '',
+                    'ug_sem_1_sub_17_marks_obtained': '',
+                    'ug_sem_1_sub_17_total_marks': '',
+                    'ug_sem_1_sub_18_name': '',
+                    'ug_sem_1_sub_18_marks_obtained': '',
+                    'ug_sem_1_sub_18_total_marks': '',
+                    'ug_sem_1_sub_19_name': '',
+                    'ug_sem_1_sub_19_marks_obtained': '',
+                    'ug_sem_1_sub_19_total_marks': '',
+                    'ug_sem_1_sub_20_name': '',
+                    'ug_sem_1_sub_20_marks_obtained': '',
+                    'ug_sem_1_sub_20_total_marks': ''
+
+                    # Add more fields as needed
+                }
+
+            # Pass the ug_sem_1_info to the template
+            return render_template('Student/student_info_forms/form_ug_sem_1.html', ug_sem_1=ug_sem_1_info)
+    except Exception as e:
+        app.logger.error(f"Exception occurred: {e}")
+        return str(e), 500
+
+def form_ug_sem_1_post():
+    try:
+        if request.method == 'POST':
+            # Get form data
+            aadhaar_no = session['aadhaar_no']
+            ug_enrollment_no = request.form['ug_enrollment_no']
+            ug_sem_1_session = request.form['ug_sem_1_session']
+            ug_sem_1_roll_no = request.form['ug_sem_1_roll_no']
+            ug_sem_1_result = request.form['ug_sem_1_result']
+            ug_sem_1_sub_1_name = request.form['ug_sem_1_sub_1_name']
+            ug_sem_1_sub_1_marks_obtained = request.form['ug_sem_1_sub_1_marks_obtained']
+            ug_sem_1_sub_1_total_marks = request.form['ug_sem_1_sub_1_total_marks']
+            ug_sem_1_sub_2_name = request.form['ug_sem_1_sub_2_name']
+            ug_sem_1_sub_2_marks_obtained = request.form['ug_sem_1_sub_2_marks_obtained']
+            ug_sem_1_sub_2_total_marks = request.form['ug_sem_1_sub_2_total_marks']
+            ug_sem_1_sub_3_name = request.form['ug_sem_1_sub_3_name']
+            ug_sem_1_sub_3_marks_obtained = request.form['ug_sem_1_sub_3_marks_obtained']
+            ug_sem_1_sub_3_total_marks = request.form['ug_sem_1_sub_3_total_marks']
+            ug_sem_1_sub_4_name = request.form['ug_sem_1_sub_4_name']
+            ug_sem_1_sub_4_marks_obtained = request.form['ug_sem_1_sub_4_marks_obtained']
+            ug_sem_1_sub_4_total_marks = request.form['ug_sem_1_sub_4_total_marks']
+            ug_sem_1_sub_5_name = request.form['ug_sem_1_sub_5_name']
+            ug_sem_1_sub_5_marks_obtained = request.form['ug_sem_1_sub_5_marks_obtained']
+            ug_sem_1_sub_5_total_marks = request.form['ug_sem_1_sub_5_total_marks']
+            ug_sem_1_sub_6_name = request.form['ug_sem_1_sub_6_name']
+            ug_sem_1_sub_6_marks_obtained = request.form['ug_sem_1_sub_6_marks_obtained']
+            ug_sem_1_sub_6_total_marks = request.form['ug_sem_1_sub_6_total_marks']
+            ug_sem_1_sub_7_name = request.form['ug_sem_1_sub_7_name']
+            ug_sem_1_sub_7_marks_obtained = request.form['ug_sem_1_sub_7_marks_obtained']
+            ug_sem_1_sub_7_total_marks = request.form['ug_sem_1_sub_7_total_marks']
+            ug_sem_1_sub_8_name = request.form['ug_sem_1_sub_8_name']
+            ug_sem_1_sub_8_marks_obtained = request.form['ug_sem_1_sub_8_marks_obtained']
+            ug_sem_1_sub_8_total_marks = request.form['ug_sem_1_sub_8_total_marks']
+            ug_sem_1_sub_9_name = request.form['ug_sem_1_sub_9_name']
+            ug_sem_1_sub_9_marks_obtained = request.form['ug_sem_1_sub_9_marks_obtained']
+            ug_sem_1_sub_9_total_marks = request.form['ug_sem_1_sub_9_total_marks']
+            ug_sem_1_sub_10_name = request.form['ug_sem_1_sub_10_name']
+            ug_sem_1_sub_10_marks_obtained = request.form['ug_sem_1_sub_10_marks_obtained']
+            ug_sem_1_sub_10_total_marks = request.form['ug_sem_1_sub_10_total_marks']
+            ug_sem_1_sub_11_name = request.form['ug_sem_1_sub_11_name']
+            ug_sem_1_sub_11_marks_obtained = request.form['ug_sem_1_sub_11_marks_obtained']
+            ug_sem_1_sub_11_total_marks = request.form['ug_sem_1_sub_11_total_marks']
+            ug_sem_1_sub_12_name = request.form['ug_sem_1_sub_12_name']
+            ug_sem_1_sub_12_marks_obtained = request.form['ug_sem_1_sub_12_marks_obtained']
+            ug_sem_1_sub_12_total_marks = request.form['ug_sem_1_sub_12_total_marks']
+            ug_sem_1_sub_13_name = request.form['ug_sem_1_sub_13_name']
+            ug_sem_1_sub_13_marks_obtained = request.form['ug_sem_1_sub_13_marks_obtained']
+            ug_sem_1_sub_13_total_marks = request.form['ug_sem_1_sub_13_total_marks']
+            ug_sem_1_sub_14_name = request.form['ug_sem_1_sub_14_name']
+            ug_sem_1_sub_14_marks_obtained = request.form['ug_sem_1_sub_14_marks_obtained']
+            ug_sem_1_sub_14_total_marks = request.form['ug_sem_1_sub_14_total_marks']
+            ug_sem_1_sub_15_name = request.form['ug_sem_1_sub_15_name']
+            ug_sem_1_sub_15_marks_obtained = request.form['ug_sem_1_sub_15_marks_obtained']
+            ug_sem_1_sub_15_total_marks = request.form['ug_sem_1_sub_15_total_marks']
+            ug_sem_1_sub_16_name = request.form['ug_sem_1_sub_16_name']
+            ug_sem_1_sub_16_marks_obtained = request.form['ug_sem_1_sub_16_marks_obtained']
+            ug_sem_1_sub_16_total_marks = request.form['ug_sem_1_sub_16_total_marks']
+            ug_sem_1_sub_17_name = request.form['ug_sem_1_sub_17_name']
+            ug_sem_1_sub_17_marks_obtained = request.form['ug_sem_1_sub_17_marks_obtained']
+            ug_sem_1_sub_17_total_marks = request.form['ug_sem_1_sub_17_total_marks']
+            ug_sem_1_sub_18_name = request.form['ug_sem_1_sub_18_name']
+            ug_sem_1_sub_18_marks_obtained = request.form['ug_sem_1_sub_18_marks_obtained']
+            ug_sem_1_sub_18_total_marks = request.form['ug_sem_1_sub_18_total_marks']
+            ug_sem_1_sub_19_name = request.form['ug_sem_1_sub_19_name']
+            ug_sem_1_sub_19_marks_obtained = request.form['ug_sem_1_sub_19_marks_obtained']
+            ug_sem_1_sub_19_total_marks = request.form['ug_sem_1_sub_19_total_marks']
+            ug_sem_1_sub_20_name = request.form['ug_sem_1_sub_20_name']
+            ug_sem_1_sub_20_marks_obtained = request.form['ug_sem_1_sub_20_marks_obtained']
+            ug_sem_1_sub_20_total_marks = request.form['ug_sem_1_sub_20_total_marks']
+
+
+            # Update ug_sem_1_info in the database
+            cursor.execute("""
+                UPDATE ug_sem_1
+                SET ug_enrollment_no = ?, ug_sem_1_session = ?, ug_sem_1_roll_no = ?, ug_sem_1_result = ?, ug_sem_1_sub_1_name = ?, ug_sem_1_sub_1_marks_obtained = ?, ug_sem_1_sub_1_total_marks = ?, ug_sem_1_sub_2_name = ?, ug_sem_1_sub_2_marks_obtained = ?, ug_sem_1_sub_2_total_marks = ?, ug_sem_1_sub_3_name = ?, ug_sem_1_sub_3_marks_obtained = ?, ug_sem_1_sub_3_total_marks = ?, ug_sem_1_sub_4_name = ?, ug_sem_1_sub_4_marks_obtained = ?, ug_sem_1_sub_4_total_marks = ?, ug_sem_1_sub_5_name = ?, ug_sem_1_sub_5_marks_obtained = ?, ug_sem_1_sub_5_total_marks = ?, ug_sem_1_sub_6_name = ?, ug_sem_1_sub_6_marks_obtained = ?, ug_sem_1_sub_6_total_marks = ?, ug_sem_1_sub_7_name = ?, ug_sem_1_sub_7_marks_obtained = ?, ug_sem_1_sub_7_total_marks = ?, ug_sem_1_sub_8_name = ?, ug_sem_1_sub_8_marks_obtained = ?, ug_sem_1_sub_8_total_marks = ?, ug_sem_1_sub_9_name = ?, ug_sem_1_sub_9_marks_obtained = ?, ug_sem_1_sub_9_total_marks = ?, ug_sem_1_sub_10_name = ?, ug_sem_1_sub_10_marks_obtained = ?, ug_sem_1_sub_10_total_marks = ?, ug_sem_1_sub_11_name = ?, ug_sem_1_sub_11_marks_obtained = ?, ug_sem_1_sub_11_total_marks = ?, ug_sem_1_sub_12_name = ?, ug_sem_1_sub_12_marks_obtained = ?, ug_sem_1_sub_12_total_marks = ?, ug_sem_1_sub_13_name = ?, ug_sem_1_sub_13_marks_obtained = ?, ug_sem_1_sub_13_total_marks = ?, ug_sem_1_sub_14_name = ?, ug_sem_1_sub_14_marks_obtained = ?, ug_sem_1_sub_14_total_marks = ?, ug_sem_1_sub_15_name = ?, ug_sem_1_sub_15_marks_obtained = ?, ug_sem_1_sub_15_total_marks = ?, ug_sem_1_sub_16_name = ?, ug_sem_1_sub_16_marks_obtained = ?, ug_sem_1_sub_16_total_marks = ?, ug_sem_1_sub_17_name = ?, ug_sem_1_sub_17_marks_obtained = ?, ug_sem_1_sub_17_total_marks = ?, ug_sem_1_sub_18_name = ?, ug_sem_1_sub_18_marks_obtained = ?, ug_sem_1_sub_18_total_marks = ?, ug_sem_1_sub_19_name = ?, ug_sem_1_sub_19_marks_obtained = ?, ug_sem_1_sub_19_total_marks = ?, ug_sem_1_sub_20_name = ?, ug_sem_1_sub_20_marks_obtained = ?, ug_sem_1_sub_20_total_marks = ?
+                WHERE aadhaar_no = ?
+            """,(ug_enrollment_no,ug_sem_1_session,ug_sem_1_roll_no,ug_sem_1_result,ug_sem_1_sub_1_name,
+                 ug_sem_1_sub_1_marks_obtained,ug_sem_1_sub_1_total_marks,ug_sem_1_sub_2_name,
+                 ug_sem_1_sub_2_marks_obtained,ug_sem_1_sub_2_total_marks,ug_sem_1_sub_3_name,
+                 ug_sem_1_sub_3_marks_obtained,ug_sem_1_sub_3_total_marks,ug_sem_1_sub_4_name,
+                 ug_sem_1_sub_4_marks_obtained,ug_sem_1_sub_4_total_marks,ug_sem_1_sub_5_name,
+                 ug_sem_1_sub_5_marks_obtained,ug_sem_1_sub_5_total_marks,ug_sem_1_sub_6_name,
+                 ug_sem_1_sub_6_marks_obtained,ug_sem_1_sub_6_total_marks,ug_sem_1_sub_7_name,
+                 ug_sem_1_sub_7_marks_obtained,ug_sem_1_sub_7_total_marks,ug_sem_1_sub_8_name,
+                 ug_sem_1_sub_8_marks_obtained,ug_sem_1_sub_8_total_marks,ug_sem_1_sub_9_name,
+                 ug_sem_1_sub_9_marks_obtained,ug_sem_1_sub_9_total_marks,ug_sem_1_sub_10_name,
+                 ug_sem_1_sub_10_marks_obtained,ug_sem_1_sub_10_total_marks,ug_sem_1_sub_11_name,
+                 ug_sem_1_sub_11_marks_obtained,ug_sem_1_sub_11_total_marks,ug_sem_1_sub_12_name,
+                 ug_sem_1_sub_12_marks_obtained,ug_sem_1_sub_12_total_marks,ug_sem_1_sub_13_name,
+                 ug_sem_1_sub_13_marks_obtained,ug_sem_1_sub_13_total_marks,ug_sem_1_sub_14_name,
+                 ug_sem_1_sub_14_marks_obtained,ug_sem_1_sub_14_total_marks,ug_sem_1_sub_15_name,
+                 ug_sem_1_sub_15_marks_obtained,ug_sem_1_sub_15_total_marks,ug_sem_1_sub_16_name,
+                 ug_sem_1_sub_16_marks_obtained,ug_sem_1_sub_16_total_marks,ug_sem_1_sub_17_name,
+                 ug_sem_1_sub_17_marks_obtained,ug_sem_1_sub_17_total_marks,ug_sem_1_sub_18_name,
+                 ug_sem_1_sub_18_marks_obtained,ug_sem_1_sub_18_total_marks,ug_sem_1_sub_19_name,
+                 ug_sem_1_sub_19_marks_obtained,ug_sem_1_sub_19_total_marks,ug_sem_1_sub_20_name,
+                 ug_sem_1_sub_20_marks_obtained,ug_sem_1_sub_20_total_marks,aadhaar_no))
+
+            # Commit changes
+            conn.commit()
+
+            # Redirect to the next form
+            return redirect(url_for('form_ug_sem_2'))  # replace 'next_form' with the actual name of the next form
+
+        else:
+            # Fetch ug_sem_1_info from the database
+            cursor.execute("SELECT * FROM ug_sem_1 WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+            ug_sem_1_info = cursor.fetchone()
+
+            # Pass the ug_sem_1_info to the template
+            return render_template('Student/student_info_forms/form_ug_sem_1.html', ug_sem_1=ug_sem_1_info)
+    except Exception as e:
+        app.logger.error(f"Exception occurred: {e}")
+        return str(e), 500
+
+
+@app.route('/form_ug_sem_2', methods=['GET', 'POST'])
+def form_ug_sem_2():
+    try:
+        if request.method == 'POST':
+            return form_ug_sem_2_post()
+        else:
+            # Fetch ug_sem_2_info from the database
+            cursor.execute("SELECT * FROM ug_sem_2 WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+            ug_sem_2_info = cursor.fetchone()
+
+            # If ug_sem_2_info is None, create a default ug_sem_2_info object
+            if ug_sem_2_info is None:
+                ug_sem_2_info = {
+                    'ug_enrollment_no': '',
+                    'ug_sem_2_session': '',
+                    'ug_sem_2_roll_no': '',
+                    'ug_sem_2_result': '',
+                    'ug_sem_2_sub_1_name': '',
+                    'ug_sem_2_sub_1_marks_obtained': '',
+                    'ug_sem_2_sub_1_total_marks': '',
+                    'ug_sem_2_sub_2_name': '',
+                    'ug_sem_2_sub_2_marks_obtained': '',
+                    'ug_sem_2_sub_2_total_marks': '',
+                    'ug_sem_2_sub_3_name': '',
+                    'ug_sem_2_sub_3_marks_obtained': '',
+                    'ug_sem_2_sub_3_total_marks': '',
+                    'ug_sem_2_sub_4_name': '',
+                    'ug_sem_2_sub_4_marks_obtained': '',
+                    'ug_sem_2_sub_4_total_marks': '',
+                    'ug_sem_2_sub_5_name': '',
+                    'ug_sem_2_sub_5_marks_obtained': '',
+                    'ug_sem_2_sub_5_total_marks': '',
+                    'ug_sem_2_sub_6_name': '',
+                    'ug_sem_2_sub_6_marks_obtained': '',
+                    'ug_sem_2_sub_6_total_marks': '',
+                    'ug_sem_2_sub_7_name': '',
+                    'ug_sem_2_sub_7_marks_obtained': '',
+                    'ug_sem_2_sub_7_total_marks': '',
+                    'ug_sem_2_sub_8_name': '',
+                    'ug_sem_2_sub_8_marks_obtained': '',
+                    'ug_sem_2_sub_8_total_marks': '',
+                    'ug_sem_2_sub_9_name': '',
+                    'ug_sem_2_sub_9_marks_obtained': '',
+                    'ug_sem_2_sub_9_total_marks': '',
+                    'ug_sem_2_sub_10_name': '',
+                    'ug_sem_2_sub_10_marks_obtained': '',
+                    'ug_sem_2_sub_10_total_marks': '',
+                    'ug_sem_2_sub_11_name': '',
+                    'ug_sem_2_sub_11_marks_obtained': '',
+                    'ug_sem_2_sub_11_total_marks': '',
+                    'ug_sem_2_sub_12_name': '',
+                    'ug_sem_2_sub_12_marks_obtained': '',
+                    'ug_sem_2_sub_12_total_marks': '',
+                    'ug_sem_2_sub_13_name': '',
+                    'ug_sem_2_sub_13_marks_obtained': '',
+                    'ug_sem_2_sub_13_total_marks': '',
+                    'ug_sem_2_sub_14_name': '',
+                    'ug_sem_2_sub_14_marks_obtained': '',
+                    'ug_sem_2_sub_14_total_marks': '',
+                    'ug_sem_2_sub_15_name': '',
+                    'ug_sem_2_sub_15_marks_obtained': '',
+                    'ug_sem_2_sub_15_total_marks': '',
+                    'ug_sem_2_sub_16_name': '',
+                    'ug_sem_2_sub_16_marks_obtained': '',
+                    'ug_sem_2_sub_16_total_marks': '',
+                    'ug_sem_2_sub_17_name': '',
+                    'ug_sem_2_sub_17_marks_obtained': '',
+                    'ug_sem_2_sub_17_total_marks': '',
+                    'ug_sem_2_sub_18_name': '',
+                    'ug_sem_2_sub_18_marks_obtained': '',
+                    'ug_sem_2_sub_18_total_marks': '',
+                    'ug_sem_2_sub_19_name': '',
+                    'ug_sem_2_sub_19_marks_obtained': '',
+                    'ug_sem_2_sub_19_total_marks': '',
+                    'ug_sem_2_sub_20_name': '',
+                    'ug_sem_2_sub_20_marks_obtained': '',
+                    'ug_sem_2_sub_20_total_marks': ''
+
+                    # Add more fields as needed
+                }
+
+            # Pass the ug_sem_2_info to the template
+            return render_template('Student/student_info_forms/form_ug_sem_2.html', ug_sem_2=ug_sem_2_info)
+    except Exception as e:
+        app.logger.error(f"Exception occurred: {e}")
+        return str(e), 500
+
+def form_ug_sem_2_post():
+    try:
+        if request.method == 'POST':
+            # Get form data
+            aadhaar_no = session['aadhaar_no']
+            ug_enrollment_no = request.form['ug_enrollment_no']
+            ug_sem_2_session = request.form['ug_sem_2_session']
+            ug_sem_2_roll_no = request.form['ug_sem_2_roll_no']
+            ug_sem_2_result = request.form['ug_sem_2_result']
+            ug_sem_2_sub_1_name = request.form['ug_sem_2_sub_1_name']
+            ug_sem_2_sub_1_marks_obtained = request.form['ug_sem_2_sub_1_marks_obtained']
+            ug_sem_2_sub_1_total_marks = request.form['ug_sem_2_sub_1_total_marks']
+            ug_sem_2_sub_2_name = request.form['ug_sem_2_sub_2_name']
+            ug_sem_2_sub_2_marks_obtained = request.form['ug_sem_2_sub_2_marks_obtained']
+            ug_sem_2_sub_2_total_marks = request.form['ug_sem_2_sub_2_total_marks']
+            ug_sem_2_sub_3_name = request.form['ug_sem_2_sub_3_name']
+            ug_sem_2_sub_3_marks_obtained = request.form['ug_sem_2_sub_3_marks_obtained']
+            ug_sem_2_sub_3_total_marks = request.form['ug_sem_2_sub_3_total_marks']
+            ug_sem_2_sub_4_name = request.form['ug_sem_2_sub_4_name']
+            ug_sem_2_sub_4_marks_obtained = request.form['ug_sem_2_sub_4_marks_obtained']
+            ug_sem_2_sub_4_total_marks = request.form['ug_sem_2_sub_4_total_marks']
+            ug_sem_2_sub_5_name = request.form['ug_sem_2_sub_5_name']
+            ug_sem_2_sub_5_marks_obtained = request.form['ug_sem_2_sub_5_marks_obtained']
+            ug_sem_2_sub_5_total_marks = request.form['ug_sem_2_sub_5_total_marks']
+            ug_sem_2_sub_6_name = request.form['ug_sem_2_sub_6_name']
+            ug_sem_2_sub_6_marks_obtained = request.form['ug_sem_2_sub_6_marks_obtained']
+            ug_sem_2_sub_6_total_marks = request.form['ug_sem_2_sub_6_total_marks']
+            ug_sem_2_sub_7_name = request.form['ug_sem_2_sub_7_name']
+            ug_sem_2_sub_7_marks_obtained = request.form['ug_sem_2_sub_7_marks_obtained']
+            ug_sem_2_sub_7_total_marks = request.form['ug_sem_2_sub_7_total_marks']
+            ug_sem_2_sub_8_name = request.form['ug_sem_2_sub_8_name']
+            ug_sem_2_sub_8_marks_obtained = request.form['ug_sem_2_sub_8_marks_obtained']
+            ug_sem_2_sub_8_total_marks = request.form['ug_sem_2_sub_8_total_marks']
+            ug_sem_2_sub_9_name = request.form['ug_sem_2_sub_9_name']
+            ug_sem_2_sub_9_marks_obtained = request.form['ug_sem_2_sub_9_marks_obtained']
+            ug_sem_2_sub_9_total_marks = request.form['ug_sem_2_sub_9_total_marks']
+            ug_sem_2_sub_10_name = request.form['ug_sem_2_sub_10_name']
+            ug_sem_2_sub_10_marks_obtained = request.form['ug_sem_2_sub_10_marks_obtained']
+            ug_sem_2_sub_10_total_marks = request.form['ug_sem_2_sub_10_total_marks']
+            ug_sem_2_sub_11_name = request.form['ug_sem_2_sub_11_name']
+            ug_sem_2_sub_11_marks_obtained = request.form['ug_sem_2_sub_11_marks_obtained']
+            ug_sem_2_sub_11_total_marks = request.form['ug_sem_2_sub_11_total_marks']
+            ug_sem_2_sub_12_name = request.form['ug_sem_2_sub_12_name']
+            ug_sem_2_sub_12_marks_obtained = request.form['ug_sem_2_sub_12_marks_obtained']
+            ug_sem_2_sub_12_total_marks = request.form['ug_sem_2_sub_12_total_marks']
+            ug_sem_2_sub_13_name = request.form['ug_sem_2_sub_13_name']
+            ug_sem_2_sub_13_marks_obtained = request.form['ug_sem_2_sub_13_marks_obtained']
+            ug_sem_2_sub_13_total_marks = request.form['ug_sem_2_sub_13_total_marks']
+            ug_sem_2_sub_14_name = request.form['ug_sem_2_sub_14_name']
+            ug_sem_2_sub_14_marks_obtained = request.form['ug_sem_2_sub_14_marks_obtained']
+            ug_sem_2_sub_14_total_marks = request.form['ug_sem_2_sub_14_total_marks']
+            ug_sem_2_sub_15_name = request.form['ug_sem_2_sub_15_name']
+            ug_sem_2_sub_15_marks_obtained = request.form['ug_sem_2_sub_15_marks_obtained']
+            ug_sem_2_sub_15_total_marks = request.form['ug_sem_2_sub_15_total_marks']
+            ug_sem_2_sub_16_name = request.form['ug_sem_2_sub_16_name']
+            ug_sem_2_sub_16_marks_obtained = request.form['ug_sem_2_sub_16_marks_obtained']
+            ug_sem_2_sub_16_total_marks = request.form['ug_sem_2_sub_16_total_marks']
+            ug_sem_2_sub_17_name = request.form['ug_sem_2_sub_17_name']
+            ug_sem_2_sub_17_marks_obtained = request.form['ug_sem_2_sub_17_marks_obtained']
+            ug_sem_2_sub_17_total_marks = request.form['ug_sem_2_sub_17_total_marks']
+            ug_sem_2_sub_18_name = request.form['ug_sem_2_sub_18_name']
+            ug_sem_2_sub_18_marks_obtained = request.form['ug_sem_2_sub_18_marks_obtained']
+            ug_sem_2_sub_18_total_marks = request.form['ug_sem_2_sub_18_total_marks']
+            ug_sem_2_sub_19_name = request.form['ug_sem_2_sub_19_name']
+            ug_sem_2_sub_19_marks_obtained = request.form['ug_sem_2_sub_19_marks_obtained']
+            ug_sem_2_sub_19_total_marks = request.form['ug_sem_2_sub_19_total_marks']
+            ug_sem_2_sub_20_name = request.form['ug_sem_2_sub_20_name']
+            ug_sem_2_sub_20_marks_obtained = request.form['ug_sem_2_sub_20_marks_obtained']
+            ug_sem_2_sub_20_total_marks = request.form['ug_sem_2_sub_20_total_marks']
+
+
+            # Update ug_sem_2_info in the database
+            cursor.execute("""
+                UPDATE ug_sem_2
+                SET ug_enrollment_no = ?, ug_sem_2_session = ?, ug_sem_2_roll_no = ?, ug_sem_2_result = ?, ug_sem_2_sub_1_name = ?, ug_sem_2_sub_1_marks_obtained = ?, ug_sem_2_sub_1_total_marks = ?, ug_sem_2_sub_2_name = ?, ug_sem_2_sub_2_marks_obtained = ?, ug_sem_2_sub_2_total_marks = ?, ug_sem_2_sub_3_name = ?, ug_sem_2_sub_3_marks_obtained = ?, ug_sem_2_sub_3_total_marks = ?, ug_sem_2_sub_4_name = ?, ug_sem_2_sub_4_marks_obtained = ?, ug_sem_2_sub_4_total_marks = ?, ug_sem_2_sub_5_name = ?, ug_sem_2_sub_5_marks_obtained = ?, ug_sem_2_sub_5_total_marks = ?, ug_sem_2_sub_6_name = ?, ug_sem_2_sub_6_marks_obtained = ?, ug_sem_2_sub_6_total_marks = ?, ug_sem_2_sub_7_name = ?, ug_sem_2_sub_7_marks_obtained = ?, ug_sem_2_sub_7_total_marks = ?, ug_sem_2_sub_8_name = ?, ug_sem_2_sub_8_marks_obtained = ?, ug_sem_2_sub_8_total_marks = ?, ug_sem_2_sub_9_name = ?, ug_sem_2_sub_9_marks_obtained = ?, ug_sem_2_sub_9_total_marks = ?, ug_sem_2_sub_10_name = ?, ug_sem_2_sub_10_marks_obtained = ?, ug_sem_2_sub_10_total_marks = ?, ug_sem_2_sub_11_name = ?, ug_sem_2_sub_11_marks_obtained = ?, ug_sem_2_sub_11_total_marks = ?, ug_sem_2_sub_12_name = ?, ug_sem_2_sub_12_marks_obtained = ?, ug_sem_2_sub_12_total_marks = ?, ug_sem_2_sub_13_name = ?, ug_sem_2_sub_13_marks_obtained = ?, ug_sem_2_sub_13_total_marks = ?, ug_sem_2_sub_14_name = ?, ug_sem_2_sub_14_marks_obtained = ?, ug_sem_2_sub_14_total_marks = ?, ug_sem_2_sub_15_name = ?, ug_sem_2_sub_15_marks_obtained = ?, ug_sem_2_sub_15_total_marks = ?, ug_sem_2_sub_16_name = ?, ug_sem_2_sub_16_marks_obtained = ?, ug_sem_2_sub_16_total_marks = ?, ug_sem_2_sub_17_name = ?, ug_sem_2_sub_17_marks_obtained = ?, ug_sem_2_sub_17_total_marks = ?, ug_sem_2_sub_18_name = ?, ug_sem_2_sub_18_marks_obtained = ?, ug_sem_2_sub_18_total_marks = ?, ug_sem_2_sub_19_name = ?, ug_sem_2_sub_19_marks_obtained = ?, ug_sem_2_sub_19_total_marks = ?, ug_sem_2_sub_20_name = ?, ug_sem_2_sub_20_marks_obtained = ?, ug_sem_2_sub_20_total_marks = ?
+                WHERE aadhaar_no = ?
+            """,(ug_enrollment_no,ug_sem_2_session,ug_sem_2_roll_no,ug_sem_2_result,ug_sem_2_sub_1_name,
+                 ug_sem_2_sub_1_marks_obtained,ug_sem_2_sub_1_total_marks,ug_sem_2_sub_2_name,
+                 ug_sem_2_sub_2_marks_obtained,ug_sem_2_sub_2_total_marks,ug_sem_2_sub_3_name,
+                 ug_sem_2_sub_3_marks_obtained,ug_sem_2_sub_3_total_marks,ug_sem_2_sub_4_name,
+                 ug_sem_2_sub_4_marks_obtained,ug_sem_2_sub_4_total_marks,ug_sem_2_sub_5_name,
+                 ug_sem_2_sub_5_marks_obtained,ug_sem_2_sub_5_total_marks,ug_sem_2_sub_6_name,
+                 ug_sem_2_sub_6_marks_obtained,ug_sem_2_sub_6_total_marks,ug_sem_2_sub_7_name,
+                 ug_sem_2_sub_7_marks_obtained,ug_sem_2_sub_7_total_marks,ug_sem_2_sub_8_name,
+                 ug_sem_2_sub_8_marks_obtained,ug_sem_2_sub_8_total_marks,ug_sem_2_sub_9_name,
+                 ug_sem_2_sub_9_marks_obtained,ug_sem_2_sub_9_total_marks,ug_sem_2_sub_10_name,
+                 ug_sem_2_sub_10_marks_obtained,ug_sem_2_sub_10_total_marks,ug_sem_2_sub_11_name,
+                 ug_sem_2_sub_11_marks_obtained,ug_sem_2_sub_11_total_marks,ug_sem_2_sub_12_name,
+                 ug_sem_2_sub_12_marks_obtained,ug_sem_2_sub_12_total_marks,ug_sem_2_sub_13_name,
+                 ug_sem_2_sub_13_marks_obtained,ug_sem_2_sub_13_total_marks,ug_sem_2_sub_14_name,
+                 ug_sem_2_sub_14_marks_obtained,ug_sem_2_sub_14_total_marks,ug_sem_2_sub_15_name,
+                 ug_sem_2_sub_15_marks_obtained,ug_sem_2_sub_15_total_marks,ug_sem_2_sub_16_name,
+                 ug_sem_2_sub_16_marks_obtained,ug_sem_2_sub_16_total_marks,ug_sem_2_sub_17_name,
+                 ug_sem_2_sub_17_marks_obtained,ug_sem_2_sub_17_total_marks,ug_sem_2_sub_18_name,
+                 ug_sem_2_sub_18_marks_obtained,ug_sem_2_sub_18_total_marks,ug_sem_2_sub_19_name,
+                 ug_sem_2_sub_19_marks_obtained,ug_sem_2_sub_19_total_marks,ug_sem_2_sub_20_name,
+                 ug_sem_2_sub_20_marks_obtained,ug_sem_2_sub_20_total_marks,aadhaar_no))
+
+            # Commit changes
+            conn.commit()
+
+            # Redirect to the next form
+            return redirect(url_for('form_ug_sem_3'))  # replace 'next_form' with the actual name of the next form
+
+        else:
+            # Fetch ug_sem_2_info from the database
+            cursor.execute("SELECT * FROM ug_sem_2 WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+            ug_sem_2_info = cursor.fetchone()
+
+            # Pass the ug_sem_2_info to the template
+            return render_template('Student/student_info_forms/form_ug_sem_2.html', ug_sem_2=ug_sem_2_info)
+    except Exception as e:
+        app.logger.error(f"Exception occurred: {e}")
+        return str(e), 500
+
+
+@app.route('/form_ug_sem_3', methods=['GET', 'POST'])
+def form_ug_sem_3():
+    try:
+        if request.method == 'POST':
+            return form_ug_sem_3_post()
+        else:
+            # Fetch ug_sem_3_info from the database
+            cursor.execute("SELECT * FROM ug_sem_3 WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+            ug_sem_3_info = cursor.fetchone()
+
+            # If ug_sem_3_info is None, create a default ug_sem_3_info object
+            if ug_sem_3_info is None:
+                ug_sem_3_info = {
+                    'ug_enrollment_no': '',
+                    'ug_sem_3_session': '',
+                    'ug_sem_3_roll_no': '',
+                    'ug_sem_3_result': '',
+                    'ug_sem_3_sub_1_name': '',
+                    'ug_sem_3_sub_1_marks_obtained': '',
+                    'ug_sem_3_sub_1_total_marks': '',
+                    'ug_sem_3_sub_2_name': '',
+                    'ug_sem_3_sub_2_marks_obtained': '',
+                    'ug_sem_3_sub_2_total_marks': '',
+                    'ug_sem_3_sub_3_name': '',
+                    'ug_sem_3_sub_3_marks_obtained': '',
+                    'ug_sem_3_sub_3_total_marks': '',
+                    'ug_sem_3_sub_4_name': '',
+                    'ug_sem_3_sub_4_marks_obtained': '',
+                    'ug_sem_3_sub_4_total_marks': '',
+                    'ug_sem_3_sub_5_name': '',
+                    'ug_sem_3_sub_5_marks_obtained': '',
+                    'ug_sem_3_sub_5_total_marks': '',
+                    'ug_sem_3_sub_6_name': '',
+                    'ug_sem_3_sub_6_marks_obtained': '',
+                    'ug_sem_3_sub_6_total_marks': '',
+                    'ug_sem_3_sub_7_name': '',
+                    'ug_sem_3_sub_7_marks_obtained': '',
+                    'ug_sem_3_sub_7_total_marks': '',
+                    'ug_sem_3_sub_8_name': '',
+                    'ug_sem_3_sub_8_marks_obtained': '',
+                    'ug_sem_3_sub_8_total_marks': '',
+                    'ug_sem_3_sub_9_name': '',
+                    'ug_sem_3_sub_9_marks_obtained': '',
+                    'ug_sem_3_sub_9_total_marks': '',
+                    'ug_sem_3_sub_10_name': '',
+                    'ug_sem_3_sub_10_marks_obtained': '',
+                    'ug_sem_3_sub_10_total_marks': '',
+                    'ug_sem_3_sub_11_name': '',
+                    'ug_sem_3_sub_11_marks_obtained': '',
+                    'ug_sem_3_sub_11_total_marks': '',
+                    'ug_sem_3_sub_12_name': '',
+                    'ug_sem_3_sub_12_marks_obtained': '',
+                    'ug_sem_3_sub_12_total_marks': '',
+                    'ug_sem_3_sub_13_name': '',
+                    'ug_sem_3_sub_13_marks_obtained': '',
+                    'ug_sem_3_sub_13_total_marks': '',
+                    'ug_sem_3_sub_14_name': '',
+                    'ug_sem_3_sub_14_marks_obtained': '',
+                    'ug_sem_3_sub_14_total_marks': '',
+                    'ug_sem_3_sub_15_name': '',
+                    'ug_sem_3_sub_15_marks_obtained': '',
+                    'ug_sem_3_sub_15_total_marks': '',
+                    'ug_sem_3_sub_16_name': '',
+                    'ug_sem_3_sub_16_marks_obtained': '',
+                    'ug_sem_3_sub_16_total_marks': '',
+                    'ug_sem_3_sub_17_name': '',
+                    'ug_sem_3_sub_17_marks_obtained': '',
+                    'ug_sem_3_sub_17_total_marks': '',
+                    'ug_sem_3_sub_18_name': '',
+                    'ug_sem_3_sub_18_marks_obtained': '',
+                    'ug_sem_3_sub_18_total_marks': '',
+                    'ug_sem_3_sub_19_name': '',
+                    'ug_sem_3_sub_19_marks_obtained': '',
+                    'ug_sem_3_sub_19_total_marks': '',
+                    'ug_sem_3_sub_20_name': '',
+                    'ug_sem_3_sub_20_marks_obtained': '',
+                    'ug_sem_3_sub_20_total_marks': ''
+
+                    # Add more fields as needed
+                }
+
+            # Pass the ug_sem_3_info to the template
+            return render_template('Student/student_info_forms/form_ug_sem_3.html', ug_sem_3=ug_sem_3_info)
+    except Exception as e:
+        app.logger.error(f"Exception occurred: {e}")
+        return str(e), 500
+
+def form_ug_sem_3_post():
+    try:
+        if request.method == 'POST':
+            # Get form data
+            aadhaar_no = session['aadhaar_no']
+            ug_enrollment_no = request.form['ug_enrollment_no']
+            ug_sem_3_session = request.form['ug_sem_3_session']
+            ug_sem_3_roll_no = request.form['ug_sem_3_roll_no']
+            ug_sem_3_result = request.form['ug_sem_3_result']
+            ug_sem_3_sub_1_name = request.form['ug_sem_3_sub_1_name']
+            ug_sem_3_sub_1_marks_obtained = request.form['ug_sem_3_sub_1_marks_obtained']
+            ug_sem_3_sub_1_total_marks = request.form['ug_sem_3_sub_1_total_marks']
+            ug_sem_3_sub_2_name = request.form['ug_sem_3_sub_2_name']
+            ug_sem_3_sub_2_marks_obtained = request.form['ug_sem_3_sub_2_marks_obtained']
+            ug_sem_3_sub_2_total_marks = request.form['ug_sem_3_sub_2_total_marks']
+            ug_sem_3_sub_3_name = request.form['ug_sem_3_sub_3_name']
+            ug_sem_3_sub_3_marks_obtained = request.form['ug_sem_3_sub_3_marks_obtained']
+            ug_sem_3_sub_3_total_marks = request.form['ug_sem_3_sub_3_total_marks']
+            ug_sem_3_sub_4_name = request.form['ug_sem_3_sub_4_name']
+            ug_sem_3_sub_4_marks_obtained = request.form['ug_sem_3_sub_4_marks_obtained']
+            ug_sem_3_sub_4_total_marks = request.form['ug_sem_3_sub_4_total_marks']
+            ug_sem_3_sub_5_name = request.form['ug_sem_3_sub_5_name']
+            ug_sem_3_sub_5_marks_obtained = request.form['ug_sem_3_sub_5_marks_obtained']
+            ug_sem_3_sub_5_total_marks = request.form['ug_sem_3_sub_5_total_marks']
+            ug_sem_3_sub_6_name = request.form['ug_sem_3_sub_6_name']
+            ug_sem_3_sub_6_marks_obtained = request.form['ug_sem_3_sub_6_marks_obtained']
+            ug_sem_3_sub_6_total_marks = request.form['ug_sem_3_sub_6_total_marks']
+            ug_sem_3_sub_7_name = request.form['ug_sem_3_sub_7_name']
+            ug_sem_3_sub_7_marks_obtained = request.form['ug_sem_3_sub_7_marks_obtained']
+            ug_sem_3_sub_7_total_marks = request.form['ug_sem_3_sub_7_total_marks']
+            ug_sem_3_sub_8_name = request.form['ug_sem_3_sub_8_name']
+            ug_sem_3_sub_8_marks_obtained = request.form['ug_sem_3_sub_8_marks_obtained']
+            ug_sem_3_sub_8_total_marks = request.form['ug_sem_3_sub_8_total_marks']
+            ug_sem_3_sub_9_name = request.form['ug_sem_3_sub_9_name']
+            ug_sem_3_sub_9_marks_obtained = request.form['ug_sem_3_sub_9_marks_obtained']
+            ug_sem_3_sub_9_total_marks = request.form['ug_sem_3_sub_9_total_marks']
+            ug_sem_3_sub_10_name = request.form['ug_sem_3_sub_10_name']
+            ug_sem_3_sub_10_marks_obtained = request.form['ug_sem_3_sub_10_marks_obtained']
+            ug_sem_3_sub_10_total_marks = request.form['ug_sem_3_sub_10_total_marks']
+            ug_sem_3_sub_11_name = request.form['ug_sem_3_sub_11_name']
+            ug_sem_3_sub_11_marks_obtained = request.form['ug_sem_3_sub_11_marks_obtained']
+            ug_sem_3_sub_11_total_marks = request.form['ug_sem_3_sub_11_total_marks']
+            ug_sem_3_sub_12_name = request.form['ug_sem_3_sub_12_name']
+            ug_sem_3_sub_12_marks_obtained = request.form['ug_sem_3_sub_12_marks_obtained']
+            ug_sem_3_sub_12_total_marks = request.form['ug_sem_3_sub_12_total_marks']
+            ug_sem_3_sub_13_name = request.form['ug_sem_3_sub_13_name']
+            ug_sem_3_sub_13_marks_obtained = request.form['ug_sem_3_sub_13_marks_obtained']
+            ug_sem_3_sub_13_total_marks = request.form['ug_sem_3_sub_13_total_marks']
+            ug_sem_3_sub_14_name = request.form['ug_sem_3_sub_14_name']
+            ug_sem_3_sub_14_marks_obtained = request.form['ug_sem_3_sub_14_marks_obtained']
+            ug_sem_3_sub_14_total_marks = request.form['ug_sem_3_sub_14_total_marks']
+            ug_sem_3_sub_15_name = request.form['ug_sem_3_sub_15_name']
+            ug_sem_3_sub_15_marks_obtained = request.form['ug_sem_3_sub_15_marks_obtained']
+            ug_sem_3_sub_15_total_marks = request.form['ug_sem_3_sub_15_total_marks']
+            ug_sem_3_sub_16_name = request.form['ug_sem_3_sub_16_name']
+            ug_sem_3_sub_16_marks_obtained = request.form['ug_sem_3_sub_16_marks_obtained']
+            ug_sem_3_sub_16_total_marks = request.form['ug_sem_3_sub_16_total_marks']
+            ug_sem_3_sub_17_name = request.form['ug_sem_3_sub_17_name']
+            ug_sem_3_sub_17_marks_obtained = request.form['ug_sem_3_sub_17_marks_obtained']
+            ug_sem_3_sub_17_total_marks = request.form['ug_sem_3_sub_17_total_marks']
+            ug_sem_3_sub_18_name = request.form['ug_sem_3_sub_18_name']
+            ug_sem_3_sub_18_marks_obtained = request.form['ug_sem_3_sub_18_marks_obtained']
+            ug_sem_3_sub_18_total_marks = request.form['ug_sem_3_sub_18_total_marks']
+            ug_sem_3_sub_19_name = request.form['ug_sem_3_sub_19_name']
+            ug_sem_3_sub_19_marks_obtained = request.form['ug_sem_3_sub_19_marks_obtained']
+            ug_sem_3_sub_19_total_marks = request.form['ug_sem_3_sub_19_total_marks']
+            ug_sem_3_sub_20_name = request.form['ug_sem_3_sub_20_name']
+            ug_sem_3_sub_20_marks_obtained = request.form['ug_sem_3_sub_20_marks_obtained']
+            ug_sem_3_sub_20_total_marks = request.form['ug_sem_3_sub_20_total_marks']
+
+
+            # Update ug_sem_3_info in the database
+            cursor.execute("""
+                UPDATE ug_sem_3
+                SET ug_enrollment_no = ?, ug_sem_3_session = ?, ug_sem_3_roll_no = ?, ug_sem_3_result = ?, ug_sem_3_sub_1_name = ?, ug_sem_3_sub_1_marks_obtained = ?, ug_sem_3_sub_1_total_marks = ?, ug_sem_3_sub_2_name = ?, ug_sem_3_sub_2_marks_obtained = ?, ug_sem_3_sub_2_total_marks = ?, ug_sem_3_sub_3_name = ?, ug_sem_3_sub_3_marks_obtained = ?, ug_sem_3_sub_3_total_marks = ?, ug_sem_3_sub_4_name = ?, ug_sem_3_sub_4_marks_obtained = ?, ug_sem_3_sub_4_total_marks = ?, ug_sem_3_sub_5_name = ?, ug_sem_3_sub_5_marks_obtained = ?, ug_sem_3_sub_5_total_marks = ?, ug_sem_3_sub_6_name = ?, ug_sem_3_sub_6_marks_obtained = ?, ug_sem_3_sub_6_total_marks = ?, ug_sem_3_sub_7_name = ?, ug_sem_3_sub_7_marks_obtained = ?, ug_sem_3_sub_7_total_marks = ?, ug_sem_3_sub_8_name = ?, ug_sem_3_sub_8_marks_obtained = ?, ug_sem_3_sub_8_total_marks = ?, ug_sem_3_sub_9_name = ?, ug_sem_3_sub_9_marks_obtained = ?, ug_sem_3_sub_9_total_marks = ?, ug_sem_3_sub_10_name = ?, ug_sem_3_sub_10_marks_obtained = ?, ug_sem_3_sub_10_total_marks = ?, ug_sem_3_sub_11_name = ?, ug_sem_3_sub_11_marks_obtained = ?, ug_sem_3_sub_11_total_marks = ?, ug_sem_3_sub_12_name = ?, ug_sem_3_sub_12_marks_obtained = ?, ug_sem_3_sub_12_total_marks = ?, ug_sem_3_sub_13_name = ?, ug_sem_3_sub_13_marks_obtained = ?, ug_sem_3_sub_13_total_marks = ?, ug_sem_3_sub_14_name = ?, ug_sem_3_sub_14_marks_obtained = ?, ug_sem_3_sub_14_total_marks = ?, ug_sem_3_sub_15_name = ?, ug_sem_3_sub_15_marks_obtained = ?, ug_sem_3_sub_15_total_marks = ?, ug_sem_3_sub_16_name = ?, ug_sem_3_sub_16_marks_obtained = ?, ug_sem_3_sub_16_total_marks = ?, ug_sem_3_sub_17_name = ?, ug_sem_3_sub_17_marks_obtained = ?, ug_sem_3_sub_17_total_marks = ?, ug_sem_3_sub_18_name = ?, ug_sem_3_sub_18_marks_obtained = ?, ug_sem_3_sub_18_total_marks = ?, ug_sem_3_sub_19_name = ?, ug_sem_3_sub_19_marks_obtained = ?, ug_sem_3_sub_19_total_marks = ?, ug_sem_3_sub_20_name = ?, ug_sem_3_sub_20_marks_obtained = ?, ug_sem_3_sub_20_total_marks = ?
+                WHERE aadhaar_no = ?
+            """,(ug_enrollment_no,ug_sem_3_session,ug_sem_3_roll_no,ug_sem_3_result,ug_sem_3_sub_1_name,
+                 ug_sem_3_sub_1_marks_obtained,ug_sem_3_sub_1_total_marks,ug_sem_3_sub_2_name,
+                 ug_sem_3_sub_2_marks_obtained,ug_sem_3_sub_2_total_marks,ug_sem_3_sub_3_name,
+                 ug_sem_3_sub_3_marks_obtained,ug_sem_3_sub_3_total_marks,ug_sem_3_sub_4_name,
+                 ug_sem_3_sub_4_marks_obtained,ug_sem_3_sub_4_total_marks,ug_sem_3_sub_5_name,
+                 ug_sem_3_sub_5_marks_obtained,ug_sem_3_sub_5_total_marks,ug_sem_3_sub_6_name,
+                 ug_sem_3_sub_6_marks_obtained,ug_sem_3_sub_6_total_marks,ug_sem_3_sub_7_name,
+                 ug_sem_3_sub_7_marks_obtained,ug_sem_3_sub_7_total_marks,ug_sem_3_sub_8_name,
+                 ug_sem_3_sub_8_marks_obtained,ug_sem_3_sub_8_total_marks,ug_sem_3_sub_9_name,
+                 ug_sem_3_sub_9_marks_obtained,ug_sem_3_sub_9_total_marks,ug_sem_3_sub_10_name,
+                 ug_sem_3_sub_10_marks_obtained,ug_sem_3_sub_10_total_marks,ug_sem_3_sub_11_name,
+                 ug_sem_3_sub_11_marks_obtained,ug_sem_3_sub_11_total_marks,ug_sem_3_sub_12_name,
+                 ug_sem_3_sub_12_marks_obtained,ug_sem_3_sub_12_total_marks,ug_sem_3_sub_13_name,
+                 ug_sem_3_sub_13_marks_obtained,ug_sem_3_sub_13_total_marks,ug_sem_3_sub_14_name,
+                 ug_sem_3_sub_14_marks_obtained,ug_sem_3_sub_14_total_marks,ug_sem_3_sub_15_name,
+                 ug_sem_3_sub_15_marks_obtained,ug_sem_3_sub_15_total_marks,ug_sem_3_sub_16_name,
+                 ug_sem_3_sub_16_marks_obtained,ug_sem_3_sub_16_total_marks,ug_sem_3_sub_17_name,
+                 ug_sem_3_sub_17_marks_obtained,ug_sem_3_sub_17_total_marks,ug_sem_3_sub_18_name,
+                 ug_sem_3_sub_18_marks_obtained,ug_sem_3_sub_18_total_marks,ug_sem_3_sub_19_name,
+                 ug_sem_3_sub_19_marks_obtained,ug_sem_3_sub_19_total_marks,ug_sem_3_sub_20_name,
+                 ug_sem_3_sub_20_marks_obtained,ug_sem_3_sub_20_total_marks,aadhaar_no))
+
+            # Commit changes
+            conn.commit()
+
+            # Redirect to the next form
+            return redirect(url_for('form_ug_sem_4'))  # replace 'next_form' with the actual name of the next form
+
+        else:
+            # Fetch ug_sem_3_info from the database
+            cursor.execute("SELECT * FROM ug_sem_3 WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+            ug_sem_3_info = cursor.fetchone()
+
+            # Pass the ug_sem_3_info to the template
+            return render_template('Student/student_info_forms/form_ug_sem_3.html', ug_sem_3=ug_sem_3_info)
+    except Exception as e:
+        app.logger.error(f"Exception occurred: {e}")
+        return str(e), 500
+
+@app.route('/form_ug_sem_4', methods=['GET', 'POST'])
+def form_ug_sem_4():
+    try:
+        if request.method == 'POST':
+            return form_ug_sem_4_post()
+        else:
+            # Fetch ug_sem_4_info from the database
+            cursor.execute("SELECT * FROM ug_sem_4 WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+            ug_sem_4_info = cursor.fetchone()
+
+            # If ug_sem_4_info is None, create a default ug_sem_4_info object
+            if ug_sem_4_info is None:
+                ug_sem_4_info = {
+                    'ug_enrollment_no': '',
+                    'ug_sem_4_session': '',
+                    'ug_sem_4_roll_no': '',
+                    'ug_sem_4_result': '',
+                    'ug_sem_4_sub_1_name': '',
+                    'ug_sem_4_sub_1_marks_obtained': '',
+                    'ug_sem_4_sub_1_total_marks': '',
+                    'ug_sem_4_sub_2_name': '',
+                    'ug_sem_4_sub_2_marks_obtained': '',
+                    'ug_sem_4_sub_2_total_marks': '',
+                    'ug_sem_4_sub_3_name': '',
+                    'ug_sem_4_sub_3_marks_obtained': '',
+                    'ug_sem_4_sub_3_total_marks': '',
+                    'ug_sem_4_sub_4_name': '',
+                    'ug_sem_4_sub_4_marks_obtained': '',
+                    'ug_sem_4_sub_4_total_marks': '',
+                    'ug_sem_4_sub_5_name': '',
+                    'ug_sem_4_sub_5_marks_obtained': '',
+                    'ug_sem_4_sub_5_total_marks': '',
+                    'ug_sem_4_sub_6_name': '',
+                    'ug_sem_4_sub_6_marks_obtained': '',
+                    'ug_sem_4_sub_6_total_marks': '',
+                    'ug_sem_4_sub_7_name': '',
+                    'ug_sem_4_sub_7_marks_obtained': '',
+                    'ug_sem_4_sub_7_total_marks': '',
+                    'ug_sem_4_sub_8_name': '',
+                    'ug_sem_4_sub_8_marks_obtained': '',
+                    'ug_sem_4_sub_8_total_marks': '',
+                    'ug_sem_4_sub_9_name': '',
+                    'ug_sem_4_sub_9_marks_obtained': '',
+                    'ug_sem_4_sub_9_total_marks': '',
+                    'ug_sem_4_sub_10_name': '',
+                    'ug_sem_4_sub_10_marks_obtained': '',
+                    'ug_sem_4_sub_10_total_marks': '',
+                    'ug_sem_4_sub_11_name': '',
+                    'ug_sem_4_sub_11_marks_obtained': '',
+                    'ug_sem_4_sub_11_total_marks': '',
+                    'ug_sem_4_sub_12_name': '',
+                    'ug_sem_4_sub_12_marks_obtained': '',
+                    'ug_sem_4_sub_12_total_marks': '',
+                    'ug_sem_4_sub_13_name': '',
+                    'ug_sem_4_sub_13_marks_obtained': '',
+                    'ug_sem_4_sub_13_total_marks': '',
+                    'ug_sem_4_sub_14_name': '',
+                    'ug_sem_4_sub_14_marks_obtained': '',
+                    'ug_sem_4_sub_14_total_marks': '',
+                    'ug_sem_4_sub_15_name': '',
+                    'ug_sem_4_sub_15_marks_obtained': '',
+                    'ug_sem_4_sub_15_total_marks': '',
+                    'ug_sem_4_sub_16_name': '',
+                    'ug_sem_4_sub_16_marks_obtained': '',
+                    'ug_sem_4_sub_16_total_marks': '',
+                    'ug_sem_4_sub_17_name': '',
+                    'ug_sem_4_sub_17_marks_obtained': '',
+                    'ug_sem_4_sub_17_total_marks': '',
+                    'ug_sem_4_sub_18_name': '',
+                    'ug_sem_4_sub_18_marks_obtained': '',
+                    'ug_sem_4_sub_18_total_marks': '',
+                    'ug_sem_4_sub_19_name': '',
+                    'ug_sem_4_sub_19_marks_obtained': '',
+                    'ug_sem_4_sub_19_total_marks': '',
+                    'ug_sem_4_sub_20_name': '',
+                    'ug_sem_4_sub_20_marks_obtained': '',
+                    'ug_sem_4_sub_20_total_marks': ''
+
+                    # Add more fields as needed
+                }
+
+            # Pass the ug_sem_4_info to the template
+            return render_template('Student/student_info_forms/form_ug_sem_4.html', ug_sem_4=ug_sem_4_info)
+    except Exception as e:
+        app.logger.error(f"Exception occurred: {e}")
+        return str(e), 500
+
+def form_ug_sem_4_post():
+    try:
+        if request.method == 'POST':
+            # Get form data
+            aadhaar_no = session['aadhaar_no']
+            ug_enrollment_no = request.form['ug_enrollment_no']
+            ug_sem_4_session = request.form['ug_sem_4_session']
+            ug_sem_4_roll_no = request.form['ug_sem_4_roll_no']
+            ug_sem_4_result = request.form['ug_sem_4_result']
+            ug_sem_4_sub_1_name = request.form['ug_sem_4_sub_1_name']
+            ug_sem_4_sub_1_marks_obtained = request.form['ug_sem_4_sub_1_marks_obtained']
+            ug_sem_4_sub_1_total_marks = request.form['ug_sem_4_sub_1_total_marks']
+            ug_sem_4_sub_2_name = request.form['ug_sem_4_sub_2_name']
+            ug_sem_4_sub_2_marks_obtained = request.form['ug_sem_4_sub_2_marks_obtained']
+            ug_sem_4_sub_2_total_marks = request.form['ug_sem_4_sub_2_total_marks']
+            ug_sem_4_sub_3_name = request.form['ug_sem_4_sub_3_name']
+            ug_sem_4_sub_3_marks_obtained = request.form['ug_sem_4_sub_3_marks_obtained']
+            ug_sem_4_sub_3_total_marks = request.form['ug_sem_4_sub_3_total_marks']
+            ug_sem_4_sub_4_name = request.form['ug_sem_4_sub_4_name']
+            ug_sem_4_sub_4_marks_obtained = request.form['ug_sem_4_sub_4_marks_obtained']
+            ug_sem_4_sub_4_total_marks = request.form['ug_sem_4_sub_4_total_marks']
+            ug_sem_4_sub_5_name = request.form['ug_sem_4_sub_5_name']
+            ug_sem_4_sub_5_marks_obtained = request.form['ug_sem_4_sub_5_marks_obtained']
+            ug_sem_4_sub_5_total_marks = request.form['ug_sem_4_sub_5_total_marks']
+            ug_sem_4_sub_6_name = request.form['ug_sem_4_sub_6_name']
+            ug_sem_4_sub_6_marks_obtained = request.form['ug_sem_4_sub_6_marks_obtained']
+            ug_sem_4_sub_6_total_marks = request.form['ug_sem_4_sub_6_total_marks']
+            ug_sem_4_sub_7_name = request.form['ug_sem_4_sub_7_name']
+            ug_sem_4_sub_7_marks_obtained = request.form['ug_sem_4_sub_7_marks_obtained']
+            ug_sem_4_sub_7_total_marks = request.form['ug_sem_4_sub_7_total_marks']
+            ug_sem_4_sub_8_name = request.form['ug_sem_4_sub_8_name']
+            ug_sem_4_sub_8_marks_obtained = request.form['ug_sem_4_sub_8_marks_obtained']
+            ug_sem_4_sub_8_total_marks = request.form['ug_sem_4_sub_8_total_marks']
+            ug_sem_4_sub_9_name = request.form['ug_sem_4_sub_9_name']
+            ug_sem_4_sub_9_marks_obtained = request.form['ug_sem_4_sub_9_marks_obtained']
+            ug_sem_4_sub_9_total_marks = request.form['ug_sem_4_sub_9_total_marks']
+            ug_sem_4_sub_10_name = request.form['ug_sem_4_sub_10_name']
+            ug_sem_4_sub_10_marks_obtained = request.form['ug_sem_4_sub_10_marks_obtained']
+            ug_sem_4_sub_10_total_marks = request.form['ug_sem_4_sub_10_total_marks']
+            ug_sem_4_sub_11_name = request.form['ug_sem_4_sub_11_name']
+            ug_sem_4_sub_11_marks_obtained = request.form['ug_sem_4_sub_11_marks_obtained']
+            ug_sem_4_sub_11_total_marks = request.form['ug_sem_4_sub_11_total_marks']
+            ug_sem_4_sub_12_name = request.form['ug_sem_4_sub_12_name']
+            ug_sem_4_sub_12_marks_obtained = request.form['ug_sem_4_sub_12_marks_obtained']
+            ug_sem_4_sub_12_total_marks = request.form['ug_sem_4_sub_12_total_marks']
+            ug_sem_4_sub_13_name = request.form['ug_sem_4_sub_13_name']
+            ug_sem_4_sub_13_marks_obtained = request.form['ug_sem_4_sub_13_marks_obtained']
+            ug_sem_4_sub_13_total_marks = request.form['ug_sem_4_sub_13_total_marks']
+            ug_sem_4_sub_14_name = request.form['ug_sem_4_sub_14_name']
+            ug_sem_4_sub_14_marks_obtained = request.form['ug_sem_4_sub_14_marks_obtained']
+            ug_sem_4_sub_14_total_marks = request.form['ug_sem_4_sub_14_total_marks']
+            ug_sem_4_sub_15_name = request.form['ug_sem_4_sub_15_name']
+            ug_sem_4_sub_15_marks_obtained = request.form['ug_sem_4_sub_15_marks_obtained']
+            ug_sem_4_sub_15_total_marks = request.form['ug_sem_4_sub_15_total_marks']
+            ug_sem_4_sub_16_name = request.form['ug_sem_4_sub_16_name']
+            ug_sem_4_sub_16_marks_obtained = request.form['ug_sem_4_sub_16_marks_obtained']
+            ug_sem_4_sub_16_total_marks = request.form['ug_sem_4_sub_16_total_marks']
+            ug_sem_4_sub_17_name = request.form['ug_sem_4_sub_17_name']
+            ug_sem_4_sub_17_marks_obtained = request.form['ug_sem_4_sub_17_marks_obtained']
+            ug_sem_4_sub_17_total_marks = request.form['ug_sem_4_sub_17_total_marks']
+            ug_sem_4_sub_18_name = request.form['ug_sem_4_sub_18_name']
+            ug_sem_4_sub_18_marks_obtained = request.form['ug_sem_4_sub_18_marks_obtained']
+            ug_sem_4_sub_18_total_marks = request.form['ug_sem_4_sub_18_total_marks']
+            ug_sem_4_sub_19_name = request.form['ug_sem_4_sub_19_name']
+            ug_sem_4_sub_19_marks_obtained = request.form['ug_sem_4_sub_19_marks_obtained']
+            ug_sem_4_sub_19_total_marks = request.form['ug_sem_4_sub_19_total_marks']
+            ug_sem_4_sub_20_name = request.form['ug_sem_4_sub_20_name']
+            ug_sem_4_sub_20_marks_obtained = request.form['ug_sem_4_sub_20_marks_obtained']
+            ug_sem_4_sub_20_total_marks = request.form['ug_sem_4_sub_20_total_marks']
+
+
+            # Update ug_sem_4_info in the database
+            cursor.execute("""
+                UPDATE ug_sem_4
+                SET ug_enrollment_no = ?, ug_sem_4_session = ?, ug_sem_4_roll_no = ?, ug_sem_4_result = ?, ug_sem_4_sub_1_name = ?, ug_sem_4_sub_1_marks_obtained = ?, ug_sem_4_sub_1_total_marks = ?, ug_sem_4_sub_2_name = ?, ug_sem_4_sub_2_marks_obtained = ?, ug_sem_4_sub_2_total_marks = ?, ug_sem_4_sub_3_name = ?, ug_sem_4_sub_3_marks_obtained = ?, ug_sem_4_sub_3_total_marks = ?, ug_sem_4_sub_4_name = ?, ug_sem_4_sub_4_marks_obtained = ?, ug_sem_4_sub_4_total_marks = ?, ug_sem_4_sub_5_name = ?, ug_sem_4_sub_5_marks_obtained = ?, ug_sem_4_sub_5_total_marks = ?, ug_sem_4_sub_6_name = ?, ug_sem_4_sub_6_marks_obtained = ?, ug_sem_4_sub_6_total_marks = ?, ug_sem_4_sub_7_name = ?, ug_sem_4_sub_7_marks_obtained = ?, ug_sem_4_sub_7_total_marks = ?, ug_sem_4_sub_8_name = ?, ug_sem_4_sub_8_marks_obtained = ?, ug_sem_4_sub_8_total_marks = ?, ug_sem_4_sub_9_name = ?, ug_sem_4_sub_9_marks_obtained = ?, ug_sem_4_sub_9_total_marks = ?, ug_sem_4_sub_10_name = ?, ug_sem_4_sub_10_marks_obtained = ?, ug_sem_4_sub_10_total_marks = ?, ug_sem_4_sub_11_name = ?, ug_sem_4_sub_11_marks_obtained = ?, ug_sem_4_sub_11_total_marks = ?, ug_sem_4_sub_12_name = ?, ug_sem_4_sub_12_marks_obtained = ?, ug_sem_4_sub_12_total_marks = ?, ug_sem_4_sub_13_name = ?, ug_sem_4_sub_13_marks_obtained = ?, ug_sem_4_sub_13_total_marks = ?, ug_sem_4_sub_14_name = ?, ug_sem_4_sub_14_marks_obtained = ?, ug_sem_4_sub_14_total_marks = ?, ug_sem_4_sub_15_name = ?, ug_sem_4_sub_15_marks_obtained = ?, ug_sem_4_sub_15_total_marks = ?, ug_sem_4_sub_16_name = ?, ug_sem_4_sub_16_marks_obtained = ?, ug_sem_4_sub_16_total_marks = ?, ug_sem_4_sub_17_name = ?, ug_sem_4_sub_17_marks_obtained = ?, ug_sem_4_sub_17_total_marks = ?, ug_sem_4_sub_18_name = ?, ug_sem_4_sub_18_marks_obtained = ?, ug_sem_4_sub_18_total_marks = ?, ug_sem_4_sub_19_name = ?, ug_sem_4_sub_19_marks_obtained = ?, ug_sem_4_sub_19_total_marks = ?, ug_sem_4_sub_20_name = ?, ug_sem_4_sub_20_marks_obtained = ?, ug_sem_4_sub_20_total_marks = ?
+                WHERE aadhaar_no = ?
+            """,(ug_enrollment_no,ug_sem_4_session,ug_sem_4_roll_no,ug_sem_4_result,ug_sem_4_sub_1_name,
+                 ug_sem_4_sub_1_marks_obtained,ug_sem_4_sub_1_total_marks,ug_sem_4_sub_2_name,
+                 ug_sem_4_sub_2_marks_obtained,ug_sem_4_sub_2_total_marks,ug_sem_4_sub_3_name,
+                 ug_sem_4_sub_3_marks_obtained,ug_sem_4_sub_3_total_marks,ug_sem_4_sub_4_name,
+                 ug_sem_4_sub_4_marks_obtained,ug_sem_4_sub_4_total_marks,ug_sem_4_sub_5_name,
+                 ug_sem_4_sub_5_marks_obtained,ug_sem_4_sub_5_total_marks,ug_sem_4_sub_6_name,
+                 ug_sem_4_sub_6_marks_obtained,ug_sem_4_sub_6_total_marks,ug_sem_4_sub_7_name,
+                 ug_sem_4_sub_7_marks_obtained,ug_sem_4_sub_7_total_marks,ug_sem_4_sub_8_name,
+                 ug_sem_4_sub_8_marks_obtained,ug_sem_4_sub_8_total_marks,ug_sem_4_sub_9_name,
+                 ug_sem_4_sub_9_marks_obtained,ug_sem_4_sub_9_total_marks,ug_sem_4_sub_10_name,
+                 ug_sem_4_sub_10_marks_obtained,ug_sem_4_sub_10_total_marks,ug_sem_4_sub_11_name,
+                 ug_sem_4_sub_11_marks_obtained,ug_sem_4_sub_11_total_marks,ug_sem_4_sub_12_name,
+                 ug_sem_4_sub_12_marks_obtained,ug_sem_4_sub_12_total_marks,ug_sem_4_sub_13_name,
+                 ug_sem_4_sub_13_marks_obtained,ug_sem_4_sub_13_total_marks,ug_sem_4_sub_14_name,
+                 ug_sem_4_sub_14_marks_obtained,ug_sem_4_sub_14_total_marks,ug_sem_4_sub_15_name,
+                 ug_sem_4_sub_15_marks_obtained,ug_sem_4_sub_15_total_marks,ug_sem_4_sub_16_name,
+                 ug_sem_4_sub_16_marks_obtained,ug_sem_4_sub_16_total_marks,ug_sem_4_sub_17_name,
+                 ug_sem_4_sub_17_marks_obtained,ug_sem_4_sub_17_total_marks,ug_sem_4_sub_18_name,
+                 ug_sem_4_sub_18_marks_obtained,ug_sem_4_sub_18_total_marks,ug_sem_4_sub_19_name,
+                 ug_sem_4_sub_19_marks_obtained,ug_sem_4_sub_19_total_marks,ug_sem_4_sub_20_name,
+                 ug_sem_4_sub_20_marks_obtained,ug_sem_4_sub_20_total_marks,aadhaar_no))
+
+            # Commit changes
+            conn.commit()
+
+            # Redirect to the next form
+            return redirect(url_for('form_ug_sem_5'))  # replace 'next_form' with the actual name of the next form
+
+        else:
+            # Fetch ug_sem_4_info from the database
+            cursor.execute("SELECT * FROM ug_sem_4 WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+            ug_sem_4_info = cursor.fetchone()
+
+            # Pass the ug_sem_4_info to the template
+            return render_template('Student/student_info_forms/form_ug_sem_4.html', ug_sem_4=ug_sem_4_info)
+    except Exception as e:
+        app.logger.error(f"Exception occurred: {e}")
+        return str(e), 500
+
+@app.route('/form_ug_sem_5', methods=['GET', 'POST'])
+def form_ug_sem_5():
+    try:
+        if request.method == 'POST':
+            return form_ug_sem_5_post()
+        else:
+            # Fetch ug_sem_5_info from the database
+            cursor.execute("SELECT * FROM ug_sem_5 WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+            ug_sem_5_info = cursor.fetchone()
+
+            # If ug_sem_5_info is None, create a default ug_sem_5_info object
+            if ug_sem_5_info is None:
+                ug_sem_5_info = {
+                    'ug_enrollment_no': '',
+                    'ug_sem_5_session': '',
+                    'ug_sem_5_roll_no': '',
+                    'ug_sem_5_result': '',
+                    'ug_sem_5_sub_1_name': '',
+                    'ug_sem_5_sub_1_marks_obtained': '',
+                    'ug_sem_5_sub_1_total_marks': '',
+                    'ug_sem_5_sub_2_name': '',
+                    'ug_sem_5_sub_2_marks_obtained': '',
+                    'ug_sem_5_sub_2_total_marks': '',
+                    'ug_sem_5_sub_3_name': '',
+                    'ug_sem_5_sub_3_marks_obtained': '',
+                    'ug_sem_5_sub_3_total_marks': '',
+                    'ug_sem_5_sub_4_name': '',
+                    'ug_sem_5_sub_4_marks_obtained': '',
+                    'ug_sem_5_sub_4_total_marks': '',
+                    'ug_sem_5_sub_5_name': '',
+                    'ug_sem_5_sub_5_marks_obtained': '',
+                    'ug_sem_5_sub_5_total_marks': '',
+                    'ug_sem_5_sub_6_name': '',
+                    'ug_sem_5_sub_6_marks_obtained': '',
+                    'ug_sem_5_sub_6_total_marks': '',
+                    'ug_sem_5_sub_7_name': '',
+                    'ug_sem_5_sub_7_marks_obtained': '',
+                    'ug_sem_5_sub_7_total_marks': '',
+                    'ug_sem_5_sub_8_name': '',
+                    'ug_sem_5_sub_8_marks_obtained': '',
+                    'ug_sem_5_sub_8_total_marks': '',
+                    'ug_sem_5_sub_9_name': '',
+                    'ug_sem_5_sub_9_marks_obtained': '',
+                    'ug_sem_5_sub_9_total_marks': '',
+                    'ug_sem_5_sub_10_name': '',
+                    'ug_sem_5_sub_10_marks_obtained': '',
+                    'ug_sem_5_sub_10_total_marks': '',
+                    'ug_sem_5_sub_11_name': '',
+                    'ug_sem_5_sub_11_marks_obtained': '',
+                    'ug_sem_5_sub_11_total_marks': '',
+                    'ug_sem_5_sub_12_name': '',
+                    'ug_sem_5_sub_12_marks_obtained': '',
+                    'ug_sem_5_sub_12_total_marks': '',
+                    'ug_sem_5_sub_13_name': '',
+                    'ug_sem_5_sub_13_marks_obtained': '',
+                    'ug_sem_5_sub_13_total_marks': '',
+                    'ug_sem_5_sub_14_name': '',
+                    'ug_sem_5_sub_14_marks_obtained': '',
+                    'ug_sem_5_sub_14_total_marks': '',
+                    'ug_sem_5_sub_15_name': '',
+                    'ug_sem_5_sub_15_marks_obtained': '',
+                    'ug_sem_5_sub_15_total_marks': '',
+                    'ug_sem_5_sub_16_name': '',
+                    'ug_sem_5_sub_16_marks_obtained': '',
+                    'ug_sem_5_sub_16_total_marks': '',
+                    'ug_sem_5_sub_17_name': '',
+                    'ug_sem_5_sub_17_marks_obtained': '',
+                    'ug_sem_5_sub_17_total_marks': '',
+                    'ug_sem_5_sub_18_name': '',
+                    'ug_sem_5_sub_18_marks_obtained': '',
+                    'ug_sem_5_sub_18_total_marks': '',
+                    'ug_sem_5_sub_19_name': '',
+                    'ug_sem_5_sub_19_marks_obtained': '',
+                    'ug_sem_5_sub_19_total_marks': '',
+                    'ug_sem_5_sub_20_name': '',
+                    'ug_sem_5_sub_20_marks_obtained': '',
+                    'ug_sem_5_sub_20_total_marks': ''
+
+                    # Add more fields as needed
+                }
+
+            # Pass the ug_sem_5_info to the template
+            return render_template('Student/student_info_forms/form_ug_sem_5.html', ug_sem_5=ug_sem_5_info)
+    except Exception as e:
+        app.logger.error(f"Exception occurred: {e}")
+        return str(e), 500
+
+def form_ug_sem_5_post():
+    try:
+        if request.method == 'POST':
+            # Get form data
+            aadhaar_no = session['aadhaar_no']
+            ug_enrollment_no = request.form['ug_enrollment_no']
+            ug_sem_5_session = request.form['ug_sem_5_session']
+            ug_sem_5_roll_no = request.form['ug_sem_5_roll_no']
+            ug_sem_5_result = request.form['ug_sem_5_result']
+            ug_sem_5_sub_1_name = request.form['ug_sem_5_sub_1_name']
+            ug_sem_5_sub_1_marks_obtained = request.form['ug_sem_5_sub_1_marks_obtained']
+            ug_sem_5_sub_1_total_marks = request.form['ug_sem_5_sub_1_total_marks']
+            ug_sem_5_sub_2_name = request.form['ug_sem_5_sub_2_name']
+            ug_sem_5_sub_2_marks_obtained = request.form['ug_sem_5_sub_2_marks_obtained']
+            ug_sem_5_sub_2_total_marks = request.form['ug_sem_5_sub_2_total_marks']
+            ug_sem_5_sub_3_name = request.form['ug_sem_5_sub_3_name']
+            ug_sem_5_sub_3_marks_obtained = request.form['ug_sem_5_sub_3_marks_obtained']
+            ug_sem_5_sub_3_total_marks = request.form['ug_sem_5_sub_3_total_marks']
+            ug_sem_5_sub_4_name = request.form['ug_sem_5_sub_4_name']
+            ug_sem_5_sub_4_marks_obtained = request.form['ug_sem_5_sub_4_marks_obtained']
+            ug_sem_5_sub_4_total_marks = request.form['ug_sem_5_sub_4_total_marks']
+            ug_sem_5_sub_5_name = request.form['ug_sem_5_sub_5_name']
+            ug_sem_5_sub_5_marks_obtained = request.form['ug_sem_5_sub_5_marks_obtained']
+            ug_sem_5_sub_5_total_marks = request.form['ug_sem_5_sub_5_total_marks']
+            ug_sem_5_sub_6_name = request.form['ug_sem_5_sub_6_name']
+            ug_sem_5_sub_6_marks_obtained = request.form['ug_sem_5_sub_6_marks_obtained']
+            ug_sem_5_sub_6_total_marks = request.form['ug_sem_5_sub_6_total_marks']
+            ug_sem_5_sub_7_name = request.form['ug_sem_5_sub_7_name']
+            ug_sem_5_sub_7_marks_obtained = request.form['ug_sem_5_sub_7_marks_obtained']
+            ug_sem_5_sub_7_total_marks = request.form['ug_sem_5_sub_7_total_marks']
+            ug_sem_5_sub_8_name = request.form['ug_sem_5_sub_8_name']
+            ug_sem_5_sub_8_marks_obtained = request.form['ug_sem_5_sub_8_marks_obtained']
+            ug_sem_5_sub_8_total_marks = request.form['ug_sem_5_sub_8_total_marks']
+            ug_sem_5_sub_9_name = request.form['ug_sem_5_sub_9_name']
+            ug_sem_5_sub_9_marks_obtained = request.form['ug_sem_5_sub_9_marks_obtained']
+            ug_sem_5_sub_9_total_marks = request.form['ug_sem_5_sub_9_total_marks']
+            ug_sem_5_sub_10_name = request.form['ug_sem_5_sub_10_name']
+            ug_sem_5_sub_10_marks_obtained = request.form['ug_sem_5_sub_10_marks_obtained']
+            ug_sem_5_sub_10_total_marks = request.form['ug_sem_5_sub_10_total_marks']
+            ug_sem_5_sub_11_name = request.form['ug_sem_5_sub_11_name']
+            ug_sem_5_sub_11_marks_obtained = request.form['ug_sem_5_sub_11_marks_obtained']
+            ug_sem_5_sub_11_total_marks = request.form['ug_sem_5_sub_11_total_marks']
+            ug_sem_5_sub_12_name = request.form['ug_sem_5_sub_12_name']
+            ug_sem_5_sub_12_marks_obtained = request.form['ug_sem_5_sub_12_marks_obtained']
+            ug_sem_5_sub_12_total_marks = request.form['ug_sem_5_sub_12_total_marks']
+            ug_sem_5_sub_13_name = request.form['ug_sem_5_sub_13_name']
+            ug_sem_5_sub_13_marks_obtained = request.form['ug_sem_5_sub_13_marks_obtained']
+            ug_sem_5_sub_13_total_marks = request.form['ug_sem_5_sub_13_total_marks']
+            ug_sem_5_sub_14_name = request.form['ug_sem_5_sub_14_name']
+            ug_sem_5_sub_14_marks_obtained = request.form['ug_sem_5_sub_14_marks_obtained']
+            ug_sem_5_sub_14_total_marks = request.form['ug_sem_5_sub_14_total_marks']
+            ug_sem_5_sub_15_name = request.form['ug_sem_5_sub_15_name']
+            ug_sem_5_sub_15_marks_obtained = request.form['ug_sem_5_sub_15_marks_obtained']
+            ug_sem_5_sub_15_total_marks = request.form['ug_sem_5_sub_15_total_marks']
+            ug_sem_5_sub_16_name = request.form['ug_sem_5_sub_16_name']
+            ug_sem_5_sub_16_marks_obtained = request.form['ug_sem_5_sub_16_marks_obtained']
+            ug_sem_5_sub_16_total_marks = request.form['ug_sem_5_sub_16_total_marks']
+            ug_sem_5_sub_17_name = request.form['ug_sem_5_sub_17_name']
+            ug_sem_5_sub_17_marks_obtained = request.form['ug_sem_5_sub_17_marks_obtained']
+            ug_sem_5_sub_17_total_marks = request.form['ug_sem_5_sub_17_total_marks']
+            ug_sem_5_sub_18_name = request.form['ug_sem_5_sub_18_name']
+            ug_sem_5_sub_18_marks_obtained = request.form['ug_sem_5_sub_18_marks_obtained']
+            ug_sem_5_sub_18_total_marks = request.form['ug_sem_5_sub_18_total_marks']
+            ug_sem_5_sub_19_name = request.form['ug_sem_5_sub_19_name']
+            ug_sem_5_sub_19_marks_obtained = request.form['ug_sem_5_sub_19_marks_obtained']
+            ug_sem_5_sub_19_total_marks = request.form['ug_sem_5_sub_19_total_marks']
+            ug_sem_5_sub_20_name = request.form['ug_sem_5_sub_20_name']
+            ug_sem_5_sub_20_marks_obtained = request.form['ug_sem_5_sub_20_marks_obtained']
+            ug_sem_5_sub_20_total_marks = request.form['ug_sem_5_sub_20_total_marks']
+
+
+            # Update ug_sem_5_info in the database
+            cursor.execute("""
+                UPDATE ug_sem_5
+                SET ug_enrollment_no = ?, ug_sem_5_session = ?, ug_sem_5_roll_no = ?, ug_sem_5_result = ?, ug_sem_5_sub_1_name = ?, ug_sem_5_sub_1_marks_obtained = ?, ug_sem_5_sub_1_total_marks = ?, ug_sem_5_sub_2_name = ?, ug_sem_5_sub_2_marks_obtained = ?, ug_sem_5_sub_2_total_marks = ?, ug_sem_5_sub_3_name = ?, ug_sem_5_sub_3_marks_obtained = ?, ug_sem_5_sub_3_total_marks = ?, ug_sem_5_sub_4_name = ?, ug_sem_5_sub_4_marks_obtained = ?, ug_sem_5_sub_4_total_marks = ?, ug_sem_5_sub_5_name = ?, ug_sem_5_sub_5_marks_obtained = ?, ug_sem_5_sub_5_total_marks = ?, ug_sem_5_sub_6_name = ?, ug_sem_5_sub_6_marks_obtained = ?, ug_sem_5_sub_6_total_marks = ?, ug_sem_5_sub_7_name = ?, ug_sem_5_sub_7_marks_obtained = ?, ug_sem_5_sub_7_total_marks = ?, ug_sem_5_sub_8_name = ?, ug_sem_5_sub_8_marks_obtained = ?, ug_sem_5_sub_8_total_marks = ?, ug_sem_5_sub_9_name = ?, ug_sem_5_sub_9_marks_obtained = ?, ug_sem_5_sub_9_total_marks = ?, ug_sem_5_sub_10_name = ?, ug_sem_5_sub_10_marks_obtained = ?, ug_sem_5_sub_10_total_marks = ?, ug_sem_5_sub_11_name = ?, ug_sem_5_sub_11_marks_obtained = ?, ug_sem_5_sub_11_total_marks = ?, ug_sem_5_sub_12_name = ?, ug_sem_5_sub_12_marks_obtained = ?, ug_sem_5_sub_12_total_marks = ?, ug_sem_5_sub_13_name = ?, ug_sem_5_sub_13_marks_obtained = ?, ug_sem_5_sub_13_total_marks = ?, ug_sem_5_sub_14_name = ?, ug_sem_5_sub_14_marks_obtained = ?, ug_sem_5_sub_14_total_marks = ?, ug_sem_5_sub_15_name = ?, ug_sem_5_sub_15_marks_obtained = ?, ug_sem_5_sub_15_total_marks = ?, ug_sem_5_sub_16_name = ?, ug_sem_5_sub_16_marks_obtained = ?, ug_sem_5_sub_16_total_marks = ?, ug_sem_5_sub_17_name = ?, ug_sem_5_sub_17_marks_obtained = ?, ug_sem_5_sub_17_total_marks = ?, ug_sem_5_sub_18_name = ?, ug_sem_5_sub_18_marks_obtained = ?, ug_sem_5_sub_18_total_marks = ?, ug_sem_5_sub_19_name = ?, ug_sem_5_sub_19_marks_obtained = ?, ug_sem_5_sub_19_total_marks = ?, ug_sem_5_sub_20_name = ?, ug_sem_5_sub_20_marks_obtained = ?, ug_sem_5_sub_20_total_marks = ?
+                WHERE aadhaar_no = ?
+            """,(ug_enrollment_no,ug_sem_5_session,ug_sem_5_roll_no,ug_sem_5_result,ug_sem_5_sub_1_name,
+                 ug_sem_5_sub_1_marks_obtained,ug_sem_5_sub_1_total_marks,ug_sem_5_sub_2_name,
+                 ug_sem_5_sub_2_marks_obtained,ug_sem_5_sub_2_total_marks,ug_sem_5_sub_3_name,
+                 ug_sem_5_sub_3_marks_obtained,ug_sem_5_sub_3_total_marks,ug_sem_5_sub_4_name,
+                 ug_sem_5_sub_4_marks_obtained,ug_sem_5_sub_4_total_marks,ug_sem_5_sub_5_name,
+                 ug_sem_5_sub_5_marks_obtained,ug_sem_5_sub_5_total_marks,ug_sem_5_sub_6_name,
+                 ug_sem_5_sub_6_marks_obtained,ug_sem_5_sub_6_total_marks,ug_sem_5_sub_7_name,
+                 ug_sem_5_sub_7_marks_obtained,ug_sem_5_sub_7_total_marks,ug_sem_5_sub_8_name,
+                 ug_sem_5_sub_8_marks_obtained,ug_sem_5_sub_8_total_marks,ug_sem_5_sub_9_name,
+                 ug_sem_5_sub_9_marks_obtained,ug_sem_5_sub_9_total_marks,ug_sem_5_sub_10_name,
+                 ug_sem_5_sub_10_marks_obtained,ug_sem_5_sub_10_total_marks,ug_sem_5_sub_11_name,
+                 ug_sem_5_sub_11_marks_obtained,ug_sem_5_sub_11_total_marks,ug_sem_5_sub_12_name,
+                 ug_sem_5_sub_12_marks_obtained,ug_sem_5_sub_12_total_marks,ug_sem_5_sub_13_name,
+                 ug_sem_5_sub_13_marks_obtained,ug_sem_5_sub_13_total_marks,ug_sem_5_sub_14_name,
+                 ug_sem_5_sub_14_marks_obtained,ug_sem_5_sub_14_total_marks,ug_sem_5_sub_15_name,
+                 ug_sem_5_sub_15_marks_obtained,ug_sem_5_sub_15_total_marks,ug_sem_5_sub_16_name,
+                 ug_sem_5_sub_16_marks_obtained,ug_sem_5_sub_16_total_marks,ug_sem_5_sub_17_name,
+                 ug_sem_5_sub_17_marks_obtained,ug_sem_5_sub_17_total_marks,ug_sem_5_sub_18_name,
+                 ug_sem_5_sub_18_marks_obtained,ug_sem_5_sub_18_total_marks,ug_sem_5_sub_19_name,
+                 ug_sem_5_sub_19_marks_obtained,ug_sem_5_sub_19_total_marks,ug_sem_5_sub_20_name,
+                 ug_sem_5_sub_20_marks_obtained,ug_sem_5_sub_20_total_marks,aadhaar_no))
+
+            # Commit changes
+            conn.commit()
+
+            # Redirect to the next form
+            return redirect(url_for('form_ug_sem_6'))  # replace 'next_form' with the actual name of the next form
+
+        else:
+            # Fetch ug_sem_5_info from the database
+            cursor.execute("SELECT * FROM ug_sem_5 WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+            ug_sem_5_info = cursor.fetchone()
+
+            # Pass the ug_sem_5_info to the template
+            return render_template('Student/student_info_forms/form_ug_sem_5.html', ug_sem_5=ug_sem_5_info)
+    except Exception as e:
+        app.logger.error(f"Exception occurred: {e}")
+        return str(e), 500
+
+@app.route('/form_ug_sem_6', methods=['GET', 'POST'])
+def form_ug_sem_6():
+    try:
+        if request.method == 'POST':
+            return form_ug_sem_6_post()
+        else:
+            # Fetch ug_sem_6_info from the database
+            cursor.execute("SELECT * FROM ug_sem_6 WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+            ug_sem_6_info = cursor.fetchone()
+
+            # If ug_sem_6_info is None, create a default ug_sem_6_info object
+            if ug_sem_6_info is None:
+                ug_sem_6_info = {
+                    'ug_enrollment_no': '',
+                    'ug_sem_6_session': '',
+                    'ug_sem_6_roll_no': '',
+                    'ug_sem_6_result': '',
+                    'ug_sem_6_sub_1_name': '',
+                    'ug_sem_6_sub_1_marks_obtained': '',
+                    'ug_sem_6_sub_1_total_marks': '',
+                    'ug_sem_6_sub_2_name': '',
+                    'ug_sem_6_sub_2_marks_obtained': '',
+                    'ug_sem_6_sub_2_total_marks': '',
+                    'ug_sem_6_sub_3_name': '',
+                    'ug_sem_6_sub_3_marks_obtained': '',
+                    'ug_sem_6_sub_3_total_marks': '',
+                    'ug_sem_6_sub_4_name': '',
+                    'ug_sem_6_sub_4_marks_obtained': '',
+                    'ug_sem_6_sub_4_total_marks': '',
+                    'ug_sem_6_sub_5_name': '',
+                    'ug_sem_6_sub_5_marks_obtained': '',
+                    'ug_sem_6_sub_5_total_marks': '',
+                    'ug_sem_6_sub_6_name': '',
+                    'ug_sem_6_sub_6_marks_obtained': '',
+                    'ug_sem_6_sub_6_total_marks': '',
+                    'ug_sem_6_sub_7_name': '',
+                    'ug_sem_6_sub_7_marks_obtained': '',
+                    'ug_sem_6_sub_7_total_marks': '',
+                    'ug_sem_6_sub_8_name': '',
+                    'ug_sem_6_sub_8_marks_obtained': '',
+                    'ug_sem_6_sub_8_total_marks': '',
+                    'ug_sem_6_sub_9_name': '',
+                    'ug_sem_6_sub_9_marks_obtained': '',
+                    'ug_sem_6_sub_9_total_marks': '',
+                    'ug_sem_6_sub_10_name': '',
+                    'ug_sem_6_sub_10_marks_obtained': '',
+                    'ug_sem_6_sub_10_total_marks': '',
+                    'ug_sem_6_sub_11_name': '',
+                    'ug_sem_6_sub_11_marks_obtained': '',
+                    'ug_sem_6_sub_11_total_marks': '',
+                    'ug_sem_6_sub_12_name': '',
+                    'ug_sem_6_sub_12_marks_obtained': '',
+                    'ug_sem_6_sub_12_total_marks': '',
+                    'ug_sem_6_sub_13_name': '',
+                    'ug_sem_6_sub_13_marks_obtained': '',
+                    'ug_sem_6_sub_13_total_marks': '',
+                    'ug_sem_6_sub_14_name': '',
+                    'ug_sem_6_sub_14_marks_obtained': '',
+                    'ug_sem_6_sub_14_total_marks': '',
+                    'ug_sem_6_sub_15_name': '',
+                    'ug_sem_6_sub_15_marks_obtained': '',
+                    'ug_sem_6_sub_15_total_marks': '',
+                    'ug_sem_6_sub_16_name': '',
+                    'ug_sem_6_sub_16_marks_obtained': '',
+                    'ug_sem_6_sub_16_total_marks': '',
+                    'ug_sem_6_sub_17_name': '',
+                    'ug_sem_6_sub_17_marks_obtained': '',
+                    'ug_sem_6_sub_17_total_marks': '',
+                    'ug_sem_6_sub_18_name': '',
+                    'ug_sem_6_sub_18_marks_obtained': '',
+                    'ug_sem_6_sub_18_total_marks': '',
+                    'ug_sem_6_sub_19_name': '',
+                    'ug_sem_6_sub_19_marks_obtained': '',
+                    'ug_sem_6_sub_19_total_marks': '',
+                    'ug_sem_6_sub_20_name': '',
+                    'ug_sem_6_sub_20_marks_obtained': '',
+                    'ug_sem_6_sub_20_total_marks': ''
+
+                    # Add more fields as needed
+                }
+
+            # Pass the ug_sem_6_info to the template
+            return render_template('Student/student_info_forms/form_ug_sem_6.html', ug_sem_6=ug_sem_6_info)
+    except Exception as e:
+        app.logger.error(f"Exception occurred: {e}")
+        return str(e), 500
+
+def form_ug_sem_6_post():
+    try:
+        if request.method == 'POST':
+            # Get form data
+            aadhaar_no = session['aadhaar_no']
+            ug_enrollment_no = request.form['ug_enrollment_no']
+            ug_sem_6_session = request.form['ug_sem_6_session']
+            ug_sem_6_roll_no = request.form['ug_sem_6_roll_no']
+            ug_sem_6_result = request.form['ug_sem_6_result']
+            ug_sem_6_sub_1_name = request.form['ug_sem_6_sub_1_name']
+            ug_sem_6_sub_1_marks_obtained = request.form['ug_sem_6_sub_1_marks_obtained']
+            ug_sem_6_sub_1_total_marks = request.form['ug_sem_6_sub_1_total_marks']
+            ug_sem_6_sub_2_name = request.form['ug_sem_6_sub_2_name']
+            ug_sem_6_sub_2_marks_obtained = request.form['ug_sem_6_sub_2_marks_obtained']
+            ug_sem_6_sub_2_total_marks = request.form['ug_sem_6_sub_2_total_marks']
+            ug_sem_6_sub_3_name = request.form['ug_sem_6_sub_3_name']
+            ug_sem_6_sub_3_marks_obtained = request.form['ug_sem_6_sub_3_marks_obtained']
+            ug_sem_6_sub_3_total_marks = request.form['ug_sem_6_sub_3_total_marks']
+            ug_sem_6_sub_4_name = request.form['ug_sem_6_sub_4_name']
+            ug_sem_6_sub_4_marks_obtained = request.form['ug_sem_6_sub_4_marks_obtained']
+            ug_sem_6_sub_4_total_marks = request.form['ug_sem_6_sub_4_total_marks']
+            ug_sem_6_sub_5_name = request.form['ug_sem_6_sub_5_name']
+            ug_sem_6_sub_5_marks_obtained = request.form['ug_sem_6_sub_5_marks_obtained']
+            ug_sem_6_sub_5_total_marks = request.form['ug_sem_6_sub_5_total_marks']
+            ug_sem_6_sub_6_name = request.form['ug_sem_6_sub_6_name']
+            ug_sem_6_sub_6_marks_obtained = request.form['ug_sem_6_sub_6_marks_obtained']
+            ug_sem_6_sub_6_total_marks = request.form['ug_sem_6_sub_6_total_marks']
+            ug_sem_6_sub_7_name = request.form['ug_sem_6_sub_7_name']
+            ug_sem_6_sub_7_marks_obtained = request.form['ug_sem_6_sub_7_marks_obtained']
+            ug_sem_6_sub_7_total_marks = request.form['ug_sem_6_sub_7_total_marks']
+            ug_sem_6_sub_8_name = request.form['ug_sem_6_sub_8_name']
+            ug_sem_6_sub_8_marks_obtained = request.form['ug_sem_6_sub_8_marks_obtained']
+            ug_sem_6_sub_8_total_marks = request.form['ug_sem_6_sub_8_total_marks']
+            ug_sem_6_sub_9_name = request.form['ug_sem_6_sub_9_name']
+            ug_sem_6_sub_9_marks_obtained = request.form['ug_sem_6_sub_9_marks_obtained']
+            ug_sem_6_sub_9_total_marks = request.form['ug_sem_6_sub_9_total_marks']
+            ug_sem_6_sub_10_name = request.form['ug_sem_6_sub_10_name']
+            ug_sem_6_sub_10_marks_obtained = request.form['ug_sem_6_sub_10_marks_obtained']
+            ug_sem_6_sub_10_total_marks = request.form['ug_sem_6_sub_10_total_marks']
+            ug_sem_6_sub_11_name = request.form['ug_sem_6_sub_11_name']
+            ug_sem_6_sub_11_marks_obtained = request.form['ug_sem_6_sub_11_marks_obtained']
+            ug_sem_6_sub_11_total_marks = request.form['ug_sem_6_sub_11_total_marks']
+            ug_sem_6_sub_12_name = request.form['ug_sem_6_sub_12_name']
+            ug_sem_6_sub_12_marks_obtained = request.form['ug_sem_6_sub_12_marks_obtained']
+            ug_sem_6_sub_12_total_marks = request.form['ug_sem_6_sub_12_total_marks']
+            ug_sem_6_sub_13_name = request.form['ug_sem_6_sub_13_name']
+            ug_sem_6_sub_13_marks_obtained = request.form['ug_sem_6_sub_13_marks_obtained']
+            ug_sem_6_sub_13_total_marks = request.form['ug_sem_6_sub_13_total_marks']
+            ug_sem_6_sub_14_name = request.form['ug_sem_6_sub_14_name']
+            ug_sem_6_sub_14_marks_obtained = request.form['ug_sem_6_sub_14_marks_obtained']
+            ug_sem_6_sub_14_total_marks = request.form['ug_sem_6_sub_14_total_marks']
+            ug_sem_6_sub_15_name = request.form['ug_sem_6_sub_15_name']
+            ug_sem_6_sub_15_marks_obtained = request.form['ug_sem_6_sub_15_marks_obtained']
+            ug_sem_6_sub_15_total_marks = request.form['ug_sem_6_sub_15_total_marks']
+            ug_sem_6_sub_16_name = request.form['ug_sem_6_sub_16_name']
+            ug_sem_6_sub_16_marks_obtained = request.form['ug_sem_6_sub_16_marks_obtained']
+            ug_sem_6_sub_16_total_marks = request.form['ug_sem_6_sub_16_total_marks']
+            ug_sem_6_sub_17_name = request.form['ug_sem_6_sub_17_name']
+            ug_sem_6_sub_17_marks_obtained = request.form['ug_sem_6_sub_17_marks_obtained']
+            ug_sem_6_sub_17_total_marks = request.form['ug_sem_6_sub_17_total_marks']
+            ug_sem_6_sub_18_name = request.form['ug_sem_6_sub_18_name']
+            ug_sem_6_sub_18_marks_obtained = request.form['ug_sem_6_sub_18_marks_obtained']
+            ug_sem_6_sub_18_total_marks = request.form['ug_sem_6_sub_18_total_marks']
+            ug_sem_6_sub_19_name = request.form['ug_sem_6_sub_19_name']
+            ug_sem_6_sub_19_marks_obtained = request.form['ug_sem_6_sub_19_marks_obtained']
+            ug_sem_6_sub_19_total_marks = request.form['ug_sem_6_sub_19_total_marks']
+            ug_sem_6_sub_20_name = request.form['ug_sem_6_sub_20_name']
+            ug_sem_6_sub_20_marks_obtained = request.form['ug_sem_6_sub_20_marks_obtained']
+            ug_sem_6_sub_20_total_marks = request.form['ug_sem_6_sub_20_total_marks']
+
+
+            # Update ug_sem_6_info in the database
+            cursor.execute("""
+                UPDATE ug_sem_6
+                SET ug_enrollment_no = ?, ug_sem_6_session = ?, ug_sem_6_roll_no = ?, ug_sem_6_result = ?, ug_sem_6_sub_1_name = ?, ug_sem_6_sub_1_marks_obtained = ?, ug_sem_6_sub_1_total_marks = ?, ug_sem_6_sub_2_name = ?, ug_sem_6_sub_2_marks_obtained = ?, ug_sem_6_sub_2_total_marks = ?, ug_sem_6_sub_3_name = ?, ug_sem_6_sub_3_marks_obtained = ?, ug_sem_6_sub_3_total_marks = ?, ug_sem_6_sub_4_name = ?, ug_sem_6_sub_4_marks_obtained = ?, ug_sem_6_sub_4_total_marks = ?, ug_sem_6_sub_5_name = ?, ug_sem_6_sub_5_marks_obtained = ?, ug_sem_6_sub_5_total_marks = ?, ug_sem_6_sub_6_name = ?, ug_sem_6_sub_6_marks_obtained = ?, ug_sem_6_sub_6_total_marks = ?, ug_sem_6_sub_7_name = ?, ug_sem_6_sub_7_marks_obtained = ?, ug_sem_6_sub_7_total_marks = ?, ug_sem_6_sub_8_name = ?, ug_sem_6_sub_8_marks_obtained = ?, ug_sem_6_sub_8_total_marks = ?, ug_sem_6_sub_9_name = ?, ug_sem_6_sub_9_marks_obtained = ?, ug_sem_6_sub_9_total_marks = ?, ug_sem_6_sub_10_name = ?, ug_sem_6_sub_10_marks_obtained = ?, ug_sem_6_sub_10_total_marks = ?, ug_sem_6_sub_11_name = ?, ug_sem_6_sub_11_marks_obtained = ?, ug_sem_6_sub_11_total_marks = ?, ug_sem_6_sub_12_name = ?, ug_sem_6_sub_12_marks_obtained = ?, ug_sem_6_sub_12_total_marks = ?, ug_sem_6_sub_13_name = ?, ug_sem_6_sub_13_marks_obtained = ?, ug_sem_6_sub_13_total_marks = ?, ug_sem_6_sub_14_name = ?, ug_sem_6_sub_14_marks_obtained = ?, ug_sem_6_sub_14_total_marks = ?, ug_sem_6_sub_15_name = ?, ug_sem_6_sub_15_marks_obtained = ?, ug_sem_6_sub_15_total_marks = ?, ug_sem_6_sub_16_name = ?, ug_sem_6_sub_16_marks_obtained = ?, ug_sem_6_sub_16_total_marks = ?, ug_sem_6_sub_17_name = ?, ug_sem_6_sub_17_marks_obtained = ?, ug_sem_6_sub_17_total_marks = ?, ug_sem_6_sub_18_name = ?, ug_sem_6_sub_18_marks_obtained = ?, ug_sem_6_sub_18_total_marks = ?, ug_sem_6_sub_19_name = ?, ug_sem_6_sub_19_marks_obtained = ?, ug_sem_6_sub_19_total_marks = ?, ug_sem_6_sub_20_name = ?, ug_sem_6_sub_20_marks_obtained = ?, ug_sem_6_sub_20_total_marks = ?
+                WHERE aadhaar_no = ?
+            """,(ug_enrollment_no,ug_sem_6_session,ug_sem_6_roll_no,ug_sem_6_result,ug_sem_6_sub_1_name,
+                 ug_sem_6_sub_1_marks_obtained,ug_sem_6_sub_1_total_marks,ug_sem_6_sub_2_name,
+                 ug_sem_6_sub_2_marks_obtained,ug_sem_6_sub_2_total_marks,ug_sem_6_sub_3_name,
+                 ug_sem_6_sub_3_marks_obtained,ug_sem_6_sub_3_total_marks,ug_sem_6_sub_4_name,
+                 ug_sem_6_sub_4_marks_obtained,ug_sem_6_sub_4_total_marks,ug_sem_6_sub_5_name,
+                 ug_sem_6_sub_5_marks_obtained,ug_sem_6_sub_5_total_marks,ug_sem_6_sub_6_name,
+                 ug_sem_6_sub_6_marks_obtained,ug_sem_6_sub_6_total_marks,ug_sem_6_sub_7_name,
+                 ug_sem_6_sub_7_marks_obtained,ug_sem_6_sub_7_total_marks,ug_sem_6_sub_8_name,
+                 ug_sem_6_sub_8_marks_obtained,ug_sem_6_sub_8_total_marks,ug_sem_6_sub_9_name,
+                 ug_sem_6_sub_9_marks_obtained,ug_sem_6_sub_9_total_marks,ug_sem_6_sub_10_name,
+                 ug_sem_6_sub_10_marks_obtained,ug_sem_6_sub_10_total_marks,ug_sem_6_sub_11_name,
+                 ug_sem_6_sub_11_marks_obtained,ug_sem_6_sub_11_total_marks,ug_sem_6_sub_12_name,
+                 ug_sem_6_sub_12_marks_obtained,ug_sem_6_sub_12_total_marks,ug_sem_6_sub_13_name,
+                 ug_sem_6_sub_13_marks_obtained,ug_sem_6_sub_13_total_marks,ug_sem_6_sub_14_name,
+                 ug_sem_6_sub_14_marks_obtained,ug_sem_6_sub_14_total_marks,ug_sem_6_sub_15_name,
+                 ug_sem_6_sub_15_marks_obtained,ug_sem_6_sub_15_total_marks,ug_sem_6_sub_16_name,
+                 ug_sem_6_sub_16_marks_obtained,ug_sem_6_sub_16_total_marks,ug_sem_6_sub_17_name,
+                 ug_sem_6_sub_17_marks_obtained,ug_sem_6_sub_17_total_marks,ug_sem_6_sub_18_name,
+                 ug_sem_6_sub_18_marks_obtained,ug_sem_6_sub_18_total_marks,ug_sem_6_sub_19_name,
+                 ug_sem_6_sub_19_marks_obtained,ug_sem_6_sub_19_total_marks,ug_sem_6_sub_20_name,
+                 ug_sem_6_sub_20_marks_obtained,ug_sem_6_sub_20_total_marks,aadhaar_no))
+
+            # Commit changes
+            conn.commit()
+
+            # Redirect to the next form
+            return redirect(url_for('form_ug_sem_7'))  # replace 'next_form' with the actual name of the next form
+
+        else:
+            # Fetch ug_sem_6_info from the database
+            cursor.execute("SELECT * FROM ug_sem_6 WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+            ug_sem_6_info = cursor.fetchone()
+
+            # Pass the ug_sem_6_info to the template
+            return render_template('Student/student_info_forms/form_ug_sem_6.html', ug_sem_6=ug_sem_6_info)
+    except Exception as e:
+        app.logger.error(f"Exception occurred: {e}")
+        return str(e), 500
+
+@app.route('/form_ug_sem_7', methods=['GET', 'POST'])
+def form_ug_sem_7():
+    try:
+        if request.method == 'POST':
+            return form_ug_sem_7_post()
+        else:
+            # Fetch ug_sem_7_info from the database
+            cursor.execute("SELECT * FROM ug_sem_7 WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+            ug_sem_7_info = cursor.fetchone()
+
+            # If ug_sem_7_info is None, create a default ug_sem_7_info object
+            if ug_sem_7_info is None:
+                ug_sem_7_info = {
+                    'ug_enrollment_no': '',
+                    'ug_sem_7_session': '',
+                    'ug_sem_7_roll_no': '',
+                    'ug_sem_7_result': '',
+                    'ug_sem_7_sub_1_name': '',
+                    'ug_sem_7_sub_1_marks_obtained': '',
+                    'ug_sem_7_sub_1_total_marks': '',
+                    'ug_sem_7_sub_2_name': '',
+                    'ug_sem_7_sub_2_marks_obtained': '',
+                    'ug_sem_7_sub_2_total_marks': '',
+                    'ug_sem_7_sub_3_name': '',
+                    'ug_sem_7_sub_3_marks_obtained': '',
+                    'ug_sem_7_sub_3_total_marks': '',
+                    'ug_sem_7_sub_4_name': '',
+                    'ug_sem_7_sub_4_marks_obtained': '',
+                    'ug_sem_7_sub_4_total_marks': '',
+                    'ug_sem_7_sub_5_name': '',
+                    'ug_sem_7_sub_5_marks_obtained': '',
+                    'ug_sem_7_sub_5_total_marks': '',
+                    'ug_sem_7_sub_6_name': '',
+                    'ug_sem_7_sub_6_marks_obtained': '',
+                    'ug_sem_7_sub_6_total_marks': '',
+                    'ug_sem_7_sub_7_name': '',
+                    'ug_sem_7_sub_7_marks_obtained': '',
+                    'ug_sem_7_sub_7_total_marks': '',
+                    'ug_sem_7_sub_8_name': '',
+                    'ug_sem_7_sub_8_marks_obtained': '',
+                    'ug_sem_7_sub_8_total_marks': '',
+                    'ug_sem_7_sub_9_name': '',
+                    'ug_sem_7_sub_9_marks_obtained': '',
+                    'ug_sem_7_sub_9_total_marks': '',
+                    'ug_sem_7_sub_10_name': '',
+                    'ug_sem_7_sub_10_marks_obtained': '',
+                    'ug_sem_7_sub_10_total_marks': '',
+                    'ug_sem_7_sub_11_name': '',
+                    'ug_sem_7_sub_11_marks_obtained': '',
+                    'ug_sem_7_sub_11_total_marks': '',
+                    'ug_sem_7_sub_12_name': '',
+                    'ug_sem_7_sub_12_marks_obtained': '',
+                    'ug_sem_7_sub_12_total_marks': '',
+                    'ug_sem_7_sub_13_name': '',
+                    'ug_sem_7_sub_13_marks_obtained': '',
+                    'ug_sem_7_sub_13_total_marks': '',
+                    'ug_sem_7_sub_14_name': '',
+                    'ug_sem_7_sub_14_marks_obtained': '',
+                    'ug_sem_7_sub_14_total_marks': '',
+                    'ug_sem_7_sub_15_name': '',
+                    'ug_sem_7_sub_15_marks_obtained': '',
+                    'ug_sem_7_sub_15_total_marks': '',
+                    'ug_sem_7_sub_16_name': '',
+                    'ug_sem_7_sub_16_marks_obtained': '',
+                    'ug_sem_7_sub_16_total_marks': '',
+                    'ug_sem_7_sub_17_name': '',
+                    'ug_sem_7_sub_17_marks_obtained': '',
+                    'ug_sem_7_sub_17_total_marks': '',
+                    'ug_sem_7_sub_18_name': '',
+                    'ug_sem_7_sub_18_marks_obtained': '',
+                    'ug_sem_7_sub_18_total_marks': '',
+                    'ug_sem_7_sub_19_name': '',
+                    'ug_sem_7_sub_19_marks_obtained': '',
+                    'ug_sem_7_sub_19_total_marks': '',
+                    'ug_sem_7_sub_20_name': '',
+                    'ug_sem_7_sub_20_marks_obtained': '',
+                    'ug_sem_7_sub_20_total_marks': ''
+
+                    # Add more fields as needed
+                }
+
+            # Pass the ug_sem_7_info to the template
+            return render_template('Student/student_info_forms/form_ug_sem_7.html', ug_sem_7=ug_sem_7_info)
+    except Exception as e:
+        app.logger.error(f"Exception occurred: {e}")
+        return str(e), 500
+
+def form_ug_sem_7_post():
+    try:
+        if request.method == 'POST':
+            # Get form data
+            aadhaar_no = session['aadhaar_no']
+            ug_enrollment_no = request.form['ug_enrollment_no']
+            ug_sem_7_session = request.form['ug_sem_7_session']
+            ug_sem_7_roll_no = request.form['ug_sem_7_roll_no']
+            ug_sem_7_result = request.form['ug_sem_7_result']
+            ug_sem_7_sub_1_name = request.form['ug_sem_7_sub_1_name']
+            ug_sem_7_sub_1_marks_obtained = request.form['ug_sem_7_sub_1_marks_obtained']
+            ug_sem_7_sub_1_total_marks = request.form['ug_sem_7_sub_1_total_marks']
+            ug_sem_7_sub_2_name = request.form['ug_sem_7_sub_2_name']
+            ug_sem_7_sub_2_marks_obtained = request.form['ug_sem_7_sub_2_marks_obtained']
+            ug_sem_7_sub_2_total_marks = request.form['ug_sem_7_sub_2_total_marks']
+            ug_sem_7_sub_3_name = request.form['ug_sem_7_sub_3_name']
+            ug_sem_7_sub_3_marks_obtained = request.form['ug_sem_7_sub_3_marks_obtained']
+            ug_sem_7_sub_3_total_marks = request.form['ug_sem_7_sub_3_total_marks']
+            ug_sem_7_sub_4_name = request.form['ug_sem_7_sub_4_name']
+            ug_sem_7_sub_4_marks_obtained = request.form['ug_sem_7_sub_4_marks_obtained']
+            ug_sem_7_sub_4_total_marks = request.form['ug_sem_7_sub_4_total_marks']
+            ug_sem_7_sub_5_name = request.form['ug_sem_7_sub_5_name']
+            ug_sem_7_sub_5_marks_obtained = request.form['ug_sem_7_sub_5_marks_obtained']
+            ug_sem_7_sub_5_total_marks = request.form['ug_sem_7_sub_5_total_marks']
+            ug_sem_7_sub_6_name = request.form['ug_sem_7_sub_6_name']
+            ug_sem_7_sub_6_marks_obtained = request.form['ug_sem_7_sub_6_marks_obtained']
+            ug_sem_7_sub_6_total_marks = request.form['ug_sem_7_sub_6_total_marks']
+            ug_sem_7_sub_7_name = request.form['ug_sem_7_sub_7_name']
+            ug_sem_7_sub_7_marks_obtained = request.form['ug_sem_7_sub_7_marks_obtained']
+            ug_sem_7_sub_7_total_marks = request.form['ug_sem_7_sub_7_total_marks']
+            ug_sem_7_sub_8_name = request.form['ug_sem_7_sub_8_name']
+            ug_sem_7_sub_8_marks_obtained = request.form['ug_sem_7_sub_8_marks_obtained']
+            ug_sem_7_sub_8_total_marks = request.form['ug_sem_7_sub_8_total_marks']
+            ug_sem_7_sub_9_name = request.form['ug_sem_7_sub_9_name']
+            ug_sem_7_sub_9_marks_obtained = request.form['ug_sem_7_sub_9_marks_obtained']
+            ug_sem_7_sub_9_total_marks = request.form['ug_sem_7_sub_9_total_marks']
+            ug_sem_7_sub_10_name = request.form['ug_sem_7_sub_10_name']
+            ug_sem_7_sub_10_marks_obtained = request.form['ug_sem_7_sub_10_marks_obtained']
+            ug_sem_7_sub_10_total_marks = request.form['ug_sem_7_sub_10_total_marks']
+            ug_sem_7_sub_11_name = request.form['ug_sem_7_sub_11_name']
+            ug_sem_7_sub_11_marks_obtained = request.form['ug_sem_7_sub_11_marks_obtained']
+            ug_sem_7_sub_11_total_marks = request.form['ug_sem_7_sub_11_total_marks']
+            ug_sem_7_sub_12_name = request.form['ug_sem_7_sub_12_name']
+            ug_sem_7_sub_12_marks_obtained = request.form['ug_sem_7_sub_12_marks_obtained']
+            ug_sem_7_sub_12_total_marks = request.form['ug_sem_7_sub_12_total_marks']
+            ug_sem_7_sub_13_name = request.form['ug_sem_7_sub_13_name']
+            ug_sem_7_sub_13_marks_obtained = request.form['ug_sem_7_sub_13_marks_obtained']
+            ug_sem_7_sub_13_total_marks = request.form['ug_sem_7_sub_13_total_marks']
+            ug_sem_7_sub_14_name = request.form['ug_sem_7_sub_14_name']
+            ug_sem_7_sub_14_marks_obtained = request.form['ug_sem_7_sub_14_marks_obtained']
+            ug_sem_7_sub_14_total_marks = request.form['ug_sem_7_sub_14_total_marks']
+            ug_sem_7_sub_15_name = request.form['ug_sem_7_sub_15_name']
+            ug_sem_7_sub_15_marks_obtained = request.form['ug_sem_7_sub_15_marks_obtained']
+            ug_sem_7_sub_15_total_marks = request.form['ug_sem_7_sub_15_total_marks']
+            ug_sem_7_sub_16_name = request.form['ug_sem_7_sub_16_name']
+            ug_sem_7_sub_16_marks_obtained = request.form['ug_sem_7_sub_16_marks_obtained']
+            ug_sem_7_sub_16_total_marks = request.form['ug_sem_7_sub_16_total_marks']
+            ug_sem_7_sub_17_name = request.form['ug_sem_7_sub_17_name']
+            ug_sem_7_sub_17_marks_obtained = request.form['ug_sem_7_sub_17_marks_obtained']
+            ug_sem_7_sub_17_total_marks = request.form['ug_sem_7_sub_17_total_marks']
+            ug_sem_7_sub_18_name = request.form['ug_sem_7_sub_18_name']
+            ug_sem_7_sub_18_marks_obtained = request.form['ug_sem_7_sub_18_marks_obtained']
+            ug_sem_7_sub_18_total_marks = request.form['ug_sem_7_sub_18_total_marks']
+            ug_sem_7_sub_19_name = request.form['ug_sem_7_sub_19_name']
+            ug_sem_7_sub_19_marks_obtained = request.form['ug_sem_7_sub_19_marks_obtained']
+            ug_sem_7_sub_19_total_marks = request.form['ug_sem_7_sub_19_total_marks']
+            ug_sem_7_sub_20_name = request.form['ug_sem_7_sub_20_name']
+            ug_sem_7_sub_20_marks_obtained = request.form['ug_sem_7_sub_20_marks_obtained']
+            ug_sem_7_sub_20_total_marks = request.form['ug_sem_7_sub_20_total_marks']
+
+
+            # Update ug_sem_7_info in the database
+            cursor.execute("""
+                UPDATE ug_sem_7
+                SET ug_enrollment_no = ?, ug_sem_7_session = ?, ug_sem_7_roll_no = ?, ug_sem_7_result = ?, ug_sem_7_sub_1_name = ?, ug_sem_7_sub_1_marks_obtained = ?, ug_sem_7_sub_1_total_marks = ?, ug_sem_7_sub_2_name = ?, ug_sem_7_sub_2_marks_obtained = ?, ug_sem_7_sub_2_total_marks = ?, ug_sem_7_sub_3_name = ?, ug_sem_7_sub_3_marks_obtained = ?, ug_sem_7_sub_3_total_marks = ?, ug_sem_7_sub_4_name = ?, ug_sem_7_sub_4_marks_obtained = ?, ug_sem_7_sub_4_total_marks = ?, ug_sem_7_sub_5_name = ?, ug_sem_7_sub_5_marks_obtained = ?, ug_sem_7_sub_5_total_marks = ?, ug_sem_7_sub_6_name = ?, ug_sem_7_sub_6_marks_obtained = ?, ug_sem_7_sub_6_total_marks = ?, ug_sem_7_sub_7_name = ?, ug_sem_7_sub_7_marks_obtained = ?, ug_sem_7_sub_7_total_marks = ?, ug_sem_7_sub_8_name = ?, ug_sem_7_sub_8_marks_obtained = ?, ug_sem_7_sub_8_total_marks = ?, ug_sem_7_sub_9_name = ?, ug_sem_7_sub_9_marks_obtained = ?, ug_sem_7_sub_9_total_marks = ?, ug_sem_7_sub_10_name = ?, ug_sem_7_sub_10_marks_obtained = ?, ug_sem_7_sub_10_total_marks = ?, ug_sem_7_sub_11_name = ?, ug_sem_7_sub_11_marks_obtained = ?, ug_sem_7_sub_11_total_marks = ?, ug_sem_7_sub_12_name = ?, ug_sem_7_sub_12_marks_obtained = ?, ug_sem_7_sub_12_total_marks = ?, ug_sem_7_sub_13_name = ?, ug_sem_7_sub_13_marks_obtained = ?, ug_sem_7_sub_13_total_marks = ?, ug_sem_7_sub_14_name = ?, ug_sem_7_sub_14_marks_obtained = ?, ug_sem_7_sub_14_total_marks = ?, ug_sem_7_sub_15_name = ?, ug_sem_7_sub_15_marks_obtained = ?, ug_sem_7_sub_15_total_marks = ?, ug_sem_7_sub_16_name = ?, ug_sem_7_sub_16_marks_obtained = ?, ug_sem_7_sub_16_total_marks = ?, ug_sem_7_sub_17_name = ?, ug_sem_7_sub_17_marks_obtained = ?, ug_sem_7_sub_17_total_marks = ?, ug_sem_7_sub_18_name = ?, ug_sem_7_sub_18_marks_obtained = ?, ug_sem_7_sub_18_total_marks = ?, ug_sem_7_sub_19_name = ?, ug_sem_7_sub_19_marks_obtained = ?, ug_sem_7_sub_19_total_marks = ?, ug_sem_7_sub_20_name = ?, ug_sem_7_sub_20_marks_obtained = ?, ug_sem_7_sub_20_total_marks = ?
+                WHERE aadhaar_no = ?
+            """,(ug_enrollment_no,ug_sem_7_session,ug_sem_7_roll_no,ug_sem_7_result,ug_sem_7_sub_1_name,
+                 ug_sem_7_sub_1_marks_obtained,ug_sem_7_sub_1_total_marks,ug_sem_7_sub_2_name,
+                 ug_sem_7_sub_2_marks_obtained,ug_sem_7_sub_2_total_marks,ug_sem_7_sub_3_name,
+                 ug_sem_7_sub_3_marks_obtained,ug_sem_7_sub_3_total_marks,ug_sem_7_sub_4_name,
+                 ug_sem_7_sub_4_marks_obtained,ug_sem_7_sub_4_total_marks,ug_sem_7_sub_5_name,
+                 ug_sem_7_sub_5_marks_obtained,ug_sem_7_sub_5_total_marks,ug_sem_7_sub_6_name,
+                 ug_sem_7_sub_6_marks_obtained,ug_sem_7_sub_6_total_marks,ug_sem_7_sub_7_name,
+                 ug_sem_7_sub_7_marks_obtained,ug_sem_7_sub_7_total_marks,ug_sem_7_sub_8_name,
+                 ug_sem_7_sub_8_marks_obtained,ug_sem_7_sub_8_total_marks,ug_sem_7_sub_9_name,
+                 ug_sem_7_sub_9_marks_obtained,ug_sem_7_sub_9_total_marks,ug_sem_7_sub_10_name,
+                 ug_sem_7_sub_10_marks_obtained,ug_sem_7_sub_10_total_marks,ug_sem_7_sub_11_name,
+                 ug_sem_7_sub_11_marks_obtained,ug_sem_7_sub_11_total_marks,ug_sem_7_sub_12_name,
+                 ug_sem_7_sub_12_marks_obtained,ug_sem_7_sub_12_total_marks,ug_sem_7_sub_13_name,
+                 ug_sem_7_sub_13_marks_obtained,ug_sem_7_sub_13_total_marks,ug_sem_7_sub_14_name,
+                 ug_sem_7_sub_14_marks_obtained,ug_sem_7_sub_14_total_marks,ug_sem_7_sub_15_name,
+                 ug_sem_7_sub_15_marks_obtained,ug_sem_7_sub_15_total_marks,ug_sem_7_sub_16_name,
+                 ug_sem_7_sub_16_marks_obtained,ug_sem_7_sub_16_total_marks,ug_sem_7_sub_17_name,
+                 ug_sem_7_sub_17_marks_obtained,ug_sem_7_sub_17_total_marks,ug_sem_7_sub_18_name,
+                 ug_sem_7_sub_18_marks_obtained,ug_sem_7_sub_18_total_marks,ug_sem_7_sub_19_name,
+                 ug_sem_7_sub_19_marks_obtained,ug_sem_7_sub_19_total_marks,ug_sem_7_sub_20_name,
+                 ug_sem_7_sub_20_marks_obtained,ug_sem_7_sub_20_total_marks,aadhaar_no))
+
+            # Commit changes
+            conn.commit()
+
+            # Redirect to the next form
+            return redirect(url_for('form_ug_sem_8'))  # replace 'next_form' with the actual name of the next form
+
+        else:
+            # Fetch ug_sem_7_info from the database
+            cursor.execute("SELECT * FROM ug_sem_7 WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+            ug_sem_7_info = cursor.fetchone()
+
+            # Pass the ug_sem_7_info to the template
+            return render_template('Student/student_info_forms/form_ug_sem_7.html', ug_sem_7=ug_sem_7_info)
+    except Exception as e:
+        app.logger.error(f"Exception occurred: {e}")
+        return str(e), 500
+
+@app.route('/form_ug_sem_8', methods=['GET', 'POST'])
+def form_ug_sem_8():
+    try:
+        if request.method == 'POST':
+            return form_ug_sem_8_post()
+        else:
+            # Fetch ug_sem_8_info from the database
+            cursor.execute("SELECT * FROM ug_sem_8 WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+            ug_sem_8_info = cursor.fetchone()
+
+            # If ug_sem_8_info is None, create a default ug_sem_8_info object
+            if ug_sem_8_info is None:
+                ug_sem_8_info = {
+                    'ug_enrollment_no': '',
+                    'ug_sem_8_session': '',
+                    'ug_sem_8_roll_no': '',
+                    'ug_sem_8_result': '',
+                    'ug_sem_8_sub_1_name': '',
+                    'ug_sem_8_sub_1_marks_obtained': '',
+                    'ug_sem_8_sub_1_total_marks': '',
+                    'ug_sem_8_sub_2_name': '',
+                    'ug_sem_8_sub_2_marks_obtained': '',
+                    'ug_sem_8_sub_2_total_marks': '',
+                    'ug_sem_8_sub_3_name': '',
+                    'ug_sem_8_sub_3_marks_obtained': '',
+                    'ug_sem_8_sub_3_total_marks': '',
+                    'ug_sem_8_sub_4_name': '',
+                    'ug_sem_8_sub_4_marks_obtained': '',
+                    'ug_sem_8_sub_4_total_marks': '',
+                    'ug_sem_8_sub_5_name': '',
+                    'ug_sem_8_sub_5_marks_obtained': '',
+                    'ug_sem_8_sub_5_total_marks': '',
+                    'ug_sem_8_sub_6_name': '',
+                    'ug_sem_8_sub_6_marks_obtained': '',
+                    'ug_sem_8_sub_6_total_marks': '',
+                    'ug_sem_8_sub_7_name': '',
+                    'ug_sem_8_sub_7_marks_obtained': '',
+                    'ug_sem_8_sub_7_total_marks': '',
+                    'ug_sem_8_sub_8_name': '',
+                    'ug_sem_8_sub_8_marks_obtained': '',
+                    'ug_sem_8_sub_8_total_marks': '',
+                    'ug_sem_8_sub_9_name': '',
+                    'ug_sem_8_sub_9_marks_obtained': '',
+                    'ug_sem_8_sub_9_total_marks': '',
+                    'ug_sem_8_sub_10_name': '',
+                    'ug_sem_8_sub_10_marks_obtained': '',
+                    'ug_sem_8_sub_10_total_marks': '',
+                    'ug_sem_8_sub_11_name': '',
+                    'ug_sem_8_sub_11_marks_obtained': '',
+                    'ug_sem_8_sub_11_total_marks': '',
+                    'ug_sem_8_sub_12_name': '',
+                    'ug_sem_8_sub_12_marks_obtained': '',
+                    'ug_sem_8_sub_12_total_marks': '',
+                    'ug_sem_8_sub_13_name': '',
+                    'ug_sem_8_sub_13_marks_obtained': '',
+                    'ug_sem_8_sub_13_total_marks': '',
+                    'ug_sem_8_sub_14_name': '',
+                    'ug_sem_8_sub_14_marks_obtained': '',
+                    'ug_sem_8_sub_14_total_marks': '',
+                    'ug_sem_8_sub_15_name': '',
+                    'ug_sem_8_sub_15_marks_obtained': '',
+                    'ug_sem_8_sub_15_total_marks': '',
+                    'ug_sem_8_sub_16_name': '',
+                    'ug_sem_8_sub_16_marks_obtained': '',
+                    'ug_sem_8_sub_16_total_marks': '',
+                    'ug_sem_8_sub_17_name': '',
+                    'ug_sem_8_sub_17_marks_obtained': '',
+                    'ug_sem_8_sub_17_total_marks': '',
+                    'ug_sem_8_sub_18_name': '',
+                    'ug_sem_8_sub_18_marks_obtained': '',
+                    'ug_sem_8_sub_18_total_marks': '',
+                    'ug_sem_8_sub_19_name': '',
+                    'ug_sem_8_sub_19_marks_obtained': '',
+                    'ug_sem_8_sub_19_total_marks': '',
+                    'ug_sem_8_sub_20_name': '',
+                    'ug_sem_8_sub_20_marks_obtained': '',
+                    'ug_sem_8_sub_20_total_marks': ''
+
+                    # Add more fields as needed
+                }
+
+            # Pass the ug_sem_8_info to the template
+            return render_template('Student/student_info_forms/form_ug_sem_8.html', ug_sem_8=ug_sem_8_info)
+    except Exception as e:
+        app.logger.error(f"Exception occurred: {e}")
+        return str(e), 500
+
+def form_ug_sem_8_post():
+    try:
+        if request.method == 'POST':
+            # Get form data
+            aadhaar_no = session['aadhaar_no']
+            ug_enrollment_no = request.form['ug_enrollment_no']
+            ug_sem_8_session = request.form['ug_sem_8_session']
+            ug_sem_8_roll_no = request.form['ug_sem_8_roll_no']
+            ug_sem_8_result = request.form['ug_sem_8_result']
+            ug_sem_8_sub_1_name = request.form['ug_sem_8_sub_1_name']
+            ug_sem_8_sub_1_marks_obtained = request.form['ug_sem_8_sub_1_marks_obtained']
+            ug_sem_8_sub_1_total_marks = request.form['ug_sem_8_sub_1_total_marks']
+            ug_sem_8_sub_2_name = request.form['ug_sem_8_sub_2_name']
+            ug_sem_8_sub_2_marks_obtained = request.form['ug_sem_8_sub_2_marks_obtained']
+            ug_sem_8_sub_2_total_marks = request.form['ug_sem_8_sub_2_total_marks']
+            ug_sem_8_sub_3_name = request.form['ug_sem_8_sub_3_name']
+            ug_sem_8_sub_3_marks_obtained = request.form['ug_sem_8_sub_3_marks_obtained']
+            ug_sem_8_sub_3_total_marks = request.form['ug_sem_8_sub_3_total_marks']
+            ug_sem_8_sub_4_name = request.form['ug_sem_8_sub_4_name']
+            ug_sem_8_sub_4_marks_obtained = request.form['ug_sem_8_sub_4_marks_obtained']
+            ug_sem_8_sub_4_total_marks = request.form['ug_sem_8_sub_4_total_marks']
+            ug_sem_8_sub_5_name = request.form['ug_sem_8_sub_5_name']
+            ug_sem_8_sub_5_marks_obtained = request.form['ug_sem_8_sub_5_marks_obtained']
+            ug_sem_8_sub_5_total_marks = request.form['ug_sem_8_sub_5_total_marks']
+            ug_sem_8_sub_6_name = request.form['ug_sem_8_sub_6_name']
+            ug_sem_8_sub_6_marks_obtained = request.form['ug_sem_8_sub_6_marks_obtained']
+            ug_sem_8_sub_6_total_marks = request.form['ug_sem_8_sub_6_total_marks']
+            ug_sem_8_sub_7_name = request.form['ug_sem_8_sub_7_name']
+            ug_sem_8_sub_7_marks_obtained = request.form['ug_sem_8_sub_7_marks_obtained']
+            ug_sem_8_sub_7_total_marks = request.form['ug_sem_8_sub_7_total_marks']
+            ug_sem_8_sub_8_name = request.form['ug_sem_8_sub_8_name']
+            ug_sem_8_sub_8_marks_obtained = request.form['ug_sem_8_sub_8_marks_obtained']
+            ug_sem_8_sub_8_total_marks = request.form['ug_sem_8_sub_8_total_marks']
+            ug_sem_8_sub_9_name = request.form['ug_sem_8_sub_9_name']
+            ug_sem_8_sub_9_marks_obtained = request.form['ug_sem_8_sub_9_marks_obtained']
+            ug_sem_8_sub_9_total_marks = request.form['ug_sem_8_sub_9_total_marks']
+            ug_sem_8_sub_10_name = request.form['ug_sem_8_sub_10_name']
+            ug_sem_8_sub_10_marks_obtained = request.form['ug_sem_8_sub_10_marks_obtained']
+            ug_sem_8_sub_10_total_marks = request.form['ug_sem_8_sub_10_total_marks']
+            ug_sem_8_sub_11_name = request.form['ug_sem_8_sub_11_name']
+            ug_sem_8_sub_11_marks_obtained = request.form['ug_sem_8_sub_11_marks_obtained']
+            ug_sem_8_sub_11_total_marks = request.form['ug_sem_8_sub_11_total_marks']
+            ug_sem_8_sub_12_name = request.form['ug_sem_8_sub_12_name']
+            ug_sem_8_sub_12_marks_obtained = request.form['ug_sem_8_sub_12_marks_obtained']
+            ug_sem_8_sub_12_total_marks = request.form['ug_sem_8_sub_12_total_marks']
+            ug_sem_8_sub_13_name = request.form['ug_sem_8_sub_13_name']
+            ug_sem_8_sub_13_marks_obtained = request.form['ug_sem_8_sub_13_marks_obtained']
+            ug_sem_8_sub_13_total_marks = request.form['ug_sem_8_sub_13_total_marks']
+            ug_sem_8_sub_14_name = request.form['ug_sem_8_sub_14_name']
+            ug_sem_8_sub_14_marks_obtained = request.form['ug_sem_8_sub_14_marks_obtained']
+            ug_sem_8_sub_14_total_marks = request.form['ug_sem_8_sub_14_total_marks']
+            ug_sem_8_sub_15_name = request.form['ug_sem_8_sub_15_name']
+            ug_sem_8_sub_15_marks_obtained = request.form['ug_sem_8_sub_15_marks_obtained']
+            ug_sem_8_sub_15_total_marks = request.form['ug_sem_8_sub_15_total_marks']
+            ug_sem_8_sub_16_name = request.form['ug_sem_8_sub_16_name']
+            ug_sem_8_sub_16_marks_obtained = request.form['ug_sem_8_sub_16_marks_obtained']
+            ug_sem_8_sub_16_total_marks = request.form['ug_sem_8_sub_16_total_marks']
+            ug_sem_8_sub_17_name = request.form['ug_sem_8_sub_17_name']
+            ug_sem_8_sub_17_marks_obtained = request.form['ug_sem_8_sub_17_marks_obtained']
+            ug_sem_8_sub_17_total_marks = request.form['ug_sem_8_sub_17_total_marks']
+            ug_sem_8_sub_18_name = request.form['ug_sem_8_sub_18_name']
+            ug_sem_8_sub_18_marks_obtained = request.form['ug_sem_8_sub_18_marks_obtained']
+            ug_sem_8_sub_18_total_marks = request.form['ug_sem_8_sub_18_total_marks']
+            ug_sem_8_sub_19_name = request.form['ug_sem_8_sub_19_name']
+            ug_sem_8_sub_19_marks_obtained = request.form['ug_sem_8_sub_19_marks_obtained']
+            ug_sem_8_sub_19_total_marks = request.form['ug_sem_8_sub_19_total_marks']
+            ug_sem_8_sub_20_name = request.form['ug_sem_8_sub_20_name']
+            ug_sem_8_sub_20_marks_obtained = request.form['ug_sem_8_sub_20_marks_obtained']
+            ug_sem_8_sub_20_total_marks = request.form['ug_sem_8_sub_20_total_marks']
+
+
+            # Update ug_sem_8_info in the database
+            cursor.execute("""
+                UPDATE ug_sem_8
+                SET ug_enrollment_no = ?, ug_sem_8_session = ?, ug_sem_8_roll_no = ?, ug_sem_8_result = ?, ug_sem_8_sub_1_name = ?, ug_sem_8_sub_1_marks_obtained = ?, ug_sem_8_sub_1_total_marks = ?, ug_sem_8_sub_2_name = ?, ug_sem_8_sub_2_marks_obtained = ?, ug_sem_8_sub_2_total_marks = ?, ug_sem_8_sub_3_name = ?, ug_sem_8_sub_3_marks_obtained = ?, ug_sem_8_sub_3_total_marks = ?, ug_sem_8_sub_4_name = ?, ug_sem_8_sub_4_marks_obtained = ?, ug_sem_8_sub_4_total_marks = ?, ug_sem_8_sub_5_name = ?, ug_sem_8_sub_5_marks_obtained = ?, ug_sem_8_sub_5_total_marks = ?, ug_sem_8_sub_6_name = ?, ug_sem_8_sub_6_marks_obtained = ?, ug_sem_8_sub_6_total_marks = ?, ug_sem_8_sub_7_name = ?, ug_sem_8_sub_7_marks_obtained = ?, ug_sem_8_sub_7_total_marks = ?, ug_sem_8_sub_8_name = ?, ug_sem_8_sub_8_marks_obtained = ?, ug_sem_8_sub_8_total_marks = ?, ug_sem_8_sub_9_name = ?, ug_sem_8_sub_9_marks_obtained = ?, ug_sem_8_sub_9_total_marks = ?, ug_sem_8_sub_10_name = ?, ug_sem_8_sub_10_marks_obtained = ?, ug_sem_8_sub_10_total_marks = ?, ug_sem_8_sub_11_name = ?, ug_sem_8_sub_11_marks_obtained = ?, ug_sem_8_sub_11_total_marks = ?, ug_sem_8_sub_12_name = ?, ug_sem_8_sub_12_marks_obtained = ?, ug_sem_8_sub_12_total_marks = ?, ug_sem_8_sub_13_name = ?, ug_sem_8_sub_13_marks_obtained = ?, ug_sem_8_sub_13_total_marks = ?, ug_sem_8_sub_14_name = ?, ug_sem_8_sub_14_marks_obtained = ?, ug_sem_8_sub_14_total_marks = ?, ug_sem_8_sub_15_name = ?, ug_sem_8_sub_15_marks_obtained = ?, ug_sem_8_sub_15_total_marks = ?, ug_sem_8_sub_16_name = ?, ug_sem_8_sub_16_marks_obtained = ?, ug_sem_8_sub_16_total_marks = ?, ug_sem_8_sub_17_name = ?, ug_sem_8_sub_17_marks_obtained = ?, ug_sem_8_sub_17_total_marks = ?, ug_sem_8_sub_18_name = ?, ug_sem_8_sub_18_marks_obtained = ?, ug_sem_8_sub_18_total_marks = ?, ug_sem_8_sub_19_name = ?, ug_sem_8_sub_19_marks_obtained = ?, ug_sem_8_sub_19_total_marks = ?, ug_sem_8_sub_20_name = ?, ug_sem_8_sub_20_marks_obtained = ?, ug_sem_8_sub_20_total_marks = ?
+                WHERE aadhaar_no = ?
+            """,(ug_enrollment_no,ug_sem_8_session,ug_sem_8_roll_no,ug_sem_8_result,ug_sem_8_sub_1_name,
+                 ug_sem_8_sub_1_marks_obtained,ug_sem_8_sub_1_total_marks,ug_sem_8_sub_2_name,
+                 ug_sem_8_sub_2_marks_obtained,ug_sem_8_sub_2_total_marks,ug_sem_8_sub_3_name,
+                 ug_sem_8_sub_3_marks_obtained,ug_sem_8_sub_3_total_marks,ug_sem_8_sub_4_name,
+                 ug_sem_8_sub_4_marks_obtained,ug_sem_8_sub_4_total_marks,ug_sem_8_sub_5_name,
+                 ug_sem_8_sub_5_marks_obtained,ug_sem_8_sub_5_total_marks,ug_sem_8_sub_6_name,
+                 ug_sem_8_sub_6_marks_obtained,ug_sem_8_sub_6_total_marks,ug_sem_8_sub_7_name,
+                 ug_sem_8_sub_7_marks_obtained,ug_sem_8_sub_7_total_marks,ug_sem_8_sub_8_name,
+                 ug_sem_8_sub_8_marks_obtained,ug_sem_8_sub_8_total_marks,ug_sem_8_sub_9_name,
+                 ug_sem_8_sub_9_marks_obtained,ug_sem_8_sub_9_total_marks,ug_sem_8_sub_10_name,
+                 ug_sem_8_sub_10_marks_obtained,ug_sem_8_sub_10_total_marks,ug_sem_8_sub_11_name,
+                 ug_sem_8_sub_11_marks_obtained,ug_sem_8_sub_11_total_marks,ug_sem_8_sub_12_name,
+                 ug_sem_8_sub_12_marks_obtained,ug_sem_8_sub_12_total_marks,ug_sem_8_sub_13_name,
+                 ug_sem_8_sub_13_marks_obtained,ug_sem_8_sub_13_total_marks,ug_sem_8_sub_14_name,
+                 ug_sem_8_sub_14_marks_obtained,ug_sem_8_sub_14_total_marks,ug_sem_8_sub_15_name,
+                 ug_sem_8_sub_15_marks_obtained,ug_sem_8_sub_15_total_marks,ug_sem_8_sub_16_name,
+                 ug_sem_8_sub_16_marks_obtained,ug_sem_8_sub_16_total_marks,ug_sem_8_sub_17_name,
+                 ug_sem_8_sub_17_marks_obtained,ug_sem_8_sub_17_total_marks,ug_sem_8_sub_18_name,
+                 ug_sem_8_sub_18_marks_obtained,ug_sem_8_sub_18_total_marks,ug_sem_8_sub_19_name,
+                 ug_sem_8_sub_19_marks_obtained,ug_sem_8_sub_19_total_marks,ug_sem_8_sub_20_name,
+                 ug_sem_8_sub_20_marks_obtained,ug_sem_8_sub_20_total_marks,aadhaar_no))
+
+            # Commit changes
+            conn.commit()
+
+            # Redirect to the next form
+            return redirect(url_for('form_ug_sem_9'))  # replace 'next_form' with the actual name of the next form
+
+        else:
+            # Fetch ug_sem_8_info from the database
+            cursor.execute("SELECT * FROM ug_sem_8 WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+            ug_sem_8_info = cursor.fetchone()
+
+            # Pass the ug_sem_8_info to the template
+            return render_template('Student/student_info_forms/form_ug_sem_8.html', ug_sem_8=ug_sem_8_info)
+    except Exception as e:
+        app.logger.error(f"Exception occurred: {e}")
+        return str(e), 500
+
+@app.route('/form_ug_sem_9', methods=['GET', 'POST'])
+def form_ug_sem_9():
+    try:
+        if request.method == 'POST':
+            return form_ug_sem_9_post()
+        else:
+            # Fetch ug_sem_9_info from the database
+            cursor.execute("SELECT * FROM ug_sem_9 WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+            ug_sem_9_info = cursor.fetchone()
+
+            # If ug_sem_9_info is None, create a default ug_sem_9_info object
+            if ug_sem_9_info is None:
+                ug_sem_9_info = {
+                    'ug_enrollment_no': '',
+                    'ug_sem_9_session': '',
+                    'ug_sem_9_roll_no': '',
+                    'ug_sem_9_result': '',
+                    'ug_sem_9_sub_1_name': '',
+                    'ug_sem_9_sub_1_marks_obtained': '',
+                    'ug_sem_9_sub_1_total_marks': '',
+                    'ug_sem_9_sub_2_name': '',
+                    'ug_sem_9_sub_2_marks_obtained': '',
+                    'ug_sem_9_sub_2_total_marks': '',
+                    'ug_sem_9_sub_3_name': '',
+                    'ug_sem_9_sub_3_marks_obtained': '',
+                    'ug_sem_9_sub_3_total_marks': '',
+                    'ug_sem_9_sub_4_name': '',
+                    'ug_sem_9_sub_4_marks_obtained': '',
+                    'ug_sem_9_sub_4_total_marks': '',
+                    'ug_sem_9_sub_5_name': '',
+                    'ug_sem_9_sub_5_marks_obtained': '',
+                    'ug_sem_9_sub_5_total_marks': '',
+                    'ug_sem_9_sub_6_name': '',
+                    'ug_sem_9_sub_6_marks_obtained': '',
+                    'ug_sem_9_sub_6_total_marks': '',
+                    'ug_sem_9_sub_7_name': '',
+                    'ug_sem_9_sub_7_marks_obtained': '',
+                    'ug_sem_9_sub_7_total_marks': '',
+                    'ug_sem_9_sub_8_name': '',
+                    'ug_sem_9_sub_8_marks_obtained': '',
+                    'ug_sem_9_sub_8_total_marks': '',
+                    'ug_sem_9_sub_9_name': '',
+                    'ug_sem_9_sub_9_marks_obtained': '',
+                    'ug_sem_9_sub_9_total_marks': '',
+                    'ug_sem_9_sub_10_name': '',
+                    'ug_sem_9_sub_10_marks_obtained': '',
+                    'ug_sem_9_sub_10_total_marks': '',
+                    'ug_sem_9_sub_11_name': '',
+                    'ug_sem_9_sub_11_marks_obtained': '',
+                    'ug_sem_9_sub_11_total_marks': '',
+                    'ug_sem_9_sub_12_name': '',
+                    'ug_sem_9_sub_12_marks_obtained': '',
+                    'ug_sem_9_sub_12_total_marks': '',
+                    'ug_sem_9_sub_13_name': '',
+                    'ug_sem_9_sub_13_marks_obtained': '',
+                    'ug_sem_9_sub_13_total_marks': '',
+                    'ug_sem_9_sub_14_name': '',
+                    'ug_sem_9_sub_14_marks_obtained': '',
+                    'ug_sem_9_sub_14_total_marks': '',
+                    'ug_sem_9_sub_15_name': '',
+                    'ug_sem_9_sub_15_marks_obtained': '',
+                    'ug_sem_9_sub_15_total_marks': '',
+                    'ug_sem_9_sub_16_name': '',
+                    'ug_sem_9_sub_16_marks_obtained': '',
+                    'ug_sem_9_sub_16_total_marks': '',
+                    'ug_sem_9_sub_17_name': '',
+                    'ug_sem_9_sub_17_marks_obtained': '',
+                    'ug_sem_9_sub_17_total_marks': '',
+                    'ug_sem_9_sub_18_name': '',
+                    'ug_sem_9_sub_18_marks_obtained': '',
+                    'ug_sem_9_sub_18_total_marks': '',
+                    'ug_sem_9_sub_19_name': '',
+                    'ug_sem_9_sub_19_marks_obtained': '',
+                    'ug_sem_9_sub_19_total_marks': '',
+                    'ug_sem_9_sub_20_name': '',
+                    'ug_sem_9_sub_20_marks_obtained': '',
+                    'ug_sem_9_sub_20_total_marks': ''
+
+                    # Add more fields as needed
+                }
+
+            # Pass the ug_sem_9_info to the template
+            return render_template('Student/student_info_forms/form_ug_sem_9.html', ug_sem_9=ug_sem_9_info)
+    except Exception as e:
+        app.logger.error(f"Exception occurred: {e}")
+        return str(e), 500
+
+def form_ug_sem_9_post():
+    try:
+        if request.method == 'POST':
+            # Get form data
+            aadhaar_no = session['aadhaar_no']
+            ug_enrollment_no = request.form['ug_enrollment_no']
+            ug_sem_9_session = request.form['ug_sem_9_session']
+            ug_sem_9_roll_no = request.form['ug_sem_9_roll_no']
+            ug_sem_9_result = request.form['ug_sem_9_result']
+            ug_sem_9_sub_1_name = request.form['ug_sem_9_sub_1_name']
+            ug_sem_9_sub_1_marks_obtained = request.form['ug_sem_9_sub_1_marks_obtained']
+            ug_sem_9_sub_1_total_marks = request.form['ug_sem_9_sub_1_total_marks']
+            ug_sem_9_sub_2_name = request.form['ug_sem_9_sub_2_name']
+            ug_sem_9_sub_2_marks_obtained = request.form['ug_sem_9_sub_2_marks_obtained']
+            ug_sem_9_sub_2_total_marks = request.form['ug_sem_9_sub_2_total_marks']
+            ug_sem_9_sub_3_name = request.form['ug_sem_9_sub_3_name']
+            ug_sem_9_sub_3_marks_obtained = request.form['ug_sem_9_sub_3_marks_obtained']
+            ug_sem_9_sub_3_total_marks = request.form['ug_sem_9_sub_3_total_marks']
+            ug_sem_9_sub_4_name = request.form['ug_sem_9_sub_4_name']
+            ug_sem_9_sub_4_marks_obtained = request.form['ug_sem_9_sub_4_marks_obtained']
+            ug_sem_9_sub_4_total_marks = request.form['ug_sem_9_sub_4_total_marks']
+            ug_sem_9_sub_5_name = request.form['ug_sem_9_sub_5_name']
+            ug_sem_9_sub_5_marks_obtained = request.form['ug_sem_9_sub_5_marks_obtained']
+            ug_sem_9_sub_5_total_marks = request.form['ug_sem_9_sub_5_total_marks']
+            ug_sem_9_sub_6_name = request.form['ug_sem_9_sub_6_name']
+            ug_sem_9_sub_6_marks_obtained = request.form['ug_sem_9_sub_6_marks_obtained']
+            ug_sem_9_sub_6_total_marks = request.form['ug_sem_9_sub_6_total_marks']
+            ug_sem_9_sub_7_name = request.form['ug_sem_9_sub_7_name']
+            ug_sem_9_sub_7_marks_obtained = request.form['ug_sem_9_sub_7_marks_obtained']
+            ug_sem_9_sub_7_total_marks = request.form['ug_sem_9_sub_7_total_marks']
+            ug_sem_9_sub_8_name = request.form['ug_sem_9_sub_8_name']
+            ug_sem_9_sub_8_marks_obtained = request.form['ug_sem_9_sub_8_marks_obtained']
+            ug_sem_9_sub_8_total_marks = request.form['ug_sem_9_sub_8_total_marks']
+            ug_sem_9_sub_9_name = request.form['ug_sem_9_sub_9_name']
+            ug_sem_9_sub_9_marks_obtained = request.form['ug_sem_9_sub_9_marks_obtained']
+            ug_sem_9_sub_9_total_marks = request.form['ug_sem_9_sub_9_total_marks']
+            ug_sem_9_sub_10_name = request.form['ug_sem_9_sub_10_name']
+            ug_sem_9_sub_10_marks_obtained = request.form['ug_sem_9_sub_10_marks_obtained']
+            ug_sem_9_sub_10_total_marks = request.form['ug_sem_9_sub_10_total_marks']
+            ug_sem_9_sub_11_name = request.form['ug_sem_9_sub_11_name']
+            ug_sem_9_sub_11_marks_obtained = request.form['ug_sem_9_sub_11_marks_obtained']
+            ug_sem_9_sub_11_total_marks = request.form['ug_sem_9_sub_11_total_marks']
+            ug_sem_9_sub_12_name = request.form['ug_sem_9_sub_12_name']
+            ug_sem_9_sub_12_marks_obtained = request.form['ug_sem_9_sub_12_marks_obtained']
+            ug_sem_9_sub_12_total_marks = request.form['ug_sem_9_sub_12_total_marks']
+            ug_sem_9_sub_13_name = request.form['ug_sem_9_sub_13_name']
+            ug_sem_9_sub_13_marks_obtained = request.form['ug_sem_9_sub_13_marks_obtained']
+            ug_sem_9_sub_13_total_marks = request.form['ug_sem_9_sub_13_total_marks']
+            ug_sem_9_sub_14_name = request.form['ug_sem_9_sub_14_name']
+            ug_sem_9_sub_14_marks_obtained = request.form['ug_sem_9_sub_14_marks_obtained']
+            ug_sem_9_sub_14_total_marks = request.form['ug_sem_9_sub_14_total_marks']
+            ug_sem_9_sub_15_name = request.form['ug_sem_9_sub_15_name']
+            ug_sem_9_sub_15_marks_obtained = request.form['ug_sem_9_sub_15_marks_obtained']
+            ug_sem_9_sub_15_total_marks = request.form['ug_sem_9_sub_15_total_marks']
+            ug_sem_9_sub_16_name = request.form['ug_sem_9_sub_16_name']
+            ug_sem_9_sub_16_marks_obtained = request.form['ug_sem_9_sub_16_marks_obtained']
+            ug_sem_9_sub_16_total_marks = request.form['ug_sem_9_sub_16_total_marks']
+            ug_sem_9_sub_17_name = request.form['ug_sem_9_sub_17_name']
+            ug_sem_9_sub_17_marks_obtained = request.form['ug_sem_9_sub_17_marks_obtained']
+            ug_sem_9_sub_17_total_marks = request.form['ug_sem_9_sub_17_total_marks']
+            ug_sem_9_sub_18_name = request.form['ug_sem_9_sub_18_name']
+            ug_sem_9_sub_18_marks_obtained = request.form['ug_sem_9_sub_18_marks_obtained']
+            ug_sem_9_sub_18_total_marks = request.form['ug_sem_9_sub_18_total_marks']
+            ug_sem_9_sub_19_name = request.form['ug_sem_9_sub_19_name']
+            ug_sem_9_sub_19_marks_obtained = request.form['ug_sem_9_sub_19_marks_obtained']
+            ug_sem_9_sub_19_total_marks = request.form['ug_sem_9_sub_19_total_marks']
+            ug_sem_9_sub_20_name = request.form['ug_sem_9_sub_20_name']
+            ug_sem_9_sub_20_marks_obtained = request.form['ug_sem_9_sub_20_marks_obtained']
+            ug_sem_9_sub_20_total_marks = request.form['ug_sem_9_sub_20_total_marks']
+
+
+            # Update ug_sem_9_info in the database
+            cursor.execute("""
+                UPDATE ug_sem_9
+                SET ug_enrollment_no = ?, ug_sem_9_session = ?, ug_sem_9_roll_no = ?, ug_sem_9_result = ?, ug_sem_9_sub_1_name = ?, ug_sem_9_sub_1_marks_obtained = ?, ug_sem_9_sub_1_total_marks = ?, ug_sem_9_sub_2_name = ?, ug_sem_9_sub_2_marks_obtained = ?, ug_sem_9_sub_2_total_marks = ?, ug_sem_9_sub_3_name = ?, ug_sem_9_sub_3_marks_obtained = ?, ug_sem_9_sub_3_total_marks = ?, ug_sem_9_sub_4_name = ?, ug_sem_9_sub_4_marks_obtained = ?, ug_sem_9_sub_4_total_marks = ?, ug_sem_9_sub_5_name = ?, ug_sem_9_sub_5_marks_obtained = ?, ug_sem_9_sub_5_total_marks = ?, ug_sem_9_sub_6_name = ?, ug_sem_9_sub_6_marks_obtained = ?, ug_sem_9_sub_6_total_marks = ?, ug_sem_9_sub_7_name = ?, ug_sem_9_sub_7_marks_obtained = ?, ug_sem_9_sub_7_total_marks = ?, ug_sem_9_sub_8_name = ?, ug_sem_9_sub_8_marks_obtained = ?, ug_sem_9_sub_8_total_marks = ?, ug_sem_9_sub_9_name = ?, ug_sem_9_sub_9_marks_obtained = ?, ug_sem_9_sub_9_total_marks = ?, ug_sem_9_sub_10_name = ?, ug_sem_9_sub_10_marks_obtained = ?, ug_sem_9_sub_10_total_marks = ?, ug_sem_9_sub_11_name = ?, ug_sem_9_sub_11_marks_obtained = ?, ug_sem_9_sub_11_total_marks = ?, ug_sem_9_sub_12_name = ?, ug_sem_9_sub_12_marks_obtained = ?, ug_sem_9_sub_12_total_marks = ?, ug_sem_9_sub_13_name = ?, ug_sem_9_sub_13_marks_obtained = ?, ug_sem_9_sub_13_total_marks = ?, ug_sem_9_sub_14_name = ?, ug_sem_9_sub_14_marks_obtained = ?, ug_sem_9_sub_14_total_marks = ?, ug_sem_9_sub_15_name = ?, ug_sem_9_sub_15_marks_obtained = ?, ug_sem_9_sub_15_total_marks = ?, ug_sem_9_sub_16_name = ?, ug_sem_9_sub_16_marks_obtained = ?, ug_sem_9_sub_16_total_marks = ?, ug_sem_9_sub_17_name = ?, ug_sem_9_sub_17_marks_obtained = ?, ug_sem_9_sub_17_total_marks = ?, ug_sem_9_sub_18_name = ?, ug_sem_9_sub_18_marks_obtained = ?, ug_sem_9_sub_18_total_marks = ?, ug_sem_9_sub_19_name = ?, ug_sem_9_sub_19_marks_obtained = ?, ug_sem_9_sub_19_total_marks = ?, ug_sem_9_sub_20_name = ?, ug_sem_9_sub_20_marks_obtained = ?, ug_sem_9_sub_20_total_marks = ?
+                WHERE aadhaar_no = ?
+            """,(ug_enrollment_no,ug_sem_9_session,ug_sem_9_roll_no,ug_sem_9_result,ug_sem_9_sub_1_name,
+                 ug_sem_9_sub_1_marks_obtained,ug_sem_9_sub_1_total_marks,ug_sem_9_sub_2_name,
+                 ug_sem_9_sub_2_marks_obtained,ug_sem_9_sub_2_total_marks,ug_sem_9_sub_3_name,
+                 ug_sem_9_sub_3_marks_obtained,ug_sem_9_sub_3_total_marks,ug_sem_9_sub_4_name,
+                 ug_sem_9_sub_4_marks_obtained,ug_sem_9_sub_4_total_marks,ug_sem_9_sub_5_name,
+                 ug_sem_9_sub_5_marks_obtained,ug_sem_9_sub_5_total_marks,ug_sem_9_sub_6_name,
+                 ug_sem_9_sub_6_marks_obtained,ug_sem_9_sub_6_total_marks,ug_sem_9_sub_7_name,
+                 ug_sem_9_sub_7_marks_obtained,ug_sem_9_sub_7_total_marks,ug_sem_9_sub_8_name,
+                 ug_sem_9_sub_8_marks_obtained,ug_sem_9_sub_8_total_marks,ug_sem_9_sub_9_name,
+                 ug_sem_9_sub_9_marks_obtained,ug_sem_9_sub_9_total_marks,ug_sem_9_sub_10_name,
+                 ug_sem_9_sub_10_marks_obtained,ug_sem_9_sub_10_total_marks,ug_sem_9_sub_11_name,
+                 ug_sem_9_sub_11_marks_obtained,ug_sem_9_sub_11_total_marks,ug_sem_9_sub_12_name,
+                 ug_sem_9_sub_12_marks_obtained,ug_sem_9_sub_12_total_marks,ug_sem_9_sub_13_name,
+                 ug_sem_9_sub_13_marks_obtained,ug_sem_9_sub_13_total_marks,ug_sem_9_sub_14_name,
+                 ug_sem_9_sub_14_marks_obtained,ug_sem_9_sub_14_total_marks,ug_sem_9_sub_15_name,
+                 ug_sem_9_sub_15_marks_obtained,ug_sem_9_sub_15_total_marks,ug_sem_9_sub_16_name,
+                 ug_sem_9_sub_16_marks_obtained,ug_sem_9_sub_16_total_marks,ug_sem_9_sub_17_name,
+                 ug_sem_9_sub_17_marks_obtained,ug_sem_9_sub_17_total_marks,ug_sem_9_sub_18_name,
+                 ug_sem_9_sub_18_marks_obtained,ug_sem_9_sub_18_total_marks,ug_sem_9_sub_19_name,
+                 ug_sem_9_sub_19_marks_obtained,ug_sem_9_sub_19_total_marks,ug_sem_9_sub_20_name,
+                 ug_sem_9_sub_20_marks_obtained,ug_sem_9_sub_20_total_marks,aadhaar_no))
+
+            # Commit changes
+            conn.commit()
+
+            # Redirect to the next form
+            return redirect(url_for('form_ug_sem_10'))  # replace 'next_form' with the actual name of the next form
+
+        else:
+            # Fetch ug_sem_9_info from the database
+            cursor.execute("SELECT * FROM ug_sem_9 WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+            ug_sem_9_info = cursor.fetchone()
+
+            # Pass the ug_sem_9_info to the template
+            return render_template('Student/student_info_forms/form_ug_sem_9.html', ug_sem_9=ug_sem_9_info)
+    except Exception as e:
+        app.logger.error(f"Exception occurred: {e}")
+        return str(e), 500
+
+@app.route('/form_ug_sem_10', methods=['GET', 'POST'])
+def form_ug_sem_10():
+    try:
+        if request.method == 'POST':
+            return form_ug_sem_10_post()
+        else:
+            # Fetch ug_sem_10_info from the database
+            cursor.execute("SELECT * FROM ug_sem_10 WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+            ug_sem_10_info = cursor.fetchone()
+
+            # If ug_sem_10_info is None, create a default ug_sem_10_info object
+            if ug_sem_10_info is None:
+                ug_sem_10_info = {
+                    'ug_enrollment_no': '',
+                    'ug_sem_10_session': '',
+                    'ug_sem_10_roll_no': '',
+                    'ug_sem_10_result': '',
+                    'ug_sem_10_sub_1_name': '',
+                    'ug_sem_10_sub_1_marks_obtained': '',
+                    'ug_sem_10_sub_1_total_marks': '',
+                    'ug_sem_10_sub_2_name': '',
+                    'ug_sem_10_sub_2_marks_obtained': '',
+                    'ug_sem_10_sub_2_total_marks': '',
+                    'ug_sem_10_sub_3_name': '',
+                    'ug_sem_10_sub_3_marks_obtained': '',
+                    'ug_sem_10_sub_3_total_marks': '',
+                    'ug_sem_10_sub_4_name': '',
+                    'ug_sem_10_sub_4_marks_obtained': '',
+                    'ug_sem_10_sub_4_total_marks': '',
+                    'ug_sem_10_sub_5_name': '',
+                    'ug_sem_10_sub_5_marks_obtained': '',
+                    'ug_sem_10_sub_5_total_marks': '',
+                    'ug_sem_10_sub_6_name': '',
+                    'ug_sem_10_sub_6_marks_obtained': '',
+                    'ug_sem_10_sub_6_total_marks': '',
+                    'ug_sem_10_sub_7_name': '',
+                    'ug_sem_10_sub_7_marks_obtained': '',
+                    'ug_sem_10_sub_7_total_marks': '',
+                    'ug_sem_10_sub_8_name': '',
+                    'ug_sem_10_sub_8_marks_obtained': '',
+                    'ug_sem_10_sub_8_total_marks': '',
+                    'ug_sem_10_sub_9_name': '',
+                    'ug_sem_10_sub_9_marks_obtained': '',
+                    'ug_sem_10_sub_9_total_marks': '',
+                    'ug_sem_10_sub_10_name': '',
+                    'ug_sem_10_sub_10_marks_obtained': '',
+                    'ug_sem_10_sub_10_total_marks': '',
+                    'ug_sem_10_sub_11_name': '',
+                    'ug_sem_10_sub_11_marks_obtained': '',
+                    'ug_sem_10_sub_11_total_marks': '',
+                    'ug_sem_10_sub_12_name': '',
+                    'ug_sem_10_sub_12_marks_obtained': '',
+                    'ug_sem_10_sub_12_total_marks': '',
+                    'ug_sem_10_sub_13_name': '',
+                    'ug_sem_10_sub_13_marks_obtained': '',
+                    'ug_sem_10_sub_13_total_marks': '',
+                    'ug_sem_10_sub_14_name': '',
+                    'ug_sem_10_sub_14_marks_obtained': '',
+                    'ug_sem_10_sub_14_total_marks': '',
+                    'ug_sem_10_sub_15_name': '',
+                    'ug_sem_10_sub_15_marks_obtained': '',
+                    'ug_sem_10_sub_15_total_marks': '',
+                    'ug_sem_10_sub_16_name': '',
+                    'ug_sem_10_sub_16_marks_obtained': '',
+                    'ug_sem_10_sub_16_total_marks': '',
+                    'ug_sem_10_sub_17_name': '',
+                    'ug_sem_10_sub_17_marks_obtained': '',
+                    'ug_sem_10_sub_17_total_marks': '',
+                    'ug_sem_10_sub_18_name': '',
+                    'ug_sem_10_sub_18_marks_obtained': '',
+                    'ug_sem_10_sub_18_total_marks': '',
+                    'ug_sem_10_sub_19_name': '',
+                    'ug_sem_10_sub_19_marks_obtained': '',
+                    'ug_sem_10_sub_19_total_marks': '',
+                    'ug_sem_10_sub_20_name': '',
+                    'ug_sem_10_sub_20_marks_obtained': '',
+                    'ug_sem_10_sub_20_total_marks': ''
+
+                    # Add more fields as needed
+                }
+
+            # Pass the ug_sem_10_info to the template
+            return render_template('Student/student_info_forms/form_ug_sem_10.html', ug_sem_10=ug_sem_10_info)
+    except Exception as e:
+        app.logger.error(f"Exception occurred: {e}")
+        return str(e), 500
+
+def form_ug_sem_10_post():
+    try:
+        if request.method == 'POST':
+            # Get form data
+            aadhaar_no = session['aadhaar_no']
+            ug_enrollment_no = request.form['ug_enrollment_no']
+            ug_sem_10_session = request.form['ug_sem_10_session']
+            ug_sem_10_roll_no = request.form['ug_sem_10_roll_no']
+            ug_sem_10_result = request.form['ug_sem_10_result']
+            ug_sem_10_sub_1_name = request.form['ug_sem_10_sub_1_name']
+            ug_sem_10_sub_1_marks_obtained = request.form['ug_sem_10_sub_1_marks_obtained']
+            ug_sem_10_sub_1_total_marks = request.form['ug_sem_10_sub_1_total_marks']
+            ug_sem_10_sub_2_name = request.form['ug_sem_10_sub_2_name']
+            ug_sem_10_sub_2_marks_obtained = request.form['ug_sem_10_sub_2_marks_obtained']
+            ug_sem_10_sub_2_total_marks = request.form['ug_sem_10_sub_2_total_marks']
+            ug_sem_10_sub_3_name = request.form['ug_sem_10_sub_3_name']
+            ug_sem_10_sub_3_marks_obtained = request.form['ug_sem_10_sub_3_marks_obtained']
+            ug_sem_10_sub_3_total_marks = request.form['ug_sem_10_sub_3_total_marks']
+            ug_sem_10_sub_4_name = request.form['ug_sem_10_sub_4_name']
+            ug_sem_10_sub_4_marks_obtained = request.form['ug_sem_10_sub_4_marks_obtained']
+            ug_sem_10_sub_4_total_marks = request.form['ug_sem_10_sub_4_total_marks']
+            ug_sem_10_sub_5_name = request.form['ug_sem_10_sub_5_name']
+            ug_sem_10_sub_5_marks_obtained = request.form['ug_sem_10_sub_5_marks_obtained']
+            ug_sem_10_sub_5_total_marks = request.form['ug_sem_10_sub_5_total_marks']
+            ug_sem_10_sub_6_name = request.form['ug_sem_10_sub_6_name']
+            ug_sem_10_sub_6_marks_obtained = request.form['ug_sem_10_sub_6_marks_obtained']
+            ug_sem_10_sub_6_total_marks = request.form['ug_sem_10_sub_6_total_marks']
+            ug_sem_10_sub_7_name = request.form['ug_sem_10_sub_7_name']
+            ug_sem_10_sub_7_marks_obtained = request.form['ug_sem_10_sub_7_marks_obtained']
+            ug_sem_10_sub_7_total_marks = request.form['ug_sem_10_sub_7_total_marks']
+            ug_sem_10_sub_8_name = request.form['ug_sem_10_sub_8_name']
+            ug_sem_10_sub_8_marks_obtained = request.form['ug_sem_10_sub_8_marks_obtained']
+            ug_sem_10_sub_8_total_marks = request.form['ug_sem_10_sub_8_total_marks']
+            ug_sem_10_sub_9_name = request.form['ug_sem_10_sub_9_name']
+            ug_sem_10_sub_9_marks_obtained = request.form['ug_sem_10_sub_9_marks_obtained']
+            ug_sem_10_sub_9_total_marks = request.form['ug_sem_10_sub_9_total_marks']
+            ug_sem_10_sub_10_name = request.form['ug_sem_10_sub_10_name']
+            ug_sem_10_sub_10_marks_obtained = request.form['ug_sem_10_sub_10_marks_obtained']
+            ug_sem_10_sub_10_total_marks = request.form['ug_sem_10_sub_10_total_marks']
+            ug_sem_10_sub_11_name = request.form['ug_sem_10_sub_11_name']
+            ug_sem_10_sub_11_marks_obtained = request.form['ug_sem_10_sub_11_marks_obtained']
+            ug_sem_10_sub_11_total_marks = request.form['ug_sem_10_sub_11_total_marks']
+            ug_sem_10_sub_12_name = request.form['ug_sem_10_sub_12_name']
+            ug_sem_10_sub_12_marks_obtained = request.form['ug_sem_10_sub_12_marks_obtained']
+            ug_sem_10_sub_12_total_marks = request.form['ug_sem_10_sub_12_total_marks']
+            ug_sem_10_sub_13_name = request.form['ug_sem_10_sub_13_name']
+            ug_sem_10_sub_13_marks_obtained = request.form['ug_sem_10_sub_13_marks_obtained']
+            ug_sem_10_sub_13_total_marks = request.form['ug_sem_10_sub_13_total_marks']
+            ug_sem_10_sub_14_name = request.form['ug_sem_10_sub_14_name']
+            ug_sem_10_sub_14_marks_obtained = request.form['ug_sem_10_sub_14_marks_obtained']
+            ug_sem_10_sub_14_total_marks = request.form['ug_sem_10_sub_14_total_marks']
+            ug_sem_10_sub_15_name = request.form['ug_sem_10_sub_15_name']
+            ug_sem_10_sub_15_marks_obtained = request.form['ug_sem_10_sub_15_marks_obtained']
+            ug_sem_10_sub_15_total_marks = request.form['ug_sem_10_sub_15_total_marks']
+            ug_sem_10_sub_16_name = request.form['ug_sem_10_sub_16_name']
+            ug_sem_10_sub_16_marks_obtained = request.form['ug_sem_10_sub_16_marks_obtained']
+            ug_sem_10_sub_16_total_marks = request.form['ug_sem_10_sub_16_total_marks']
+            ug_sem_10_sub_17_name = request.form['ug_sem_10_sub_17_name']
+            ug_sem_10_sub_17_marks_obtained = request.form['ug_sem_10_sub_17_marks_obtained']
+            ug_sem_10_sub_17_total_marks = request.form['ug_sem_10_sub_17_total_marks']
+            ug_sem_10_sub_18_name = request.form['ug_sem_10_sub_18_name']
+            ug_sem_10_sub_18_marks_obtained = request.form['ug_sem_10_sub_18_marks_obtained']
+            ug_sem_10_sub_18_total_marks = request.form['ug_sem_10_sub_18_total_marks']
+            ug_sem_10_sub_19_name = request.form['ug_sem_10_sub_19_name']
+            ug_sem_10_sub_19_marks_obtained = request.form['ug_sem_10_sub_19_marks_obtained']
+            ug_sem_10_sub_19_total_marks = request.form['ug_sem_10_sub_19_total_marks']
+            ug_sem_10_sub_20_name = request.form['ug_sem_10_sub_20_name']
+            ug_sem_10_sub_20_marks_obtained = request.form['ug_sem_10_sub_20_marks_obtained']
+            ug_sem_10_sub_20_total_marks = request.form['ug_sem_10_sub_20_total_marks']
+
+
+            # Update ug_sem_10_info in the database
+            cursor.execute("""
+                UPDATE ug_sem_10
+                SET ug_enrollment_no = ?, ug_sem_10_session = ?, ug_sem_10_roll_no = ?, ug_sem_10_result = ?, ug_sem_10_sub_1_name = ?, ug_sem_10_sub_1_marks_obtained = ?, ug_sem_10_sub_1_total_marks = ?, ug_sem_10_sub_2_name = ?, ug_sem_10_sub_2_marks_obtained = ?, ug_sem_10_sub_2_total_marks = ?, ug_sem_10_sub_3_name = ?, ug_sem_10_sub_3_marks_obtained = ?, ug_sem_10_sub_3_total_marks = ?, ug_sem_10_sub_4_name = ?, ug_sem_10_sub_4_marks_obtained = ?, ug_sem_10_sub_4_total_marks = ?, ug_sem_10_sub_5_name = ?, ug_sem_10_sub_5_marks_obtained = ?, ug_sem_10_sub_5_total_marks = ?, ug_sem_10_sub_6_name = ?, ug_sem_10_sub_6_marks_obtained = ?, ug_sem_10_sub_6_total_marks = ?, ug_sem_10_sub_7_name = ?, ug_sem_10_sub_7_marks_obtained = ?, ug_sem_10_sub_7_total_marks = ?, ug_sem_10_sub_8_name = ?, ug_sem_10_sub_8_marks_obtained = ?, ug_sem_10_sub_8_total_marks = ?, ug_sem_10_sub_9_name = ?, ug_sem_10_sub_9_marks_obtained = ?, ug_sem_10_sub_9_total_marks = ?, ug_sem_10_sub_10_name = ?, ug_sem_10_sub_10_marks_obtained = ?, ug_sem_10_sub_10_total_marks = ?, ug_sem_10_sub_11_name = ?, ug_sem_10_sub_11_marks_obtained = ?, ug_sem_10_sub_11_total_marks = ?, ug_sem_10_sub_12_name = ?, ug_sem_10_sub_12_marks_obtained = ?, ug_sem_10_sub_12_total_marks = ?, ug_sem_10_sub_13_name = ?, ug_sem_10_sub_13_marks_obtained = ?, ug_sem_10_sub_13_total_marks = ?, ug_sem_10_sub_14_name = ?, ug_sem_10_sub_14_marks_obtained = ?, ug_sem_10_sub_14_total_marks = ?, ug_sem_10_sub_15_name = ?, ug_sem_10_sub_15_marks_obtained = ?, ug_sem_10_sub_15_total_marks = ?, ug_sem_10_sub_16_name = ?, ug_sem_10_sub_16_marks_obtained = ?, ug_sem_10_sub_16_total_marks = ?, ug_sem_10_sub_17_name = ?, ug_sem_10_sub_17_marks_obtained = ?, ug_sem_10_sub_17_total_marks = ?, ug_sem_10_sub_18_name = ?, ug_sem_10_sub_18_marks_obtained = ?, ug_sem_10_sub_18_total_marks = ?, ug_sem_10_sub_19_name = ?, ug_sem_10_sub_19_marks_obtained = ?, ug_sem_10_sub_19_total_marks = ?, ug_sem_10_sub_20_name = ?, ug_sem_10_sub_20_marks_obtained = ?, ug_sem_10_sub_20_total_marks = ?
+                WHERE aadhaar_no = ?
+            """,(ug_enrollment_no,ug_sem_10_session,ug_sem_10_roll_no,ug_sem_10_result,ug_sem_10_sub_1_name,
+                 ug_sem_10_sub_1_marks_obtained,ug_sem_10_sub_1_total_marks,ug_sem_10_sub_2_name,
+                 ug_sem_10_sub_2_marks_obtained,ug_sem_10_sub_2_total_marks,ug_sem_10_sub_3_name,
+                 ug_sem_10_sub_3_marks_obtained,ug_sem_10_sub_3_total_marks,ug_sem_10_sub_4_name,
+                 ug_sem_10_sub_4_marks_obtained,ug_sem_10_sub_4_total_marks,ug_sem_10_sub_5_name,
+                 ug_sem_10_sub_5_marks_obtained,ug_sem_10_sub_5_total_marks,ug_sem_10_sub_6_name,
+                 ug_sem_10_sub_6_marks_obtained,ug_sem_10_sub_6_total_marks,ug_sem_10_sub_7_name,
+                 ug_sem_10_sub_7_marks_obtained,ug_sem_10_sub_7_total_marks,ug_sem_10_sub_8_name,
+                 ug_sem_10_sub_8_marks_obtained,ug_sem_10_sub_8_total_marks,ug_sem_10_sub_9_name,
+                 ug_sem_10_sub_9_marks_obtained,ug_sem_10_sub_9_total_marks,ug_sem_10_sub_10_name,
+                 ug_sem_10_sub_10_marks_obtained,ug_sem_10_sub_10_total_marks,ug_sem_10_sub_11_name,
+                 ug_sem_10_sub_11_marks_obtained,ug_sem_10_sub_11_total_marks,ug_sem_10_sub_12_name,
+                 ug_sem_10_sub_12_marks_obtained,ug_sem_10_sub_12_total_marks,ug_sem_10_sub_13_name,
+                 ug_sem_10_sub_13_marks_obtained,ug_sem_10_sub_13_total_marks,ug_sem_10_sub_14_name,
+                 ug_sem_10_sub_14_marks_obtained,ug_sem_10_sub_14_total_marks,ug_sem_10_sub_15_name,
+                 ug_sem_10_sub_15_marks_obtained,ug_sem_10_sub_15_total_marks,ug_sem_10_sub_16_name,
+                 ug_sem_10_sub_16_marks_obtained,ug_sem_10_sub_16_total_marks,ug_sem_10_sub_17_name,
+                 ug_sem_10_sub_17_marks_obtained,ug_sem_10_sub_17_total_marks,ug_sem_10_sub_18_name,
+                 ug_sem_10_sub_18_marks_obtained,ug_sem_10_sub_18_total_marks,ug_sem_10_sub_19_name,
+                 ug_sem_10_sub_19_marks_obtained,ug_sem_10_sub_19_total_marks,ug_sem_10_sub_20_name,
+                 ug_sem_10_sub_20_marks_obtained,ug_sem_10_sub_20_total_marks,aadhaar_no))
+
+            # Commit changes
+            conn.commit()
+
+            # Redirect to the next form
+            return redirect(url_for('form_pg_details'))  # replace 'next_form' with the actual name of the next form
+
+        else:
+            # Fetch ug_sem_10_info from the database
+            cursor.execute("SELECT * FROM ug_sem_10 WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+            ug_sem_10_info = cursor.fetchone()
+
+            # Pass the ug_sem_10_info to the template
+            return render_template('Student/student_info_forms/form_ug_sem_10.html', ug_sem_10=ug_sem_10_info)
+    except Exception as e:
+        app.logger.error(f"Exception occurred: {e}")
+        return str(e), 500
+
+
+@app.route('/form_pg_details', methods=['GET', 'POST'])
 def form_pg_details():
-    return render_template('Student/student_info_forms/form_pg_details.html')
+    if request.method == 'POST':
+        return form_pg_details_post()
+    else:
+        # Fetch pg_details from the database
+        cursor.execute("SELECT * FROM pg_details WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+        pg_details = cursor.fetchone()
+
+        # If pg_details is None, create a default pg_details object
+        if pg_details is None:
+            pg_details = {
+                'aadhaar_no': '',
+                'pg_enrollment_no': '',
+                'pg_admission_year': '',
+                'pg_state': '',
+                'pg_district': '',
+                'pg_qualification_level': '',
+                'pg_stream': '',
+                'pg_institute_name': '',
+                'pg_institute_code': '',
+                'pg_board_university': '',
+                'pg_course_name': '',
+                'pg_course_duration': '',
+                'pg_year_of_study': '',
+                'pg_year_1_status': '',
+                'pg_year_1_admission_year': '',
+                'pg_sem_1_status': '',
+                'pg_sem_1_session': '',
+                'pg_sem_1_roll_no': '',
+                'pg_sem_2_status': '',
+                'pg_sem_2_session': '',
+                'pg_sem_2_roll_no': '',
+                'pg_year_2_status': '',
+                'pg_year_2_admission_year': '',
+                'pg_sem_3_status': '',
+                'pg_sem_3_session': '',
+                'pg_sem_3_roll_no': '',
+                'pg_sem_4_status': '',
+                'pg_sem_4_session': '',
+                'pg_sem_4_roll_no': '',
+                'pg_year_3_status': '',
+                'pg_year_3_admission_year': '',
+                'pg_sem_5_status': '',
+                'pg_sem_5_session': '',
+                'pg_sem_5_roll_no': '',
+                'pg_year_4_status': '',
+                'pg_year_4_admission_year': '',
+                'pg_sem_6_status': '',
+                'pg_sem_6_session': '',
+                'pg_sem_6_roll_no': '',
+                'pg_year_5_status': '',
+                'pg_year_5_admission_year': '',
+                'pg_sem_7_status': '',
+                'pg_sem_7_session': '',
+                'pg_sem_7_roll_no': '',
+                'pg_sem_8_status': '',
+                'pg_sem_8_session': '',
+                'pg_sem_8_roll_no': '',
+                'pg_sem_9_status': '',
+                'pg_sem_9_session': '',
+                'pg_sem_9_roll_no': '',
+                'pg_sem_10_status': '',
+                'pg_sem_10_session': '',
+                'pg_sem_10_roll_no': ''
+            }
+
+        # Pass the pg_details to the template
+        return render_template('Student/student_info_forms/form_pg_details.html', pg_details=pg_details)
+
+
+def form_pg_details_post():
+    try:
+        if request.method == 'POST':
+            # Get form data
+            aadhaar_no = request.form.get('aadhaar_no')
+            pg_enrollment_no = request.form.get('pg_enrollment_no')
+            pg_admission_year = request.form.get('pg_admission_year')
+            pg_state = request.form.get('pg_state')
+            pg_district = request.form.get('pg_district')
+            pg_qualification_level = request.form.get('pg_qualification_level')
+            pg_stream = request.form.get('pg_stream')
+            pg_institute_name = request.form.get('pg_institute_name')
+            pg_institute_code = request.form.get('pg_institute_code')
+            pg_board_university = request.form.get('pg_board_university')
+            pg_course_name = request.form.get('pg_course_name')
+            pg_course_duration = request.form.get('pg_course_duration')
+            pg_year_of_study = request.form.get('pg_year_of_study')
+            pg_year_1_status = request.form.get('pg_year_1_status')
+            pg_year_1_admission_year = request.form.get('pg_year_1_admission_year')
+            pg_sem_1_status = request.form.get('pg_sem_1_status')
+            pg_sem_1_session = request.form.get('pg_sem_1_session')
+            pg_sem_1_roll_no = request.form.get('pg_sem_1_roll_no')
+            pg_sem_2_status = request.form.get('pg_sem_2_status')
+            pg_sem_2_session = request.form.get('pg_sem_2_session')
+            pg_sem_2_roll_no = request.form.get('pg_sem_2_roll_no')
+            pg_year_2_status = request.form.get('pg_year_2_status')
+            pg_year_2_admission_year = request.form.get('pg_year_2_admission_year')
+            pg_sem_3_status = request.form.get('pg_sem_3_status')
+            pg_sem_3_session = request.form.get('pg_sem_3_session')
+            pg_sem_3_roll_no = request.form.get('pg_sem_3_roll_no')
+            pg_sem_4_status = request.form.get('pg_sem_4_status')
+            pg_sem_4_session = request.form.get('pg_sem_4_session')
+            pg_sem_4_roll_no = request.form.get('pg_sem_4_roll_no')
+            pg_year_3_status = request.form.get('pg_year_3_status')
+            pg_year_3_admission_year = request.form.get('pg_year_3_admission_year')
+            pg_sem_5_status = request.form.get('pg_sem_5_status')
+            pg_sem_5_session = request.form.get('pg_sem_5_session')
+            pg_sem_5_roll_no = request.form.get('pg_sem_5_roll_no')
+            pg_sem_6_status = request.form.get('pg_sem_6_status')
+            pg_sem_6_session = request.form.get('pg_sem_6_session')
+            pg_sem_6_roll_no = request.form.get('pg_sem_6_roll_no')
+            pg_year_4_status = request.form.get('pg_year_4_status')
+            pg_year_4_admission_year = request.form.get('pg_year_4_admission_year')
+            pg_sem_7_status = request.form.get('pg_sem_7_status')
+            pg_sem_7_session = request.form.get('pg_sem_7_session')
+            pg_sem_7_roll_no = request.form.get('pg_sem_7_roll_no')
+            pg_sem_8_status = request.form.get('pg_sem_8_status')
+            pg_sem_8_session = request.form.get('pg_sem_8_session')
+            pg_sem_8_roll_no = request.form.get('pg_sem_8_roll_no')
+            pg_year_5_status = request.form.get('pg_year_5_status')
+            pg_year_5_admission_year = request.form.get('pg_year_5_admission_year')
+            pg_sem_9_status = request.form.get('pg_sem_9_status')
+            pg_sem_9_session = request.form.get('pg_sem_9_session')
+            pg_sem_9_roll_no = request.form.get('pg_sem_9_roll_no')
+            pg_sem_10_status = request.form.get('pg_sem_10_status')
+            pg_sem_10_session = request.form.get('pg_sem_10_session')
+            pg_sem_10_roll_no = request.form.get('pg_sem_10_roll_no')
+
+            # Update pg_details in the database
+            cursor.execute("""
+                UPDATE pg_details
+                SET pg_enrollment_no = ?, pg_admission_year = ?, pg_state = ?, pg_district = ?,
+                    pg_qualification_level = ?, pg_stream = ?, pg_institute_name = ?, pg_institute_code = ?,
+                    pg_board_university = ?, pg_course_name = ?, pg_course_duration = ?, pg_year_of_study = ?,
+                    pg_year_1_status = ?, pg_year_1_admission_year = ?, pg_sem_1_status = ?, pg_sem_1_session = ?,
+                    pg_sem_1_roll_no = ?, pg_sem_2_status = ?, pg_sem_2_session = ?, pg_sem_2_roll_no = ?,
+                    pg_year_2_status = ?, pg_year_2_admission_year = ?, pg_sem_3_status = ?, pg_sem_3_session = ?,
+                    pg_sem_3_roll_no = ?, pg_sem_4_status = ?, pg_sem_4_session = ?, pg_sem_4_roll_no = ?,
+                    pg_year_3_status = ?, pg_year_3_admission_year = ?, pg_sem_5_status = ?, pg_sem_5_session = ?,
+                    pg_sem_5_roll_no = ?, pg_sem_6_status = ?, pg_sem_6_session = ?, pg_sem_6_roll_no = ?,
+                    pg_year_4_status = ?, pg_year_4_admission_year = ?, pg_sem_7_status = ?, pg_sem_7_session = ?,
+                    pg_sem_7_roll_no = ?, pg_sem_8_status = ?, pg_sem_8_session = ?, pg_sem_8_roll_no = ?,
+                    pg_year_5_status = ?, pg_year_5_admission_year = ?, pg_sem_9_status = ?, pg_sem_9_session = ?,
+                    pg_sem_9_roll_no = ?, pg_sem_10_status = ?, pg_sem_10_session = ?, pg_sem_10_roll_no = ?
+                WHERE aadhaar_no = ?
+            """, (pg_enrollment_no, pg_admission_year, pg_state, pg_district, pg_qualification_level,
+                  pg_stream, pg_institute_name, pg_institute_code, pg_board_university, pg_course_name,
+                  pg_course_duration, pg_year_of_study, pg_year_1_status, pg_year_1_admission_year,
+                  pg_sem_1_status, pg_sem_1_session, pg_sem_1_roll_no, pg_sem_2_status, pg_sem_2_session,
+                  pg_sem_2_roll_no, pg_year_2_status, pg_year_2_admission_year, pg_sem_3_status, pg_sem_3_session,
+                  pg_sem_3_roll_no, pg_sem_4_status, pg_sem_4_session, pg_sem_4_roll_no, pg_year_3_status,
+                  pg_year_3_admission_year, pg_sem_5_status, pg_sem_5_session, pg_sem_5_roll_no, pg_sem_6_status,
+                  pg_sem_6_session, pg_sem_6_roll_no, pg_year_4_status, pg_year_4_admission_year,
+                  pg_sem_7_status, pg_sem_7_session, pg_sem_7_roll_no, pg_sem_8_status, pg_sem_8_session,
+                  pg_sem_8_roll_no, pg_year_5_status, pg_year_5_admission_year, pg_sem_9_status, pg_sem_9_session,
+                  pg_sem_9_roll_no, pg_sem_10_status, pg_sem_10_session, pg_sem_10_roll_no, aadhaar_no))
+
+            # Commit changes
+            conn.commit()
+
+            # Redirect to the next form
+            return redirect(url_for('form_pg_sem_1'))  # replace 'next_form' with the actual name of the next form
+
+        else:
+            # Fetch c_12_info from the database
+            cursor.execute("SELECT * FROM pg_details WHERE aadhaar_no = ?",(session['aadhaar_no'],))
+            pg_details = cursor.fetchone()
+
+            # Pass the pg_details to the template
+            return render_template('Student/student_info_forms/form_pg_details.html', pg_details=pg_details)
+
+    except Exception as e:
+        app.logger.error(f"Exception occurred: {e}")
+        return str(e), 500
+
+
+@app.route('/form_pg_sem_1', methods=['GET', 'POST'])
+def form_pg_sem_1():
+    try:
+        if request.method == 'POST':
+            return form_pg_sem_1_post()
+        else:
+            # Fetch pg_sem_1_info from the database
+            cursor.execute("SELECT * FROM pg_sem_1 WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+            pg_sem_1_info = cursor.fetchone()
+
+            # If pg_sem_1_info is None, create a default pg_sem_1_info object
+            if pg_sem_1_info is None:
+                pg_sem_1_info = {
+                    'pg_enrollment_no': '',
+                    'pg_sem_1_session': '',
+                    'pg_sem_1_roll_no': '',
+                    'pg_sem_1_result': '',
+                    'pg_sem_1_sub_1_name': '',
+                    'pg_sem_1_sub_1_marks_obtained': '',
+                    'pg_sem_1_sub_1_total_marks': '',
+                    'pg_sem_1_sub_2_name': '',
+                    'pg_sem_1_sub_2_marks_obtained': '',
+                    'pg_sem_1_sub_2_total_marks': '',
+                    'pg_sem_1_sub_3_name': '',
+                    'pg_sem_1_sub_3_marks_obtained': '',
+                    'pg_sem_1_sub_3_total_marks': '',
+                    'pg_sem_1_sub_4_name': '',
+                    'pg_sem_1_sub_4_marks_obtained': '',
+                    'pg_sem_1_sub_4_total_marks': '',
+                    'pg_sem_1_sub_5_name': '',
+                    'pg_sem_1_sub_5_marks_obtained': '',
+                    'pg_sem_1_sub_5_total_marks': '',
+                    'pg_sem_1_sub_6_name': '',
+                    'pg_sem_1_sub_6_marks_obtained': '',
+                    'pg_sem_1_sub_6_total_marks': '',
+                    'pg_sem_1_sub_7_name': '',
+                    'pg_sem_1_sub_7_marks_obtained': '',
+                    'pg_sem_1_sub_7_total_marks': '',
+                    'pg_sem_1_sub_8_name': '',
+                    'pg_sem_1_sub_8_marks_obtained': '',
+                    'pg_sem_1_sub_8_total_marks': '',
+                    'pg_sem_1_sub_9_name': '',
+                    'pg_sem_1_sub_9_marks_obtained': '',
+                    'pg_sem_1_sub_9_total_marks': '',
+                    'pg_sem_1_sub_10_name': '',
+                    'pg_sem_1_sub_10_marks_obtained': '',
+                    'pg_sem_1_sub_10_total_marks': '',
+                    'pg_sem_1_sub_11_name': '',
+                    'pg_sem_1_sub_11_marks_obtained': '',
+                    'pg_sem_1_sub_11_total_marks': '',
+                    'pg_sem_1_sub_12_name': '',
+                    'pg_sem_1_sub_12_marks_obtained': '',
+                    'pg_sem_1_sub_12_total_marks': '',
+                    'pg_sem_1_sub_13_name': '',
+                    'pg_sem_1_sub_13_marks_obtained': '',
+                    'pg_sem_1_sub_13_total_marks': '',
+                    'pg_sem_1_sub_14_name': '',
+                    'pg_sem_1_sub_14_marks_obtained': '',
+                    'pg_sem_1_sub_14_total_marks': '',
+                    'pg_sem_1_sub_15_name': '',
+                    'pg_sem_1_sub_15_marks_obtained': '',
+                    'pg_sem_1_sub_15_total_marks': '',
+                    'pg_sem_1_sub_16_name': '',
+                    'pg_sem_1_sub_16_marks_obtained': '',
+                    'pg_sem_1_sub_16_total_marks': '',
+                    'pg_sem_1_sub_17_name': '',
+                    'pg_sem_1_sub_17_marks_obtained': '',
+                    'pg_sem_1_sub_17_total_marks': '',
+                    'pg_sem_1_sub_18_name': '',
+                    'pg_sem_1_sub_18_marks_obtained': '',
+                    'pg_sem_1_sub_18_total_marks': '',
+                    'pg_sem_1_sub_19_name': '',
+                    'pg_sem_1_sub_19_marks_obtained': '',
+                    'pg_sem_1_sub_19_total_marks': '',
+                    'pg_sem_1_sub_20_name': '',
+                    'pg_sem_1_sub_20_marks_obtained': '',
+                    'pg_sem_1_sub_20_total_marks': ''
+
+                    # Add more fields as needed
+                }
+
+            # Pass the pg_sem_1_info to the template
+            return render_template('Student/student_info_forms/form_pg_sem_1.html', pg_sem_1=pg_sem_1_info)
+    except Exception as e:
+        app.logger.error(f"Exception occurred: {e}")
+        return str(e), 500
+
+def form_pg_sem_1_post():
+    try:
+        if request.method == 'POST':
+            # Get form data
+            aadhaar_no = session['aadhaar_no']
+            pg_enrollment_no = request.form['pg_enrollment_no']
+            pg_sem_1_session = request.form['pg_sem_1_session']
+            pg_sem_1_roll_no = request.form['pg_sem_1_roll_no']
+            pg_sem_1_result = request.form['pg_sem_1_result']
+            pg_sem_1_sub_1_name = request.form['pg_sem_1_sub_1_name']
+            pg_sem_1_sub_1_marks_obtained = request.form['pg_sem_1_sub_1_marks_obtained']
+            pg_sem_1_sub_1_total_marks = request.form['pg_sem_1_sub_1_total_marks']
+            pg_sem_1_sub_2_name = request.form['pg_sem_1_sub_2_name']
+            pg_sem_1_sub_2_marks_obtained = request.form['pg_sem_1_sub_2_marks_obtained']
+            pg_sem_1_sub_2_total_marks = request.form['pg_sem_1_sub_2_total_marks']
+            pg_sem_1_sub_3_name = request.form['pg_sem_1_sub_3_name']
+            pg_sem_1_sub_3_marks_obtained = request.form['pg_sem_1_sub_3_marks_obtained']
+            pg_sem_1_sub_3_total_marks = request.form['pg_sem_1_sub_3_total_marks']
+            pg_sem_1_sub_4_name = request.form['pg_sem_1_sub_4_name']
+            pg_sem_1_sub_4_marks_obtained = request.form['pg_sem_1_sub_4_marks_obtained']
+            pg_sem_1_sub_4_total_marks = request.form['pg_sem_1_sub_4_total_marks']
+            pg_sem_1_sub_5_name = request.form['pg_sem_1_sub_5_name']
+            pg_sem_1_sub_5_marks_obtained = request.form['pg_sem_1_sub_5_marks_obtained']
+            pg_sem_1_sub_5_total_marks = request.form['pg_sem_1_sub_5_total_marks']
+            pg_sem_1_sub_6_name = request.form['pg_sem_1_sub_6_name']
+            pg_sem_1_sub_6_marks_obtained = request.form['pg_sem_1_sub_6_marks_obtained']
+            pg_sem_1_sub_6_total_marks = request.form['pg_sem_1_sub_6_total_marks']
+            pg_sem_1_sub_7_name = request.form['pg_sem_1_sub_7_name']
+            pg_sem_1_sub_7_marks_obtained = request.form['pg_sem_1_sub_7_marks_obtained']
+            pg_sem_1_sub_7_total_marks = request.form['pg_sem_1_sub_7_total_marks']
+            pg_sem_1_sub_8_name = request.form['pg_sem_1_sub_8_name']
+            pg_sem_1_sub_8_marks_obtained = request.form['pg_sem_1_sub_8_marks_obtained']
+            pg_sem_1_sub_8_total_marks = request.form['pg_sem_1_sub_8_total_marks']
+            pg_sem_1_sub_9_name = request.form['pg_sem_1_sub_9_name']
+            pg_sem_1_sub_9_marks_obtained = request.form['pg_sem_1_sub_9_marks_obtained']
+            pg_sem_1_sub_9_total_marks = request.form['pg_sem_1_sub_9_total_marks']
+            pg_sem_1_sub_10_name = request.form['pg_sem_1_sub_10_name']
+            pg_sem_1_sub_10_marks_obtained = request.form['pg_sem_1_sub_10_marks_obtained']
+            pg_sem_1_sub_10_total_marks = request.form['pg_sem_1_sub_10_total_marks']
+            pg_sem_1_sub_11_name = request.form['pg_sem_1_sub_11_name']
+            pg_sem_1_sub_11_marks_obtained = request.form['pg_sem_1_sub_11_marks_obtained']
+            pg_sem_1_sub_11_total_marks = request.form['pg_sem_1_sub_11_total_marks']
+            pg_sem_1_sub_12_name = request.form['pg_sem_1_sub_12_name']
+            pg_sem_1_sub_12_marks_obtained = request.form['pg_sem_1_sub_12_marks_obtained']
+            pg_sem_1_sub_12_total_marks = request.form['pg_sem_1_sub_12_total_marks']
+            pg_sem_1_sub_13_name = request.form['pg_sem_1_sub_13_name']
+            pg_sem_1_sub_13_marks_obtained = request.form['pg_sem_1_sub_13_marks_obtained']
+            pg_sem_1_sub_13_total_marks = request.form['pg_sem_1_sub_13_total_marks']
+            pg_sem_1_sub_14_name = request.form['pg_sem_1_sub_14_name']
+            pg_sem_1_sub_14_marks_obtained = request.form['pg_sem_1_sub_14_marks_obtained']
+            pg_sem_1_sub_14_total_marks = request.form['pg_sem_1_sub_14_total_marks']
+            pg_sem_1_sub_15_name = request.form['pg_sem_1_sub_15_name']
+            pg_sem_1_sub_15_marks_obtained = request.form['pg_sem_1_sub_15_marks_obtained']
+            pg_sem_1_sub_15_total_marks = request.form['pg_sem_1_sub_15_total_marks']
+            pg_sem_1_sub_16_name = request.form['pg_sem_1_sub_16_name']
+            pg_sem_1_sub_16_marks_obtained = request.form['pg_sem_1_sub_16_marks_obtained']
+            pg_sem_1_sub_16_total_marks = request.form['pg_sem_1_sub_16_total_marks']
+            pg_sem_1_sub_17_name = request.form['pg_sem_1_sub_17_name']
+            pg_sem_1_sub_17_marks_obtained = request.form['pg_sem_1_sub_17_marks_obtained']
+            pg_sem_1_sub_17_total_marks = request.form['pg_sem_1_sub_17_total_marks']
+            pg_sem_1_sub_18_name = request.form['pg_sem_1_sub_18_name']
+            pg_sem_1_sub_18_marks_obtained = request.form['pg_sem_1_sub_18_marks_obtained']
+            pg_sem_1_sub_18_total_marks = request.form['pg_sem_1_sub_18_total_marks']
+            pg_sem_1_sub_19_name = request.form['pg_sem_1_sub_19_name']
+            pg_sem_1_sub_19_marks_obtained = request.form['pg_sem_1_sub_19_marks_obtained']
+            pg_sem_1_sub_19_total_marks = request.form['pg_sem_1_sub_19_total_marks']
+            pg_sem_1_sub_20_name = request.form['pg_sem_1_sub_20_name']
+            pg_sem_1_sub_20_marks_obtained = request.form['pg_sem_1_sub_20_marks_obtained']
+            pg_sem_1_sub_20_total_marks = request.form['pg_sem_1_sub_20_total_marks']
+
+
+            # Update pg_sem_1_info in the database
+            cursor.execute("""
+                UPDATE pg_sem_1
+                SET pg_enrollment_no = ?, pg_sem_1_session = ?, pg_sem_1_roll_no = ?, pg_sem_1_result = ?, pg_sem_1_sub_1_name = ?, pg_sem_1_sub_1_marks_obtained = ?, pg_sem_1_sub_1_total_marks = ?, pg_sem_1_sub_2_name = ?, pg_sem_1_sub_2_marks_obtained = ?, pg_sem_1_sub_2_total_marks = ?, pg_sem_1_sub_3_name = ?, pg_sem_1_sub_3_marks_obtained = ?, pg_sem_1_sub_3_total_marks = ?, pg_sem_1_sub_4_name = ?, pg_sem_1_sub_4_marks_obtained = ?, pg_sem_1_sub_4_total_marks = ?, pg_sem_1_sub_5_name = ?, pg_sem_1_sub_5_marks_obtained = ?, pg_sem_1_sub_5_total_marks = ?, pg_sem_1_sub_6_name = ?, pg_sem_1_sub_6_marks_obtained = ?, pg_sem_1_sub_6_total_marks = ?, pg_sem_1_sub_7_name = ?, pg_sem_1_sub_7_marks_obtained = ?, pg_sem_1_sub_7_total_marks = ?, pg_sem_1_sub_8_name = ?, pg_sem_1_sub_8_marks_obtained = ?, pg_sem_1_sub_8_total_marks = ?, pg_sem_1_sub_9_name = ?, pg_sem_1_sub_9_marks_obtained = ?, pg_sem_1_sub_9_total_marks = ?, pg_sem_1_sub_10_name = ?, pg_sem_1_sub_10_marks_obtained = ?, pg_sem_1_sub_10_total_marks = ?, pg_sem_1_sub_11_name = ?, pg_sem_1_sub_11_marks_obtained = ?, pg_sem_1_sub_11_total_marks = ?, pg_sem_1_sub_12_name = ?, pg_sem_1_sub_12_marks_obtained = ?, pg_sem_1_sub_12_total_marks = ?, pg_sem_1_sub_13_name = ?, pg_sem_1_sub_13_marks_obtained = ?, pg_sem_1_sub_13_total_marks = ?, pg_sem_1_sub_14_name = ?, pg_sem_1_sub_14_marks_obtained = ?, pg_sem_1_sub_14_total_marks = ?, pg_sem_1_sub_15_name = ?, pg_sem_1_sub_15_marks_obtained = ?, pg_sem_1_sub_15_total_marks = ?, pg_sem_1_sub_16_name = ?, pg_sem_1_sub_16_marks_obtained = ?, pg_sem_1_sub_16_total_marks = ?, pg_sem_1_sub_17_name = ?, pg_sem_1_sub_17_marks_obtained = ?, pg_sem_1_sub_17_total_marks = ?, pg_sem_1_sub_18_name = ?, pg_sem_1_sub_18_marks_obtained = ?, pg_sem_1_sub_18_total_marks = ?, pg_sem_1_sub_19_name = ?, pg_sem_1_sub_19_marks_obtained = ?, pg_sem_1_sub_19_total_marks = ?, pg_sem_1_sub_20_name = ?, pg_sem_1_sub_20_marks_obtained = ?, pg_sem_1_sub_20_total_marks = ?
+                WHERE aadhaar_no = ?
+            """,(pg_enrollment_no,pg_sem_1_session,pg_sem_1_roll_no,pg_sem_1_result,pg_sem_1_sub_1_name,
+                 pg_sem_1_sub_1_marks_obtained,pg_sem_1_sub_1_total_marks,pg_sem_1_sub_2_name,
+                 pg_sem_1_sub_2_marks_obtained,pg_sem_1_sub_2_total_marks,pg_sem_1_sub_3_name,
+                 pg_sem_1_sub_3_marks_obtained,pg_sem_1_sub_3_total_marks,pg_sem_1_sub_4_name,
+                 pg_sem_1_sub_4_marks_obtained,pg_sem_1_sub_4_total_marks,pg_sem_1_sub_5_name,
+                 pg_sem_1_sub_5_marks_obtained,pg_sem_1_sub_5_total_marks,pg_sem_1_sub_6_name,
+                 pg_sem_1_sub_6_marks_obtained,pg_sem_1_sub_6_total_marks,pg_sem_1_sub_7_name,
+                 pg_sem_1_sub_7_marks_obtained,pg_sem_1_sub_7_total_marks,pg_sem_1_sub_8_name,
+                 pg_sem_1_sub_8_marks_obtained,pg_sem_1_sub_8_total_marks,pg_sem_1_sub_9_name,
+                 pg_sem_1_sub_9_marks_obtained,pg_sem_1_sub_9_total_marks,pg_sem_1_sub_10_name,
+                 pg_sem_1_sub_10_marks_obtained,pg_sem_1_sub_10_total_marks,pg_sem_1_sub_11_name,
+                 pg_sem_1_sub_11_marks_obtained,pg_sem_1_sub_11_total_marks,pg_sem_1_sub_12_name,
+                 pg_sem_1_sub_12_marks_obtained,pg_sem_1_sub_12_total_marks,pg_sem_1_sub_13_name,
+                 pg_sem_1_sub_13_marks_obtained,pg_sem_1_sub_13_total_marks,pg_sem_1_sub_14_name,
+                 pg_sem_1_sub_14_marks_obtained,pg_sem_1_sub_14_total_marks,pg_sem_1_sub_15_name,
+                 pg_sem_1_sub_15_marks_obtained,pg_sem_1_sub_15_total_marks,pg_sem_1_sub_16_name,
+                 pg_sem_1_sub_16_marks_obtained,pg_sem_1_sub_16_total_marks,pg_sem_1_sub_17_name,
+                 pg_sem_1_sub_17_marks_obtained,pg_sem_1_sub_17_total_marks,pg_sem_1_sub_18_name,
+                 pg_sem_1_sub_18_marks_obtained,pg_sem_1_sub_18_total_marks,pg_sem_1_sub_19_name,
+                 pg_sem_1_sub_19_marks_obtained,pg_sem_1_sub_19_total_marks,pg_sem_1_sub_20_name,
+                 pg_sem_1_sub_20_marks_obtained,pg_sem_1_sub_20_total_marks,aadhaar_no))
+
+            # Commit changes
+            conn.commit()
+
+            # Redirect to the next form
+            return redirect(url_for('form_pg_sem_2'))  # replace 'next_form' with the actual name of the next form
+
+        else:
+            # Fetch pg_sem_1_info from the database
+            cursor.execute("SELECT * FROM pg_sem_1 WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+            pg_sem_1_info = cursor.fetchone()
+
+            # Pass the pg_sem_1_info to the template
+            return render_template('Student/student_info_forms/form_pg_sem_1.html', pg_sem_1=pg_sem_1_info)
+    except Exception as e:
+        app.logger.error(f"Exception occurred: {e}")
+        return str(e), 500
+
+
+@app.route('/form_pg_sem_2', methods=['GET', 'POST'])
+def form_pg_sem_2():
+    try:
+        if request.method == 'POST':
+            return form_pg_sem_2_post()
+        else:
+            # Fetch pg_sem_2_info from the database
+            cursor.execute("SELECT * FROM pg_sem_2 WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+            pg_sem_2_info = cursor.fetchone()
+
+            # If pg_sem_2_info is None, create a default pg_sem_2_info object
+            if pg_sem_2_info is None:
+                pg_sem_2_info = {
+                    'pg_enrollment_no': '',
+                    'pg_sem_2_session': '',
+                    'pg_sem_2_roll_no': '',
+                    'pg_sem_2_result': '',
+                    'pg_sem_2_sub_1_name': '',
+                    'pg_sem_2_sub_1_marks_obtained': '',
+                    'pg_sem_2_sub_1_total_marks': '',
+                    'pg_sem_2_sub_2_name': '',
+                    'pg_sem_2_sub_2_marks_obtained': '',
+                    'pg_sem_2_sub_2_total_marks': '',
+                    'pg_sem_2_sub_3_name': '',
+                    'pg_sem_2_sub_3_marks_obtained': '',
+                    'pg_sem_2_sub_3_total_marks': '',
+                    'pg_sem_2_sub_4_name': '',
+                    'pg_sem_2_sub_4_marks_obtained': '',
+                    'pg_sem_2_sub_4_total_marks': '',
+                    'pg_sem_2_sub_5_name': '',
+                    'pg_sem_2_sub_5_marks_obtained': '',
+                    'pg_sem_2_sub_5_total_marks': '',
+                    'pg_sem_2_sub_6_name': '',
+                    'pg_sem_2_sub_6_marks_obtained': '',
+                    'pg_sem_2_sub_6_total_marks': '',
+                    'pg_sem_2_sub_7_name': '',
+                    'pg_sem_2_sub_7_marks_obtained': '',
+                    'pg_sem_2_sub_7_total_marks': '',
+                    'pg_sem_2_sub_8_name': '',
+                    'pg_sem_2_sub_8_marks_obtained': '',
+                    'pg_sem_2_sub_8_total_marks': '',
+                    'pg_sem_2_sub_9_name': '',
+                    'pg_sem_2_sub_9_marks_obtained': '',
+                    'pg_sem_2_sub_9_total_marks': '',
+                    'pg_sem_2_sub_10_name': '',
+                    'pg_sem_2_sub_10_marks_obtained': '',
+                    'pg_sem_2_sub_10_total_marks': '',
+                    'pg_sem_2_sub_11_name': '',
+                    'pg_sem_2_sub_11_marks_obtained': '',
+                    'pg_sem_2_sub_11_total_marks': '',
+                    'pg_sem_2_sub_12_name': '',
+                    'pg_sem_2_sub_12_marks_obtained': '',
+                    'pg_sem_2_sub_12_total_marks': '',
+                    'pg_sem_2_sub_13_name': '',
+                    'pg_sem_2_sub_13_marks_obtained': '',
+                    'pg_sem_2_sub_13_total_marks': '',
+                    'pg_sem_2_sub_14_name': '',
+                    'pg_sem_2_sub_14_marks_obtained': '',
+                    'pg_sem_2_sub_14_total_marks': '',
+                    'pg_sem_2_sub_15_name': '',
+                    'pg_sem_2_sub_15_marks_obtained': '',
+                    'pg_sem_2_sub_15_total_marks': '',
+                    'pg_sem_2_sub_16_name': '',
+                    'pg_sem_2_sub_16_marks_obtained': '',
+                    'pg_sem_2_sub_16_total_marks': '',
+                    'pg_sem_2_sub_17_name': '',
+                    'pg_sem_2_sub_17_marks_obtained': '',
+                    'pg_sem_2_sub_17_total_marks': '',
+                    'pg_sem_2_sub_18_name': '',
+                    'pg_sem_2_sub_18_marks_obtained': '',
+                    'pg_sem_2_sub_18_total_marks': '',
+                    'pg_sem_2_sub_19_name': '',
+                    'pg_sem_2_sub_19_marks_obtained': '',
+                    'pg_sem_2_sub_19_total_marks': '',
+                    'pg_sem_2_sub_20_name': '',
+                    'pg_sem_2_sub_20_marks_obtained': '',
+                    'pg_sem_2_sub_20_total_marks': ''
+
+                    # Add more fields as needed
+                }
+
+            # Pass the pg_sem_2_info to the template
+            return render_template('Student/student_info_forms/form_pg_sem_2.html', pg_sem_2=pg_sem_2_info)
+    except Exception as e:
+        app.logger.error(f"Exception occurred: {e}")
+        return str(e), 500
+
+def form_pg_sem_2_post():
+    try:
+        if request.method == 'POST':
+            # Get form data
+            aadhaar_no = session['aadhaar_no']
+            pg_enrollment_no = request.form['pg_enrollment_no']
+            pg_sem_2_session = request.form['pg_sem_2_session']
+            pg_sem_2_roll_no = request.form['pg_sem_2_roll_no']
+            pg_sem_2_result = request.form['pg_sem_2_result']
+            pg_sem_2_sub_1_name = request.form['pg_sem_2_sub_1_name']
+            pg_sem_2_sub_1_marks_obtained = request.form['pg_sem_2_sub_1_marks_obtained']
+            pg_sem_2_sub_1_total_marks = request.form['pg_sem_2_sub_1_total_marks']
+            pg_sem_2_sub_2_name = request.form['pg_sem_2_sub_2_name']
+            pg_sem_2_sub_2_marks_obtained = request.form['pg_sem_2_sub_2_marks_obtained']
+            pg_sem_2_sub_2_total_marks = request.form['pg_sem_2_sub_2_total_marks']
+            pg_sem_2_sub_3_name = request.form['pg_sem_2_sub_3_name']
+            pg_sem_2_sub_3_marks_obtained = request.form['pg_sem_2_sub_3_marks_obtained']
+            pg_sem_2_sub_3_total_marks = request.form['pg_sem_2_sub_3_total_marks']
+            pg_sem_2_sub_4_name = request.form['pg_sem_2_sub_4_name']
+            pg_sem_2_sub_4_marks_obtained = request.form['pg_sem_2_sub_4_marks_obtained']
+            pg_sem_2_sub_4_total_marks = request.form['pg_sem_2_sub_4_total_marks']
+            pg_sem_2_sub_5_name = request.form['pg_sem_2_sub_5_name']
+            pg_sem_2_sub_5_marks_obtained = request.form['pg_sem_2_sub_5_marks_obtained']
+            pg_sem_2_sub_5_total_marks = request.form['pg_sem_2_sub_5_total_marks']
+            pg_sem_2_sub_6_name = request.form['pg_sem_2_sub_6_name']
+            pg_sem_2_sub_6_marks_obtained = request.form['pg_sem_2_sub_6_marks_obtained']
+            pg_sem_2_sub_6_total_marks = request.form['pg_sem_2_sub_6_total_marks']
+            pg_sem_2_sub_7_name = request.form['pg_sem_2_sub_7_name']
+            pg_sem_2_sub_7_marks_obtained = request.form['pg_sem_2_sub_7_marks_obtained']
+            pg_sem_2_sub_7_total_marks = request.form['pg_sem_2_sub_7_total_marks']
+            pg_sem_2_sub_8_name = request.form['pg_sem_2_sub_8_name']
+            pg_sem_2_sub_8_marks_obtained = request.form['pg_sem_2_sub_8_marks_obtained']
+            pg_sem_2_sub_8_total_marks = request.form['pg_sem_2_sub_8_total_marks']
+            pg_sem_2_sub_9_name = request.form['pg_sem_2_sub_9_name']
+            pg_sem_2_sub_9_marks_obtained = request.form['pg_sem_2_sub_9_marks_obtained']
+            pg_sem_2_sub_9_total_marks = request.form['pg_sem_2_sub_9_total_marks']
+            pg_sem_2_sub_10_name = request.form['pg_sem_2_sub_10_name']
+            pg_sem_2_sub_10_marks_obtained = request.form['pg_sem_2_sub_10_marks_obtained']
+            pg_sem_2_sub_10_total_marks = request.form['pg_sem_2_sub_10_total_marks']
+            pg_sem_2_sub_11_name = request.form['pg_sem_2_sub_11_name']
+            pg_sem_2_sub_11_marks_obtained = request.form['pg_sem_2_sub_11_marks_obtained']
+            pg_sem_2_sub_11_total_marks = request.form['pg_sem_2_sub_11_total_marks']
+            pg_sem_2_sub_12_name = request.form['pg_sem_2_sub_12_name']
+            pg_sem_2_sub_12_marks_obtained = request.form['pg_sem_2_sub_12_marks_obtained']
+            pg_sem_2_sub_12_total_marks = request.form['pg_sem_2_sub_12_total_marks']
+            pg_sem_2_sub_13_name = request.form['pg_sem_2_sub_13_name']
+            pg_sem_2_sub_13_marks_obtained = request.form['pg_sem_2_sub_13_marks_obtained']
+            pg_sem_2_sub_13_total_marks = request.form['pg_sem_2_sub_13_total_marks']
+            pg_sem_2_sub_14_name = request.form['pg_sem_2_sub_14_name']
+            pg_sem_2_sub_14_marks_obtained = request.form['pg_sem_2_sub_14_marks_obtained']
+            pg_sem_2_sub_14_total_marks = request.form['pg_sem_2_sub_14_total_marks']
+            pg_sem_2_sub_15_name = request.form['pg_sem_2_sub_15_name']
+            pg_sem_2_sub_15_marks_obtained = request.form['pg_sem_2_sub_15_marks_obtained']
+            pg_sem_2_sub_15_total_marks = request.form['pg_sem_2_sub_15_total_marks']
+            pg_sem_2_sub_16_name = request.form['pg_sem_2_sub_16_name']
+            pg_sem_2_sub_16_marks_obtained = request.form['pg_sem_2_sub_16_marks_obtained']
+            pg_sem_2_sub_16_total_marks = request.form['pg_sem_2_sub_16_total_marks']
+            pg_sem_2_sub_17_name = request.form['pg_sem_2_sub_17_name']
+            pg_sem_2_sub_17_marks_obtained = request.form['pg_sem_2_sub_17_marks_obtained']
+            pg_sem_2_sub_17_total_marks = request.form['pg_sem_2_sub_17_total_marks']
+            pg_sem_2_sub_18_name = request.form['pg_sem_2_sub_18_name']
+            pg_sem_2_sub_18_marks_obtained = request.form['pg_sem_2_sub_18_marks_obtained']
+            pg_sem_2_sub_18_total_marks = request.form['pg_sem_2_sub_18_total_marks']
+            pg_sem_2_sub_19_name = request.form['pg_sem_2_sub_19_name']
+            pg_sem_2_sub_19_marks_obtained = request.form['pg_sem_2_sub_19_marks_obtained']
+            pg_sem_2_sub_19_total_marks = request.form['pg_sem_2_sub_19_total_marks']
+            pg_sem_2_sub_20_name = request.form['pg_sem_2_sub_20_name']
+            pg_sem_2_sub_20_marks_obtained = request.form['pg_sem_2_sub_20_marks_obtained']
+            pg_sem_2_sub_20_total_marks = request.form['pg_sem_2_sub_20_total_marks']
+
+
+            # Update pg_sem_2_info in the database
+            cursor.execute("""
+                UPDATE pg_sem_2
+                SET pg_enrollment_no = ?, pg_sem_2_session = ?, pg_sem_2_roll_no = ?, pg_sem_2_result = ?, pg_sem_2_sub_1_name = ?, pg_sem_2_sub_1_marks_obtained = ?, pg_sem_2_sub_1_total_marks = ?, pg_sem_2_sub_2_name = ?, pg_sem_2_sub_2_marks_obtained = ?, pg_sem_2_sub_2_total_marks = ?, pg_sem_2_sub_3_name = ?, pg_sem_2_sub_3_marks_obtained = ?, pg_sem_2_sub_3_total_marks = ?, pg_sem_2_sub_4_name = ?, pg_sem_2_sub_4_marks_obtained = ?, pg_sem_2_sub_4_total_marks = ?, pg_sem_2_sub_5_name = ?, pg_sem_2_sub_5_marks_obtained = ?, pg_sem_2_sub_5_total_marks = ?, pg_sem_2_sub_6_name = ?, pg_sem_2_sub_6_marks_obtained = ?, pg_sem_2_sub_6_total_marks = ?, pg_sem_2_sub_7_name = ?, pg_sem_2_sub_7_marks_obtained = ?, pg_sem_2_sub_7_total_marks = ?, pg_sem_2_sub_8_name = ?, pg_sem_2_sub_8_marks_obtained = ?, pg_sem_2_sub_8_total_marks = ?, pg_sem_2_sub_9_name = ?, pg_sem_2_sub_9_marks_obtained = ?, pg_sem_2_sub_9_total_marks = ?, pg_sem_2_sub_10_name = ?, pg_sem_2_sub_10_marks_obtained = ?, pg_sem_2_sub_10_total_marks = ?, pg_sem_2_sub_11_name = ?, pg_sem_2_sub_11_marks_obtained = ?, pg_sem_2_sub_11_total_marks = ?, pg_sem_2_sub_12_name = ?, pg_sem_2_sub_12_marks_obtained = ?, pg_sem_2_sub_12_total_marks = ?, pg_sem_2_sub_13_name = ?, pg_sem_2_sub_13_marks_obtained = ?, pg_sem_2_sub_13_total_marks = ?, pg_sem_2_sub_14_name = ?, pg_sem_2_sub_14_marks_obtained = ?, pg_sem_2_sub_14_total_marks = ?, pg_sem_2_sub_15_name = ?, pg_sem_2_sub_15_marks_obtained = ?, pg_sem_2_sub_15_total_marks = ?, pg_sem_2_sub_16_name = ?, pg_sem_2_sub_16_marks_obtained = ?, pg_sem_2_sub_16_total_marks = ?, pg_sem_2_sub_17_name = ?, pg_sem_2_sub_17_marks_obtained = ?, pg_sem_2_sub_17_total_marks = ?, pg_sem_2_sub_18_name = ?, pg_sem_2_sub_18_marks_obtained = ?, pg_sem_2_sub_18_total_marks = ?, pg_sem_2_sub_19_name = ?, pg_sem_2_sub_19_marks_obtained = ?, pg_sem_2_sub_19_total_marks = ?, pg_sem_2_sub_20_name = ?, pg_sem_2_sub_20_marks_obtained = ?, pg_sem_2_sub_20_total_marks = ?
+                WHERE aadhaar_no = ?
+            """,(pg_enrollment_no,pg_sem_2_session,pg_sem_2_roll_no,pg_sem_2_result,pg_sem_2_sub_1_name,
+                 pg_sem_2_sub_1_marks_obtained,pg_sem_2_sub_1_total_marks,pg_sem_2_sub_2_name,
+                 pg_sem_2_sub_2_marks_obtained,pg_sem_2_sub_2_total_marks,pg_sem_2_sub_3_name,
+                 pg_sem_2_sub_3_marks_obtained,pg_sem_2_sub_3_total_marks,pg_sem_2_sub_4_name,
+                 pg_sem_2_sub_4_marks_obtained,pg_sem_2_sub_4_total_marks,pg_sem_2_sub_5_name,
+                 pg_sem_2_sub_5_marks_obtained,pg_sem_2_sub_5_total_marks,pg_sem_2_sub_6_name,
+                 pg_sem_2_sub_6_marks_obtained,pg_sem_2_sub_6_total_marks,pg_sem_2_sub_7_name,
+                 pg_sem_2_sub_7_marks_obtained,pg_sem_2_sub_7_total_marks,pg_sem_2_sub_8_name,
+                 pg_sem_2_sub_8_marks_obtained,pg_sem_2_sub_8_total_marks,pg_sem_2_sub_9_name,
+                 pg_sem_2_sub_9_marks_obtained,pg_sem_2_sub_9_total_marks,pg_sem_2_sub_10_name,
+                 pg_sem_2_sub_10_marks_obtained,pg_sem_2_sub_10_total_marks,pg_sem_2_sub_11_name,
+                 pg_sem_2_sub_11_marks_obtained,pg_sem_2_sub_11_total_marks,pg_sem_2_sub_12_name,
+                 pg_sem_2_sub_12_marks_obtained,pg_sem_2_sub_12_total_marks,pg_sem_2_sub_13_name,
+                 pg_sem_2_sub_13_marks_obtained,pg_sem_2_sub_13_total_marks,pg_sem_2_sub_14_name,
+                 pg_sem_2_sub_14_marks_obtained,pg_sem_2_sub_14_total_marks,pg_sem_2_sub_15_name,
+                 pg_sem_2_sub_15_marks_obtained,pg_sem_2_sub_15_total_marks,pg_sem_2_sub_16_name,
+                 pg_sem_2_sub_16_marks_obtained,pg_sem_2_sub_16_total_marks,pg_sem_2_sub_17_name,
+                 pg_sem_2_sub_17_marks_obtained,pg_sem_2_sub_17_total_marks,pg_sem_2_sub_18_name,
+                 pg_sem_2_sub_18_marks_obtained,pg_sem_2_sub_18_total_marks,pg_sem_2_sub_19_name,
+                 pg_sem_2_sub_19_marks_obtained,pg_sem_2_sub_19_total_marks,pg_sem_2_sub_20_name,
+                 pg_sem_2_sub_20_marks_obtained,pg_sem_2_sub_20_total_marks,aadhaar_no))
+
+            # Commit changes
+            conn.commit()
+
+            # Redirect to the next form
+            return redirect(url_for('form_pg_sem_3'))  # replace 'next_form' with the actual name of the next form
+
+        else:
+            # Fetch pg_sem_2_info from the database
+            cursor.execute("SELECT * FROM pg_sem_2 WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+            pg_sem_2_info = cursor.fetchone()
+
+            # Pass the pg_sem_2_info to the template
+            return render_template('Student/student_info_forms/form_pg_sem_2.html', pg_sem_2=pg_sem_2_info)
+    except Exception as e:
+        app.logger.error(f"Exception occurred: {e}")
+        return str(e), 500
+
+
+@app.route('/form_pg_sem_3', methods=['GET', 'POST'])
+def form_pg_sem_3():
+    try:
+        if request.method == 'POST':
+            return form_pg_sem_3_post()
+        else:
+            # Fetch pg_sem_3_info from the database
+            cursor.execute("SELECT * FROM pg_sem_3 WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+            pg_sem_3_info = cursor.fetchone()
+
+            # If pg_sem_3_info is None, create a default pg_sem_3_info object
+            if pg_sem_3_info is None:
+                pg_sem_3_info = {
+                    'pg_enrollment_no': '',
+                    'pg_sem_3_session': '',
+                    'pg_sem_3_roll_no': '',
+                    'pg_sem_3_result': '',
+                    'pg_sem_3_sub_1_name': '',
+                    'pg_sem_3_sub_1_marks_obtained': '',
+                    'pg_sem_3_sub_1_total_marks': '',
+                    'pg_sem_3_sub_2_name': '',
+                    'pg_sem_3_sub_2_marks_obtained': '',
+                    'pg_sem_3_sub_2_total_marks': '',
+                    'pg_sem_3_sub_3_name': '',
+                    'pg_sem_3_sub_3_marks_obtained': '',
+                    'pg_sem_3_sub_3_total_marks': '',
+                    'pg_sem_3_sub_4_name': '',
+                    'pg_sem_3_sub_4_marks_obtained': '',
+                    'pg_sem_3_sub_4_total_marks': '',
+                    'pg_sem_3_sub_5_name': '',
+                    'pg_sem_3_sub_5_marks_obtained': '',
+                    'pg_sem_3_sub_5_total_marks': '',
+                    'pg_sem_3_sub_6_name': '',
+                    'pg_sem_3_sub_6_marks_obtained': '',
+                    'pg_sem_3_sub_6_total_marks': '',
+                    'pg_sem_3_sub_7_name': '',
+                    'pg_sem_3_sub_7_marks_obtained': '',
+                    'pg_sem_3_sub_7_total_marks': '',
+                    'pg_sem_3_sub_8_name': '',
+                    'pg_sem_3_sub_8_marks_obtained': '',
+                    'pg_sem_3_sub_8_total_marks': '',
+                    'pg_sem_3_sub_9_name': '',
+                    'pg_sem_3_sub_9_marks_obtained': '',
+                    'pg_sem_3_sub_9_total_marks': '',
+                    'pg_sem_3_sub_10_name': '',
+                    'pg_sem_3_sub_10_marks_obtained': '',
+                    'pg_sem_3_sub_10_total_marks': '',
+                    'pg_sem_3_sub_11_name': '',
+                    'pg_sem_3_sub_11_marks_obtained': '',
+                    'pg_sem_3_sub_11_total_marks': '',
+                    'pg_sem_3_sub_12_name': '',
+                    'pg_sem_3_sub_12_marks_obtained': '',
+                    'pg_sem_3_sub_12_total_marks': '',
+                    'pg_sem_3_sub_13_name': '',
+                    'pg_sem_3_sub_13_marks_obtained': '',
+                    'pg_sem_3_sub_13_total_marks': '',
+                    'pg_sem_3_sub_14_name': '',
+                    'pg_sem_3_sub_14_marks_obtained': '',
+                    'pg_sem_3_sub_14_total_marks': '',
+                    'pg_sem_3_sub_15_name': '',
+                    'pg_sem_3_sub_15_marks_obtained': '',
+                    'pg_sem_3_sub_15_total_marks': '',
+                    'pg_sem_3_sub_16_name': '',
+                    'pg_sem_3_sub_16_marks_obtained': '',
+                    'pg_sem_3_sub_16_total_marks': '',
+                    'pg_sem_3_sub_17_name': '',
+                    'pg_sem_3_sub_17_marks_obtained': '',
+                    'pg_sem_3_sub_17_total_marks': '',
+                    'pg_sem_3_sub_18_name': '',
+                    'pg_sem_3_sub_18_marks_obtained': '',
+                    'pg_sem_3_sub_18_total_marks': '',
+                    'pg_sem_3_sub_19_name': '',
+                    'pg_sem_3_sub_19_marks_obtained': '',
+                    'pg_sem_3_sub_19_total_marks': '',
+                    'pg_sem_3_sub_20_name': '',
+                    'pg_sem_3_sub_20_marks_obtained': '',
+                    'pg_sem_3_sub_20_total_marks': ''
+
+                    # Add more fields as needed
+                }
+
+            # Pass the pg_sem_3_info to the template
+            return render_template('Student/student_info_forms/form_pg_sem_3.html', pg_sem_3=pg_sem_3_info)
+    except Exception as e:
+        app.logger.error(f"Exception occurred: {e}")
+        return str(e), 500
+
+def form_pg_sem_3_post():
+    try:
+        if request.method == 'POST':
+            # Get form data
+            aadhaar_no = session['aadhaar_no']
+            pg_enrollment_no = request.form['pg_enrollment_no']
+            pg_sem_3_session = request.form['pg_sem_3_session']
+            pg_sem_3_roll_no = request.form['pg_sem_3_roll_no']
+            pg_sem_3_result = request.form['pg_sem_3_result']
+            pg_sem_3_sub_1_name = request.form['pg_sem_3_sub_1_name']
+            pg_sem_3_sub_1_marks_obtained = request.form['pg_sem_3_sub_1_marks_obtained']
+            pg_sem_3_sub_1_total_marks = request.form['pg_sem_3_sub_1_total_marks']
+            pg_sem_3_sub_2_name = request.form['pg_sem_3_sub_2_name']
+            pg_sem_3_sub_2_marks_obtained = request.form['pg_sem_3_sub_2_marks_obtained']
+            pg_sem_3_sub_2_total_marks = request.form['pg_sem_3_sub_2_total_marks']
+            pg_sem_3_sub_3_name = request.form['pg_sem_3_sub_3_name']
+            pg_sem_3_sub_3_marks_obtained = request.form['pg_sem_3_sub_3_marks_obtained']
+            pg_sem_3_sub_3_total_marks = request.form['pg_sem_3_sub_3_total_marks']
+            pg_sem_3_sub_4_name = request.form['pg_sem_3_sub_4_name']
+            pg_sem_3_sub_4_marks_obtained = request.form['pg_sem_3_sub_4_marks_obtained']
+            pg_sem_3_sub_4_total_marks = request.form['pg_sem_3_sub_4_total_marks']
+            pg_sem_3_sub_5_name = request.form['pg_sem_3_sub_5_name']
+            pg_sem_3_sub_5_marks_obtained = request.form['pg_sem_3_sub_5_marks_obtained']
+            pg_sem_3_sub_5_total_marks = request.form['pg_sem_3_sub_5_total_marks']
+            pg_sem_3_sub_6_name = request.form['pg_sem_3_sub_6_name']
+            pg_sem_3_sub_6_marks_obtained = request.form['pg_sem_3_sub_6_marks_obtained']
+            pg_sem_3_sub_6_total_marks = request.form['pg_sem_3_sub_6_total_marks']
+            pg_sem_3_sub_7_name = request.form['pg_sem_3_sub_7_name']
+            pg_sem_3_sub_7_marks_obtained = request.form['pg_sem_3_sub_7_marks_obtained']
+            pg_sem_3_sub_7_total_marks = request.form['pg_sem_3_sub_7_total_marks']
+            pg_sem_3_sub_8_name = request.form['pg_sem_3_sub_8_name']
+            pg_sem_3_sub_8_marks_obtained = request.form['pg_sem_3_sub_8_marks_obtained']
+            pg_sem_3_sub_8_total_marks = request.form['pg_sem_3_sub_8_total_marks']
+            pg_sem_3_sub_9_name = request.form['pg_sem_3_sub_9_name']
+            pg_sem_3_sub_9_marks_obtained = request.form['pg_sem_3_sub_9_marks_obtained']
+            pg_sem_3_sub_9_total_marks = request.form['pg_sem_3_sub_9_total_marks']
+            pg_sem_3_sub_10_name = request.form['pg_sem_3_sub_10_name']
+            pg_sem_3_sub_10_marks_obtained = request.form['pg_sem_3_sub_10_marks_obtained']
+            pg_sem_3_sub_10_total_marks = request.form['pg_sem_3_sub_10_total_marks']
+            pg_sem_3_sub_11_name = request.form['pg_sem_3_sub_11_name']
+            pg_sem_3_sub_11_marks_obtained = request.form['pg_sem_3_sub_11_marks_obtained']
+            pg_sem_3_sub_11_total_marks = request.form['pg_sem_3_sub_11_total_marks']
+            pg_sem_3_sub_12_name = request.form['pg_sem_3_sub_12_name']
+            pg_sem_3_sub_12_marks_obtained = request.form['pg_sem_3_sub_12_marks_obtained']
+            pg_sem_3_sub_12_total_marks = request.form['pg_sem_3_sub_12_total_marks']
+            pg_sem_3_sub_13_name = request.form['pg_sem_3_sub_13_name']
+            pg_sem_3_sub_13_marks_obtained = request.form['pg_sem_3_sub_13_marks_obtained']
+            pg_sem_3_sub_13_total_marks = request.form['pg_sem_3_sub_13_total_marks']
+            pg_sem_3_sub_14_name = request.form['pg_sem_3_sub_14_name']
+            pg_sem_3_sub_14_marks_obtained = request.form['pg_sem_3_sub_14_marks_obtained']
+            pg_sem_3_sub_14_total_marks = request.form['pg_sem_3_sub_14_total_marks']
+            pg_sem_3_sub_15_name = request.form['pg_sem_3_sub_15_name']
+            pg_sem_3_sub_15_marks_obtained = request.form['pg_sem_3_sub_15_marks_obtained']
+            pg_sem_3_sub_15_total_marks = request.form['pg_sem_3_sub_15_total_marks']
+            pg_sem_3_sub_16_name = request.form['pg_sem_3_sub_16_name']
+            pg_sem_3_sub_16_marks_obtained = request.form['pg_sem_3_sub_16_marks_obtained']
+            pg_sem_3_sub_16_total_marks = request.form['pg_sem_3_sub_16_total_marks']
+            pg_sem_3_sub_17_name = request.form['pg_sem_3_sub_17_name']
+            pg_sem_3_sub_17_marks_obtained = request.form['pg_sem_3_sub_17_marks_obtained']
+            pg_sem_3_sub_17_total_marks = request.form['pg_sem_3_sub_17_total_marks']
+            pg_sem_3_sub_18_name = request.form['pg_sem_3_sub_18_name']
+            pg_sem_3_sub_18_marks_obtained = request.form['pg_sem_3_sub_18_marks_obtained']
+            pg_sem_3_sub_18_total_marks = request.form['pg_sem_3_sub_18_total_marks']
+            pg_sem_3_sub_19_name = request.form['pg_sem_3_sub_19_name']
+            pg_sem_3_sub_19_marks_obtained = request.form['pg_sem_3_sub_19_marks_obtained']
+            pg_sem_3_sub_19_total_marks = request.form['pg_sem_3_sub_19_total_marks']
+            pg_sem_3_sub_20_name = request.form['pg_sem_3_sub_20_name']
+            pg_sem_3_sub_20_marks_obtained = request.form['pg_sem_3_sub_20_marks_obtained']
+            pg_sem_3_sub_20_total_marks = request.form['pg_sem_3_sub_20_total_marks']
+
+
+            # Update pg_sem_3_info in the database
+            cursor.execute("""
+                UPDATE pg_sem_3
+                SET pg_enrollment_no = ?, pg_sem_3_session = ?, pg_sem_3_roll_no = ?, pg_sem_3_result = ?, pg_sem_3_sub_1_name = ?, pg_sem_3_sub_1_marks_obtained = ?, pg_sem_3_sub_1_total_marks = ?, pg_sem_3_sub_2_name = ?, pg_sem_3_sub_2_marks_obtained = ?, pg_sem_3_sub_2_total_marks = ?, pg_sem_3_sub_3_name = ?, pg_sem_3_sub_3_marks_obtained = ?, pg_sem_3_sub_3_total_marks = ?, pg_sem_3_sub_4_name = ?, pg_sem_3_sub_4_marks_obtained = ?, pg_sem_3_sub_4_total_marks = ?, pg_sem_3_sub_5_name = ?, pg_sem_3_sub_5_marks_obtained = ?, pg_sem_3_sub_5_total_marks = ?, pg_sem_3_sub_6_name = ?, pg_sem_3_sub_6_marks_obtained = ?, pg_sem_3_sub_6_total_marks = ?, pg_sem_3_sub_7_name = ?, pg_sem_3_sub_7_marks_obtained = ?, pg_sem_3_sub_7_total_marks = ?, pg_sem_3_sub_8_name = ?, pg_sem_3_sub_8_marks_obtained = ?, pg_sem_3_sub_8_total_marks = ?, pg_sem_3_sub_9_name = ?, pg_sem_3_sub_9_marks_obtained = ?, pg_sem_3_sub_9_total_marks = ?, pg_sem_3_sub_10_name = ?, pg_sem_3_sub_10_marks_obtained = ?, pg_sem_3_sub_10_total_marks = ?, pg_sem_3_sub_11_name = ?, pg_sem_3_sub_11_marks_obtained = ?, pg_sem_3_sub_11_total_marks = ?, pg_sem_3_sub_12_name = ?, pg_sem_3_sub_12_marks_obtained = ?, pg_sem_3_sub_12_total_marks = ?, pg_sem_3_sub_13_name = ?, pg_sem_3_sub_13_marks_obtained = ?, pg_sem_3_sub_13_total_marks = ?, pg_sem_3_sub_14_name = ?, pg_sem_3_sub_14_marks_obtained = ?, pg_sem_3_sub_14_total_marks = ?, pg_sem_3_sub_15_name = ?, pg_sem_3_sub_15_marks_obtained = ?, pg_sem_3_sub_15_total_marks = ?, pg_sem_3_sub_16_name = ?, pg_sem_3_sub_16_marks_obtained = ?, pg_sem_3_sub_16_total_marks = ?, pg_sem_3_sub_17_name = ?, pg_sem_3_sub_17_marks_obtained = ?, pg_sem_3_sub_17_total_marks = ?, pg_sem_3_sub_18_name = ?, pg_sem_3_sub_18_marks_obtained = ?, pg_sem_3_sub_18_total_marks = ?, pg_sem_3_sub_19_name = ?, pg_sem_3_sub_19_marks_obtained = ?, pg_sem_3_sub_19_total_marks = ?, pg_sem_3_sub_20_name = ?, pg_sem_3_sub_20_marks_obtained = ?, pg_sem_3_sub_20_total_marks = ?
+                WHERE aadhaar_no = ?
+            """,(pg_enrollment_no,pg_sem_3_session,pg_sem_3_roll_no,pg_sem_3_result,pg_sem_3_sub_1_name,
+                 pg_sem_3_sub_1_marks_obtained,pg_sem_3_sub_1_total_marks,pg_sem_3_sub_2_name,
+                 pg_sem_3_sub_2_marks_obtained,pg_sem_3_sub_2_total_marks,pg_sem_3_sub_3_name,
+                 pg_sem_3_sub_3_marks_obtained,pg_sem_3_sub_3_total_marks,pg_sem_3_sub_4_name,
+                 pg_sem_3_sub_4_marks_obtained,pg_sem_3_sub_4_total_marks,pg_sem_3_sub_5_name,
+                 pg_sem_3_sub_5_marks_obtained,pg_sem_3_sub_5_total_marks,pg_sem_3_sub_6_name,
+                 pg_sem_3_sub_6_marks_obtained,pg_sem_3_sub_6_total_marks,pg_sem_3_sub_7_name,
+                 pg_sem_3_sub_7_marks_obtained,pg_sem_3_sub_7_total_marks,pg_sem_3_sub_8_name,
+                 pg_sem_3_sub_8_marks_obtained,pg_sem_3_sub_8_total_marks,pg_sem_3_sub_9_name,
+                 pg_sem_3_sub_9_marks_obtained,pg_sem_3_sub_9_total_marks,pg_sem_3_sub_10_name,
+                 pg_sem_3_sub_10_marks_obtained,pg_sem_3_sub_10_total_marks,pg_sem_3_sub_11_name,
+                 pg_sem_3_sub_11_marks_obtained,pg_sem_3_sub_11_total_marks,pg_sem_3_sub_12_name,
+                 pg_sem_3_sub_12_marks_obtained,pg_sem_3_sub_12_total_marks,pg_sem_3_sub_13_name,
+                 pg_sem_3_sub_13_marks_obtained,pg_sem_3_sub_13_total_marks,pg_sem_3_sub_14_name,
+                 pg_sem_3_sub_14_marks_obtained,pg_sem_3_sub_14_total_marks,pg_sem_3_sub_15_name,
+                 pg_sem_3_sub_15_marks_obtained,pg_sem_3_sub_15_total_marks,pg_sem_3_sub_16_name,
+                 pg_sem_3_sub_16_marks_obtained,pg_sem_3_sub_16_total_marks,pg_sem_3_sub_17_name,
+                 pg_sem_3_sub_17_marks_obtained,pg_sem_3_sub_17_total_marks,pg_sem_3_sub_18_name,
+                 pg_sem_3_sub_18_marks_obtained,pg_sem_3_sub_18_total_marks,pg_sem_3_sub_19_name,
+                 pg_sem_3_sub_19_marks_obtained,pg_sem_3_sub_19_total_marks,pg_sem_3_sub_20_name,
+                 pg_sem_3_sub_20_marks_obtained,pg_sem_3_sub_20_total_marks,aadhaar_no))
+
+            # Commit changes
+            conn.commit()
+
+            # Redirect to the next form
+            return redirect(url_for('form_pg_sem_4'))  # replace 'next_form' with the actual name of the next form
+
+        else:
+            # Fetch pg_sem_3_info from the database
+            cursor.execute("SELECT * FROM pg_sem_3 WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+            pg_sem_3_info = cursor.fetchone()
+
+            # Pass the pg_sem_3_info to the template
+            return render_template('Student/student_info_forms/form_pg_sem_3.html', pg_sem_3=pg_sem_3_info)
+    except Exception as e:
+        app.logger.error(f"Exception occurred: {e}")
+        return str(e), 500
+
+@app.route('/form_pg_sem_4', methods=['GET', 'POST'])
+def form_pg_sem_4():
+    try:
+        if request.method == 'POST':
+            return form_pg_sem_4_post()
+        else:
+            # Fetch pg_sem_4_info from the database
+            cursor.execute("SELECT * FROM pg_sem_4 WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+            pg_sem_4_info = cursor.fetchone()
+
+            # If pg_sem_4_info is None, create a default pg_sem_4_info object
+            if pg_sem_4_info is None:
+                pg_sem_4_info = {
+                    'pg_enrollment_no': '',
+                    'pg_sem_4_session': '',
+                    'pg_sem_4_roll_no': '',
+                    'pg_sem_4_result': '',
+                    'pg_sem_4_sub_1_name': '',
+                    'pg_sem_4_sub_1_marks_obtained': '',
+                    'pg_sem_4_sub_1_total_marks': '',
+                    'pg_sem_4_sub_2_name': '',
+                    'pg_sem_4_sub_2_marks_obtained': '',
+                    'pg_sem_4_sub_2_total_marks': '',
+                    'pg_sem_4_sub_3_name': '',
+                    'pg_sem_4_sub_3_marks_obtained': '',
+                    'pg_sem_4_sub_3_total_marks': '',
+                    'pg_sem_4_sub_4_name': '',
+                    'pg_sem_4_sub_4_marks_obtained': '',
+                    'pg_sem_4_sub_4_total_marks': '',
+                    'pg_sem_4_sub_5_name': '',
+                    'pg_sem_4_sub_5_marks_obtained': '',
+                    'pg_sem_4_sub_5_total_marks': '',
+                    'pg_sem_4_sub_6_name': '',
+                    'pg_sem_4_sub_6_marks_obtained': '',
+                    'pg_sem_4_sub_6_total_marks': '',
+                    'pg_sem_4_sub_7_name': '',
+                    'pg_sem_4_sub_7_marks_obtained': '',
+                    'pg_sem_4_sub_7_total_marks': '',
+                    'pg_sem_4_sub_8_name': '',
+                    'pg_sem_4_sub_8_marks_obtained': '',
+                    'pg_sem_4_sub_8_total_marks': '',
+                    'pg_sem_4_sub_9_name': '',
+                    'pg_sem_4_sub_9_marks_obtained': '',
+                    'pg_sem_4_sub_9_total_marks': '',
+                    'pg_sem_4_sub_10_name': '',
+                    'pg_sem_4_sub_10_marks_obtained': '',
+                    'pg_sem_4_sub_10_total_marks': '',
+                    'pg_sem_4_sub_11_name': '',
+                    'pg_sem_4_sub_11_marks_obtained': '',
+                    'pg_sem_4_sub_11_total_marks': '',
+                    'pg_sem_4_sub_12_name': '',
+                    'pg_sem_4_sub_12_marks_obtained': '',
+                    'pg_sem_4_sub_12_total_marks': '',
+                    'pg_sem_4_sub_13_name': '',
+                    'pg_sem_4_sub_13_marks_obtained': '',
+                    'pg_sem_4_sub_13_total_marks': '',
+                    'pg_sem_4_sub_14_name': '',
+                    'pg_sem_4_sub_14_marks_obtained': '',
+                    'pg_sem_4_sub_14_total_marks': '',
+                    'pg_sem_4_sub_15_name': '',
+                    'pg_sem_4_sub_15_marks_obtained': '',
+                    'pg_sem_4_sub_15_total_marks': '',
+                    'pg_sem_4_sub_16_name': '',
+                    'pg_sem_4_sub_16_marks_obtained': '',
+                    'pg_sem_4_sub_16_total_marks': '',
+                    'pg_sem_4_sub_17_name': '',
+                    'pg_sem_4_sub_17_marks_obtained': '',
+                    'pg_sem_4_sub_17_total_marks': '',
+                    'pg_sem_4_sub_18_name': '',
+                    'pg_sem_4_sub_18_marks_obtained': '',
+                    'pg_sem_4_sub_18_total_marks': '',
+                    'pg_sem_4_sub_19_name': '',
+                    'pg_sem_4_sub_19_marks_obtained': '',
+                    'pg_sem_4_sub_19_total_marks': '',
+                    'pg_sem_4_sub_20_name': '',
+                    'pg_sem_4_sub_20_marks_obtained': '',
+                    'pg_sem_4_sub_20_total_marks': ''
+
+                    # Add more fields as needed
+                }
+
+            # Pass the pg_sem_4_info to the template
+            return render_template('Student/student_info_forms/form_pg_sem_4.html', pg_sem_4=pg_sem_4_info)
+    except Exception as e:
+        app.logger.error(f"Exception occurred: {e}")
+        return str(e), 500
+
+def form_pg_sem_4_post():
+    try:
+        if request.method == 'POST':
+            # Get form data
+            aadhaar_no = session['aadhaar_no']
+            pg_enrollment_no = request.form['pg_enrollment_no']
+            pg_sem_4_session = request.form['pg_sem_4_session']
+            pg_sem_4_roll_no = request.form['pg_sem_4_roll_no']
+            pg_sem_4_result = request.form['pg_sem_4_result']
+            pg_sem_4_sub_1_name = request.form['pg_sem_4_sub_1_name']
+            pg_sem_4_sub_1_marks_obtained = request.form['pg_sem_4_sub_1_marks_obtained']
+            pg_sem_4_sub_1_total_marks = request.form['pg_sem_4_sub_1_total_marks']
+            pg_sem_4_sub_2_name = request.form['pg_sem_4_sub_2_name']
+            pg_sem_4_sub_2_marks_obtained = request.form['pg_sem_4_sub_2_marks_obtained']
+            pg_sem_4_sub_2_total_marks = request.form['pg_sem_4_sub_2_total_marks']
+            pg_sem_4_sub_3_name = request.form['pg_sem_4_sub_3_name']
+            pg_sem_4_sub_3_marks_obtained = request.form['pg_sem_4_sub_3_marks_obtained']
+            pg_sem_4_sub_3_total_marks = request.form['pg_sem_4_sub_3_total_marks']
+            pg_sem_4_sub_4_name = request.form['pg_sem_4_sub_4_name']
+            pg_sem_4_sub_4_marks_obtained = request.form['pg_sem_4_sub_4_marks_obtained']
+            pg_sem_4_sub_4_total_marks = request.form['pg_sem_4_sub_4_total_marks']
+            pg_sem_4_sub_5_name = request.form['pg_sem_4_sub_5_name']
+            pg_sem_4_sub_5_marks_obtained = request.form['pg_sem_4_sub_5_marks_obtained']
+            pg_sem_4_sub_5_total_marks = request.form['pg_sem_4_sub_5_total_marks']
+            pg_sem_4_sub_6_name = request.form['pg_sem_4_sub_6_name']
+            pg_sem_4_sub_6_marks_obtained = request.form['pg_sem_4_sub_6_marks_obtained']
+            pg_sem_4_sub_6_total_marks = request.form['pg_sem_4_sub_6_total_marks']
+            pg_sem_4_sub_7_name = request.form['pg_sem_4_sub_7_name']
+            pg_sem_4_sub_7_marks_obtained = request.form['pg_sem_4_sub_7_marks_obtained']
+            pg_sem_4_sub_7_total_marks = request.form['pg_sem_4_sub_7_total_marks']
+            pg_sem_4_sub_8_name = request.form['pg_sem_4_sub_8_name']
+            pg_sem_4_sub_8_marks_obtained = request.form['pg_sem_4_sub_8_marks_obtained']
+            pg_sem_4_sub_8_total_marks = request.form['pg_sem_4_sub_8_total_marks']
+            pg_sem_4_sub_9_name = request.form['pg_sem_4_sub_9_name']
+            pg_sem_4_sub_9_marks_obtained = request.form['pg_sem_4_sub_9_marks_obtained']
+            pg_sem_4_sub_9_total_marks = request.form['pg_sem_4_sub_9_total_marks']
+            pg_sem_4_sub_10_name = request.form['pg_sem_4_sub_10_name']
+            pg_sem_4_sub_10_marks_obtained = request.form['pg_sem_4_sub_10_marks_obtained']
+            pg_sem_4_sub_10_total_marks = request.form['pg_sem_4_sub_10_total_marks']
+            pg_sem_4_sub_11_name = request.form['pg_sem_4_sub_11_name']
+            pg_sem_4_sub_11_marks_obtained = request.form['pg_sem_4_sub_11_marks_obtained']
+            pg_sem_4_sub_11_total_marks = request.form['pg_sem_4_sub_11_total_marks']
+            pg_sem_4_sub_12_name = request.form['pg_sem_4_sub_12_name']
+            pg_sem_4_sub_12_marks_obtained = request.form['pg_sem_4_sub_12_marks_obtained']
+            pg_sem_4_sub_12_total_marks = request.form['pg_sem_4_sub_12_total_marks']
+            pg_sem_4_sub_13_name = request.form['pg_sem_4_sub_13_name']
+            pg_sem_4_sub_13_marks_obtained = request.form['pg_sem_4_sub_13_marks_obtained']
+            pg_sem_4_sub_13_total_marks = request.form['pg_sem_4_sub_13_total_marks']
+            pg_sem_4_sub_14_name = request.form['pg_sem_4_sub_14_name']
+            pg_sem_4_sub_14_marks_obtained = request.form['pg_sem_4_sub_14_marks_obtained']
+            pg_sem_4_sub_14_total_marks = request.form['pg_sem_4_sub_14_total_marks']
+            pg_sem_4_sub_15_name = request.form['pg_sem_4_sub_15_name']
+            pg_sem_4_sub_15_marks_obtained = request.form['pg_sem_4_sub_15_marks_obtained']
+            pg_sem_4_sub_15_total_marks = request.form['pg_sem_4_sub_15_total_marks']
+            pg_sem_4_sub_16_name = request.form['pg_sem_4_sub_16_name']
+            pg_sem_4_sub_16_marks_obtained = request.form['pg_sem_4_sub_16_marks_obtained']
+            pg_sem_4_sub_16_total_marks = request.form['pg_sem_4_sub_16_total_marks']
+            pg_sem_4_sub_17_name = request.form['pg_sem_4_sub_17_name']
+            pg_sem_4_sub_17_marks_obtained = request.form['pg_sem_4_sub_17_marks_obtained']
+            pg_sem_4_sub_17_total_marks = request.form['pg_sem_4_sub_17_total_marks']
+            pg_sem_4_sub_18_name = request.form['pg_sem_4_sub_18_name']
+            pg_sem_4_sub_18_marks_obtained = request.form['pg_sem_4_sub_18_marks_obtained']
+            pg_sem_4_sub_18_total_marks = request.form['pg_sem_4_sub_18_total_marks']
+            pg_sem_4_sub_19_name = request.form['pg_sem_4_sub_19_name']
+            pg_sem_4_sub_19_marks_obtained = request.form['pg_sem_4_sub_19_marks_obtained']
+            pg_sem_4_sub_19_total_marks = request.form['pg_sem_4_sub_19_total_marks']
+            pg_sem_4_sub_20_name = request.form['pg_sem_4_sub_20_name']
+            pg_sem_4_sub_20_marks_obtained = request.form['pg_sem_4_sub_20_marks_obtained']
+            pg_sem_4_sub_20_total_marks = request.form['pg_sem_4_sub_20_total_marks']
+
+
+            # Update pg_sem_4_info in the database
+            cursor.execute("""
+                UPDATE pg_sem_4
+                SET pg_enrollment_no = ?, pg_sem_4_session = ?, pg_sem_4_roll_no = ?, pg_sem_4_result = ?, pg_sem_4_sub_1_name = ?, pg_sem_4_sub_1_marks_obtained = ?, pg_sem_4_sub_1_total_marks = ?, pg_sem_4_sub_2_name = ?, pg_sem_4_sub_2_marks_obtained = ?, pg_sem_4_sub_2_total_marks = ?, pg_sem_4_sub_3_name = ?, pg_sem_4_sub_3_marks_obtained = ?, pg_sem_4_sub_3_total_marks = ?, pg_sem_4_sub_4_name = ?, pg_sem_4_sub_4_marks_obtained = ?, pg_sem_4_sub_4_total_marks = ?, pg_sem_4_sub_5_name = ?, pg_sem_4_sub_5_marks_obtained = ?, pg_sem_4_sub_5_total_marks = ?, pg_sem_4_sub_6_name = ?, pg_sem_4_sub_6_marks_obtained = ?, pg_sem_4_sub_6_total_marks = ?, pg_sem_4_sub_7_name = ?, pg_sem_4_sub_7_marks_obtained = ?, pg_sem_4_sub_7_total_marks = ?, pg_sem_4_sub_8_name = ?, pg_sem_4_sub_8_marks_obtained = ?, pg_sem_4_sub_8_total_marks = ?, pg_sem_4_sub_9_name = ?, pg_sem_4_sub_9_marks_obtained = ?, pg_sem_4_sub_9_total_marks = ?, pg_sem_4_sub_10_name = ?, pg_sem_4_sub_10_marks_obtained = ?, pg_sem_4_sub_10_total_marks = ?, pg_sem_4_sub_11_name = ?, pg_sem_4_sub_11_marks_obtained = ?, pg_sem_4_sub_11_total_marks = ?, pg_sem_4_sub_12_name = ?, pg_sem_4_sub_12_marks_obtained = ?, pg_sem_4_sub_12_total_marks = ?, pg_sem_4_sub_13_name = ?, pg_sem_4_sub_13_marks_obtained = ?, pg_sem_4_sub_13_total_marks = ?, pg_sem_4_sub_14_name = ?, pg_sem_4_sub_14_marks_obtained = ?, pg_sem_4_sub_14_total_marks = ?, pg_sem_4_sub_15_name = ?, pg_sem_4_sub_15_marks_obtained = ?, pg_sem_4_sub_15_total_marks = ?, pg_sem_4_sub_16_name = ?, pg_sem_4_sub_16_marks_obtained = ?, pg_sem_4_sub_16_total_marks = ?, pg_sem_4_sub_17_name = ?, pg_sem_4_sub_17_marks_obtained = ?, pg_sem_4_sub_17_total_marks = ?, pg_sem_4_sub_18_name = ?, pg_sem_4_sub_18_marks_obtained = ?, pg_sem_4_sub_18_total_marks = ?, pg_sem_4_sub_19_name = ?, pg_sem_4_sub_19_marks_obtained = ?, pg_sem_4_sub_19_total_marks = ?, pg_sem_4_sub_20_name = ?, pg_sem_4_sub_20_marks_obtained = ?, pg_sem_4_sub_20_total_marks = ?
+                WHERE aadhaar_no = ?
+            """,(pg_enrollment_no,pg_sem_4_session,pg_sem_4_roll_no,pg_sem_4_result,pg_sem_4_sub_1_name,
+                 pg_sem_4_sub_1_marks_obtained,pg_sem_4_sub_1_total_marks,pg_sem_4_sub_2_name,
+                 pg_sem_4_sub_2_marks_obtained,pg_sem_4_sub_2_total_marks,pg_sem_4_sub_3_name,
+                 pg_sem_4_sub_3_marks_obtained,pg_sem_4_sub_3_total_marks,pg_sem_4_sub_4_name,
+                 pg_sem_4_sub_4_marks_obtained,pg_sem_4_sub_4_total_marks,pg_sem_4_sub_5_name,
+                 pg_sem_4_sub_5_marks_obtained,pg_sem_4_sub_5_total_marks,pg_sem_4_sub_6_name,
+                 pg_sem_4_sub_6_marks_obtained,pg_sem_4_sub_6_total_marks,pg_sem_4_sub_7_name,
+                 pg_sem_4_sub_7_marks_obtained,pg_sem_4_sub_7_total_marks,pg_sem_4_sub_8_name,
+                 pg_sem_4_sub_8_marks_obtained,pg_sem_4_sub_8_total_marks,pg_sem_4_sub_9_name,
+                 pg_sem_4_sub_9_marks_obtained,pg_sem_4_sub_9_total_marks,pg_sem_4_sub_10_name,
+                 pg_sem_4_sub_10_marks_obtained,pg_sem_4_sub_10_total_marks,pg_sem_4_sub_11_name,
+                 pg_sem_4_sub_11_marks_obtained,pg_sem_4_sub_11_total_marks,pg_sem_4_sub_12_name,
+                 pg_sem_4_sub_12_marks_obtained,pg_sem_4_sub_12_total_marks,pg_sem_4_sub_13_name,
+                 pg_sem_4_sub_13_marks_obtained,pg_sem_4_sub_13_total_marks,pg_sem_4_sub_14_name,
+                 pg_sem_4_sub_14_marks_obtained,pg_sem_4_sub_14_total_marks,pg_sem_4_sub_15_name,
+                 pg_sem_4_sub_15_marks_obtained,pg_sem_4_sub_15_total_marks,pg_sem_4_sub_16_name,
+                 pg_sem_4_sub_16_marks_obtained,pg_sem_4_sub_16_total_marks,pg_sem_4_sub_17_name,
+                 pg_sem_4_sub_17_marks_obtained,pg_sem_4_sub_17_total_marks,pg_sem_4_sub_18_name,
+                 pg_sem_4_sub_18_marks_obtained,pg_sem_4_sub_18_total_marks,pg_sem_4_sub_19_name,
+                 pg_sem_4_sub_19_marks_obtained,pg_sem_4_sub_19_total_marks,pg_sem_4_sub_20_name,
+                 pg_sem_4_sub_20_marks_obtained,pg_sem_4_sub_20_total_marks,aadhaar_no))
+
+            # Commit changes
+            conn.commit()
+
+            # Redirect to the next form
+            return redirect(url_for('form_pg_sem_5'))  # replace 'next_form' with the actual name of the next form
+
+        else:
+            # Fetch pg_sem_4_info from the database
+            cursor.execute("SELECT * FROM pg_sem_4 WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+            pg_sem_4_info = cursor.fetchone()
+
+            # Pass the pg_sem_4_info to the template
+            return render_template('Student/student_info_forms/form_pg_sem_4.html', pg_sem_4=pg_sem_4_info)
+    except Exception as e:
+        app.logger.error(f"Exception occurred: {e}")
+        return str(e), 500
+
+@app.route('/form_pg_sem_5', methods=['GET', 'POST'])
+def form_pg_sem_5():
+    try:
+        if request.method == 'POST':
+            return form_pg_sem_5_post()
+        else:
+            # Fetch pg_sem_5_info from the database
+            cursor.execute("SELECT * FROM pg_sem_5 WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+            pg_sem_5_info = cursor.fetchone()
+
+            # If pg_sem_5_info is None, create a default pg_sem_5_info object
+            if pg_sem_5_info is None:
+                pg_sem_5_info = {
+                    'pg_enrollment_no': '',
+                    'pg_sem_5_session': '',
+                    'pg_sem_5_roll_no': '',
+                    'pg_sem_5_result': '',
+                    'pg_sem_5_sub_1_name': '',
+                    'pg_sem_5_sub_1_marks_obtained': '',
+                    'pg_sem_5_sub_1_total_marks': '',
+                    'pg_sem_5_sub_2_name': '',
+                    'pg_sem_5_sub_2_marks_obtained': '',
+                    'pg_sem_5_sub_2_total_marks': '',
+                    'pg_sem_5_sub_3_name': '',
+                    'pg_sem_5_sub_3_marks_obtained': '',
+                    'pg_sem_5_sub_3_total_marks': '',
+                    'pg_sem_5_sub_4_name': '',
+                    'pg_sem_5_sub_4_marks_obtained': '',
+                    'pg_sem_5_sub_4_total_marks': '',
+                    'pg_sem_5_sub_5_name': '',
+                    'pg_sem_5_sub_5_marks_obtained': '',
+                    'pg_sem_5_sub_5_total_marks': '',
+                    'pg_sem_5_sub_6_name': '',
+                    'pg_sem_5_sub_6_marks_obtained': '',
+                    'pg_sem_5_sub_6_total_marks': '',
+                    'pg_sem_5_sub_7_name': '',
+                    'pg_sem_5_sub_7_marks_obtained': '',
+                    'pg_sem_5_sub_7_total_marks': '',
+                    'pg_sem_5_sub_8_name': '',
+                    'pg_sem_5_sub_8_marks_obtained': '',
+                    'pg_sem_5_sub_8_total_marks': '',
+                    'pg_sem_5_sub_9_name': '',
+                    'pg_sem_5_sub_9_marks_obtained': '',
+                    'pg_sem_5_sub_9_total_marks': '',
+                    'pg_sem_5_sub_10_name': '',
+                    'pg_sem_5_sub_10_marks_obtained': '',
+                    'pg_sem_5_sub_10_total_marks': '',
+                    'pg_sem_5_sub_11_name': '',
+                    'pg_sem_5_sub_11_marks_obtained': '',
+                    'pg_sem_5_sub_11_total_marks': '',
+                    'pg_sem_5_sub_12_name': '',
+                    'pg_sem_5_sub_12_marks_obtained': '',
+                    'pg_sem_5_sub_12_total_marks': '',
+                    'pg_sem_5_sub_13_name': '',
+                    'pg_sem_5_sub_13_marks_obtained': '',
+                    'pg_sem_5_sub_13_total_marks': '',
+                    'pg_sem_5_sub_14_name': '',
+                    'pg_sem_5_sub_14_marks_obtained': '',
+                    'pg_sem_5_sub_14_total_marks': '',
+                    'pg_sem_5_sub_15_name': '',
+                    'pg_sem_5_sub_15_marks_obtained': '',
+                    'pg_sem_5_sub_15_total_marks': '',
+                    'pg_sem_5_sub_16_name': '',
+                    'pg_sem_5_sub_16_marks_obtained': '',
+                    'pg_sem_5_sub_16_total_marks': '',
+                    'pg_sem_5_sub_17_name': '',
+                    'pg_sem_5_sub_17_marks_obtained': '',
+                    'pg_sem_5_sub_17_total_marks': '',
+                    'pg_sem_5_sub_18_name': '',
+                    'pg_sem_5_sub_18_marks_obtained': '',
+                    'pg_sem_5_sub_18_total_marks': '',
+                    'pg_sem_5_sub_19_name': '',
+                    'pg_sem_5_sub_19_marks_obtained': '',
+                    'pg_sem_5_sub_19_total_marks': '',
+                    'pg_sem_5_sub_20_name': '',
+                    'pg_sem_5_sub_20_marks_obtained': '',
+                    'pg_sem_5_sub_20_total_marks': ''
+
+                    # Add more fields as needed
+                }
+
+            # Pass the pg_sem_5_info to the template
+            return render_template('Student/student_info_forms/form_pg_sem_5.html', pg_sem_5=pg_sem_5_info)
+    except Exception as e:
+        app.logger.error(f"Exception occurred: {e}")
+        return str(e), 500
+
+def form_pg_sem_5_post():
+    try:
+        if request.method == 'POST':
+            # Get form data
+            aadhaar_no = session['aadhaar_no']
+            pg_enrollment_no = request.form['pg_enrollment_no']
+            pg_sem_5_session = request.form['pg_sem_5_session']
+            pg_sem_5_roll_no = request.form['pg_sem_5_roll_no']
+            pg_sem_5_result = request.form['pg_sem_5_result']
+            pg_sem_5_sub_1_name = request.form['pg_sem_5_sub_1_name']
+            pg_sem_5_sub_1_marks_obtained = request.form['pg_sem_5_sub_1_marks_obtained']
+            pg_sem_5_sub_1_total_marks = request.form['pg_sem_5_sub_1_total_marks']
+            pg_sem_5_sub_2_name = request.form['pg_sem_5_sub_2_name']
+            pg_sem_5_sub_2_marks_obtained = request.form['pg_sem_5_sub_2_marks_obtained']
+            pg_sem_5_sub_2_total_marks = request.form['pg_sem_5_sub_2_total_marks']
+            pg_sem_5_sub_3_name = request.form['pg_sem_5_sub_3_name']
+            pg_sem_5_sub_3_marks_obtained = request.form['pg_sem_5_sub_3_marks_obtained']
+            pg_sem_5_sub_3_total_marks = request.form['pg_sem_5_sub_3_total_marks']
+            pg_sem_5_sub_4_name = request.form['pg_sem_5_sub_4_name']
+            pg_sem_5_sub_4_marks_obtained = request.form['pg_sem_5_sub_4_marks_obtained']
+            pg_sem_5_sub_4_total_marks = request.form['pg_sem_5_sub_4_total_marks']
+            pg_sem_5_sub_5_name = request.form['pg_sem_5_sub_5_name']
+            pg_sem_5_sub_5_marks_obtained = request.form['pg_sem_5_sub_5_marks_obtained']
+            pg_sem_5_sub_5_total_marks = request.form['pg_sem_5_sub_5_total_marks']
+            pg_sem_5_sub_6_name = request.form['pg_sem_5_sub_6_name']
+            pg_sem_5_sub_6_marks_obtained = request.form['pg_sem_5_sub_6_marks_obtained']
+            pg_sem_5_sub_6_total_marks = request.form['pg_sem_5_sub_6_total_marks']
+            pg_sem_5_sub_7_name = request.form['pg_sem_5_sub_7_name']
+            pg_sem_5_sub_7_marks_obtained = request.form['pg_sem_5_sub_7_marks_obtained']
+            pg_sem_5_sub_7_total_marks = request.form['pg_sem_5_sub_7_total_marks']
+            pg_sem_5_sub_8_name = request.form['pg_sem_5_sub_8_name']
+            pg_sem_5_sub_8_marks_obtained = request.form['pg_sem_5_sub_8_marks_obtained']
+            pg_sem_5_sub_8_total_marks = request.form['pg_sem_5_sub_8_total_marks']
+            pg_sem_5_sub_9_name = request.form['pg_sem_5_sub_9_name']
+            pg_sem_5_sub_9_marks_obtained = request.form['pg_sem_5_sub_9_marks_obtained']
+            pg_sem_5_sub_9_total_marks = request.form['pg_sem_5_sub_9_total_marks']
+            pg_sem_5_sub_10_name = request.form['pg_sem_5_sub_10_name']
+            pg_sem_5_sub_10_marks_obtained = request.form['pg_sem_5_sub_10_marks_obtained']
+            pg_sem_5_sub_10_total_marks = request.form['pg_sem_5_sub_10_total_marks']
+            pg_sem_5_sub_11_name = request.form['pg_sem_5_sub_11_name']
+            pg_sem_5_sub_11_marks_obtained = request.form['pg_sem_5_sub_11_marks_obtained']
+            pg_sem_5_sub_11_total_marks = request.form['pg_sem_5_sub_11_total_marks']
+            pg_sem_5_sub_12_name = request.form['pg_sem_5_sub_12_name']
+            pg_sem_5_sub_12_marks_obtained = request.form['pg_sem_5_sub_12_marks_obtained']
+            pg_sem_5_sub_12_total_marks = request.form['pg_sem_5_sub_12_total_marks']
+            pg_sem_5_sub_13_name = request.form['pg_sem_5_sub_13_name']
+            pg_sem_5_sub_13_marks_obtained = request.form['pg_sem_5_sub_13_marks_obtained']
+            pg_sem_5_sub_13_total_marks = request.form['pg_sem_5_sub_13_total_marks']
+            pg_sem_5_sub_14_name = request.form['pg_sem_5_sub_14_name']
+            pg_sem_5_sub_14_marks_obtained = request.form['pg_sem_5_sub_14_marks_obtained']
+            pg_sem_5_sub_14_total_marks = request.form['pg_sem_5_sub_14_total_marks']
+            pg_sem_5_sub_15_name = request.form['pg_sem_5_sub_15_name']
+            pg_sem_5_sub_15_marks_obtained = request.form['pg_sem_5_sub_15_marks_obtained']
+            pg_sem_5_sub_15_total_marks = request.form['pg_sem_5_sub_15_total_marks']
+            pg_sem_5_sub_16_name = request.form['pg_sem_5_sub_16_name']
+            pg_sem_5_sub_16_marks_obtained = request.form['pg_sem_5_sub_16_marks_obtained']
+            pg_sem_5_sub_16_total_marks = request.form['pg_sem_5_sub_16_total_marks']
+            pg_sem_5_sub_17_name = request.form['pg_sem_5_sub_17_name']
+            pg_sem_5_sub_17_marks_obtained = request.form['pg_sem_5_sub_17_marks_obtained']
+            pg_sem_5_sub_17_total_marks = request.form['pg_sem_5_sub_17_total_marks']
+            pg_sem_5_sub_18_name = request.form['pg_sem_5_sub_18_name']
+            pg_sem_5_sub_18_marks_obtained = request.form['pg_sem_5_sub_18_marks_obtained']
+            pg_sem_5_sub_18_total_marks = request.form['pg_sem_5_sub_18_total_marks']
+            pg_sem_5_sub_19_name = request.form['pg_sem_5_sub_19_name']
+            pg_sem_5_sub_19_marks_obtained = request.form['pg_sem_5_sub_19_marks_obtained']
+            pg_sem_5_sub_19_total_marks = request.form['pg_sem_5_sub_19_total_marks']
+            pg_sem_5_sub_20_name = request.form['pg_sem_5_sub_20_name']
+            pg_sem_5_sub_20_marks_obtained = request.form['pg_sem_5_sub_20_marks_obtained']
+            pg_sem_5_sub_20_total_marks = request.form['pg_sem_5_sub_20_total_marks']
+
+
+            # Update pg_sem_5_info in the database
+            cursor.execute("""
+                UPDATE pg_sem_5
+                SET pg_enrollment_no = ?, pg_sem_5_session = ?, pg_sem_5_roll_no = ?, pg_sem_5_result = ?, pg_sem_5_sub_1_name = ?, pg_sem_5_sub_1_marks_obtained = ?, pg_sem_5_sub_1_total_marks = ?, pg_sem_5_sub_2_name = ?, pg_sem_5_sub_2_marks_obtained = ?, pg_sem_5_sub_2_total_marks = ?, pg_sem_5_sub_3_name = ?, pg_sem_5_sub_3_marks_obtained = ?, pg_sem_5_sub_3_total_marks = ?, pg_sem_5_sub_4_name = ?, pg_sem_5_sub_4_marks_obtained = ?, pg_sem_5_sub_4_total_marks = ?, pg_sem_5_sub_5_name = ?, pg_sem_5_sub_5_marks_obtained = ?, pg_sem_5_sub_5_total_marks = ?, pg_sem_5_sub_6_name = ?, pg_sem_5_sub_6_marks_obtained = ?, pg_sem_5_sub_6_total_marks = ?, pg_sem_5_sub_7_name = ?, pg_sem_5_sub_7_marks_obtained = ?, pg_sem_5_sub_7_total_marks = ?, pg_sem_5_sub_8_name = ?, pg_sem_5_sub_8_marks_obtained = ?, pg_sem_5_sub_8_total_marks = ?, pg_sem_5_sub_9_name = ?, pg_sem_5_sub_9_marks_obtained = ?, pg_sem_5_sub_9_total_marks = ?, pg_sem_5_sub_10_name = ?, pg_sem_5_sub_10_marks_obtained = ?, pg_sem_5_sub_10_total_marks = ?, pg_sem_5_sub_11_name = ?, pg_sem_5_sub_11_marks_obtained = ?, pg_sem_5_sub_11_total_marks = ?, pg_sem_5_sub_12_name = ?, pg_sem_5_sub_12_marks_obtained = ?, pg_sem_5_sub_12_total_marks = ?, pg_sem_5_sub_13_name = ?, pg_sem_5_sub_13_marks_obtained = ?, pg_sem_5_sub_13_total_marks = ?, pg_sem_5_sub_14_name = ?, pg_sem_5_sub_14_marks_obtained = ?, pg_sem_5_sub_14_total_marks = ?, pg_sem_5_sub_15_name = ?, pg_sem_5_sub_15_marks_obtained = ?, pg_sem_5_sub_15_total_marks = ?, pg_sem_5_sub_16_name = ?, pg_sem_5_sub_16_marks_obtained = ?, pg_sem_5_sub_16_total_marks = ?, pg_sem_5_sub_17_name = ?, pg_sem_5_sub_17_marks_obtained = ?, pg_sem_5_sub_17_total_marks = ?, pg_sem_5_sub_18_name = ?, pg_sem_5_sub_18_marks_obtained = ?, pg_sem_5_sub_18_total_marks = ?, pg_sem_5_sub_19_name = ?, pg_sem_5_sub_19_marks_obtained = ?, pg_sem_5_sub_19_total_marks = ?, pg_sem_5_sub_20_name = ?, pg_sem_5_sub_20_marks_obtained = ?, pg_sem_5_sub_20_total_marks = ?
+                WHERE aadhaar_no = ?
+            """,(pg_enrollment_no,pg_sem_5_session,pg_sem_5_roll_no,pg_sem_5_result,pg_sem_5_sub_1_name,
+                 pg_sem_5_sub_1_marks_obtained,pg_sem_5_sub_1_total_marks,pg_sem_5_sub_2_name,
+                 pg_sem_5_sub_2_marks_obtained,pg_sem_5_sub_2_total_marks,pg_sem_5_sub_3_name,
+                 pg_sem_5_sub_3_marks_obtained,pg_sem_5_sub_3_total_marks,pg_sem_5_sub_4_name,
+                 pg_sem_5_sub_4_marks_obtained,pg_sem_5_sub_4_total_marks,pg_sem_5_sub_5_name,
+                 pg_sem_5_sub_5_marks_obtained,pg_sem_5_sub_5_total_marks,pg_sem_5_sub_6_name,
+                 pg_sem_5_sub_6_marks_obtained,pg_sem_5_sub_6_total_marks,pg_sem_5_sub_7_name,
+                 pg_sem_5_sub_7_marks_obtained,pg_sem_5_sub_7_total_marks,pg_sem_5_sub_8_name,
+                 pg_sem_5_sub_8_marks_obtained,pg_sem_5_sub_8_total_marks,pg_sem_5_sub_9_name,
+                 pg_sem_5_sub_9_marks_obtained,pg_sem_5_sub_9_total_marks,pg_sem_5_sub_10_name,
+                 pg_sem_5_sub_10_marks_obtained,pg_sem_5_sub_10_total_marks,pg_sem_5_sub_11_name,
+                 pg_sem_5_sub_11_marks_obtained,pg_sem_5_sub_11_total_marks,pg_sem_5_sub_12_name,
+                 pg_sem_5_sub_12_marks_obtained,pg_sem_5_sub_12_total_marks,pg_sem_5_sub_13_name,
+                 pg_sem_5_sub_13_marks_obtained,pg_sem_5_sub_13_total_marks,pg_sem_5_sub_14_name,
+                 pg_sem_5_sub_14_marks_obtained,pg_sem_5_sub_14_total_marks,pg_sem_5_sub_15_name,
+                 pg_sem_5_sub_15_marks_obtained,pg_sem_5_sub_15_total_marks,pg_sem_5_sub_16_name,
+                 pg_sem_5_sub_16_marks_obtained,pg_sem_5_sub_16_total_marks,pg_sem_5_sub_17_name,
+                 pg_sem_5_sub_17_marks_obtained,pg_sem_5_sub_17_total_marks,pg_sem_5_sub_18_name,
+                 pg_sem_5_sub_18_marks_obtained,pg_sem_5_sub_18_total_marks,pg_sem_5_sub_19_name,
+                 pg_sem_5_sub_19_marks_obtained,pg_sem_5_sub_19_total_marks,pg_sem_5_sub_20_name,
+                 pg_sem_5_sub_20_marks_obtained,pg_sem_5_sub_20_total_marks,aadhaar_no))
+
+            # Commit changes
+            conn.commit()
+
+            # Redirect to the next form
+            return redirect(url_for('form_pg_sem_6'))  # replace 'next_form' with the actual name of the next form
+
+        else:
+            # Fetch pg_sem_5_info from the database
+            cursor.execute("SELECT * FROM pg_sem_5 WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+            pg_sem_5_info = cursor.fetchone()
+
+            # Pass the pg_sem_5_info to the template
+            return render_template('Student/student_info_forms/form_pg_sem_5.html', pg_sem_5=pg_sem_5_info)
+    except Exception as e:
+        app.logger.error(f"Exception occurred: {e}")
+        return str(e), 500
+
+@app.route('/form_pg_sem_6', methods=['GET', 'POST'])
+def form_pg_sem_6():
+    try:
+        if request.method == 'POST':
+            return form_pg_sem_6_post()
+        else:
+            # Fetch pg_sem_6_info from the database
+            cursor.execute("SELECT * FROM pg_sem_6 WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+            pg_sem_6_info = cursor.fetchone()
+
+            # If pg_sem_6_info is None, create a default pg_sem_6_info object
+            if pg_sem_6_info is None:
+                pg_sem_6_info = {
+                    'pg_enrollment_no': '',
+                    'pg_sem_6_session': '',
+                    'pg_sem_6_roll_no': '',
+                    'pg_sem_6_result': '',
+                    'pg_sem_6_sub_1_name': '',
+                    'pg_sem_6_sub_1_marks_obtained': '',
+                    'pg_sem_6_sub_1_total_marks': '',
+                    'pg_sem_6_sub_2_name': '',
+                    'pg_sem_6_sub_2_marks_obtained': '',
+                    'pg_sem_6_sub_2_total_marks': '',
+                    'pg_sem_6_sub_3_name': '',
+                    'pg_sem_6_sub_3_marks_obtained': '',
+                    'pg_sem_6_sub_3_total_marks': '',
+                    'pg_sem_6_sub_4_name': '',
+                    'pg_sem_6_sub_4_marks_obtained': '',
+                    'pg_sem_6_sub_4_total_marks': '',
+                    'pg_sem_6_sub_5_name': '',
+                    'pg_sem_6_sub_5_marks_obtained': '',
+                    'pg_sem_6_sub_5_total_marks': '',
+                    'pg_sem_6_sub_6_name': '',
+                    'pg_sem_6_sub_6_marks_obtained': '',
+                    'pg_sem_6_sub_6_total_marks': '',
+                    'pg_sem_6_sub_7_name': '',
+                    'pg_sem_6_sub_7_marks_obtained': '',
+                    'pg_sem_6_sub_7_total_marks': '',
+                    'pg_sem_6_sub_8_name': '',
+                    'pg_sem_6_sub_8_marks_obtained': '',
+                    'pg_sem_6_sub_8_total_marks': '',
+                    'pg_sem_6_sub_9_name': '',
+                    'pg_sem_6_sub_9_marks_obtained': '',
+                    'pg_sem_6_sub_9_total_marks': '',
+                    'pg_sem_6_sub_10_name': '',
+                    'pg_sem_6_sub_10_marks_obtained': '',
+                    'pg_sem_6_sub_10_total_marks': '',
+                    'pg_sem_6_sub_11_name': '',
+                    'pg_sem_6_sub_11_marks_obtained': '',
+                    'pg_sem_6_sub_11_total_marks': '',
+                    'pg_sem_6_sub_12_name': '',
+                    'pg_sem_6_sub_12_marks_obtained': '',
+                    'pg_sem_6_sub_12_total_marks': '',
+                    'pg_sem_6_sub_13_name': '',
+                    'pg_sem_6_sub_13_marks_obtained': '',
+                    'pg_sem_6_sub_13_total_marks': '',
+                    'pg_sem_6_sub_14_name': '',
+                    'pg_sem_6_sub_14_marks_obtained': '',
+                    'pg_sem_6_sub_14_total_marks': '',
+                    'pg_sem_6_sub_15_name': '',
+                    'pg_sem_6_sub_15_marks_obtained': '',
+                    'pg_sem_6_sub_15_total_marks': '',
+                    'pg_sem_6_sub_16_name': '',
+                    'pg_sem_6_sub_16_marks_obtained': '',
+                    'pg_sem_6_sub_16_total_marks': '',
+                    'pg_sem_6_sub_17_name': '',
+                    'pg_sem_6_sub_17_marks_obtained': '',
+                    'pg_sem_6_sub_17_total_marks': '',
+                    'pg_sem_6_sub_18_name': '',
+                    'pg_sem_6_sub_18_marks_obtained': '',
+                    'pg_sem_6_sub_18_total_marks': '',
+                    'pg_sem_6_sub_19_name': '',
+                    'pg_sem_6_sub_19_marks_obtained': '',
+                    'pg_sem_6_sub_19_total_marks': '',
+                    'pg_sem_6_sub_20_name': '',
+                    'pg_sem_6_sub_20_marks_obtained': '',
+                    'pg_sem_6_sub_20_total_marks': ''
+
+                    # Add more fields as needed
+                }
+
+            # Pass the pg_sem_6_info to the template
+            return render_template('Student/student_info_forms/form_pg_sem_6.html', pg_sem_6=pg_sem_6_info)
+    except Exception as e:
+        app.logger.error(f"Exception occurred: {e}")
+        return str(e), 500
+
+def form_pg_sem_6_post():
+    try:
+        if request.method == 'POST':
+            # Get form data
+            aadhaar_no = session['aadhaar_no']
+            pg_enrollment_no = request.form['pg_enrollment_no']
+            pg_sem_6_session = request.form['pg_sem_6_session']
+            pg_sem_6_roll_no = request.form['pg_sem_6_roll_no']
+            pg_sem_6_result = request.form['pg_sem_6_result']
+            pg_sem_6_sub_1_name = request.form['pg_sem_6_sub_1_name']
+            pg_sem_6_sub_1_marks_obtained = request.form['pg_sem_6_sub_1_marks_obtained']
+            pg_sem_6_sub_1_total_marks = request.form['pg_sem_6_sub_1_total_marks']
+            pg_sem_6_sub_2_name = request.form['pg_sem_6_sub_2_name']
+            pg_sem_6_sub_2_marks_obtained = request.form['pg_sem_6_sub_2_marks_obtained']
+            pg_sem_6_sub_2_total_marks = request.form['pg_sem_6_sub_2_total_marks']
+            pg_sem_6_sub_3_name = request.form['pg_sem_6_sub_3_name']
+            pg_sem_6_sub_3_marks_obtained = request.form['pg_sem_6_sub_3_marks_obtained']
+            pg_sem_6_sub_3_total_marks = request.form['pg_sem_6_sub_3_total_marks']
+            pg_sem_6_sub_4_name = request.form['pg_sem_6_sub_4_name']
+            pg_sem_6_sub_4_marks_obtained = request.form['pg_sem_6_sub_4_marks_obtained']
+            pg_sem_6_sub_4_total_marks = request.form['pg_sem_6_sub_4_total_marks']
+            pg_sem_6_sub_5_name = request.form['pg_sem_6_sub_5_name']
+            pg_sem_6_sub_5_marks_obtained = request.form['pg_sem_6_sub_5_marks_obtained']
+            pg_sem_6_sub_5_total_marks = request.form['pg_sem_6_sub_5_total_marks']
+            pg_sem_6_sub_6_name = request.form['pg_sem_6_sub_6_name']
+            pg_sem_6_sub_6_marks_obtained = request.form['pg_sem_6_sub_6_marks_obtained']
+            pg_sem_6_sub_6_total_marks = request.form['pg_sem_6_sub_6_total_marks']
+            pg_sem_6_sub_7_name = request.form['pg_sem_6_sub_7_name']
+            pg_sem_6_sub_7_marks_obtained = request.form['pg_sem_6_sub_7_marks_obtained']
+            pg_sem_6_sub_7_total_marks = request.form['pg_sem_6_sub_7_total_marks']
+            pg_sem_6_sub_8_name = request.form['pg_sem_6_sub_8_name']
+            pg_sem_6_sub_8_marks_obtained = request.form['pg_sem_6_sub_8_marks_obtained']
+            pg_sem_6_sub_8_total_marks = request.form['pg_sem_6_sub_8_total_marks']
+            pg_sem_6_sub_9_name = request.form['pg_sem_6_sub_9_name']
+            pg_sem_6_sub_9_marks_obtained = request.form['pg_sem_6_sub_9_marks_obtained']
+            pg_sem_6_sub_9_total_marks = request.form['pg_sem_6_sub_9_total_marks']
+            pg_sem_6_sub_10_name = request.form['pg_sem_6_sub_10_name']
+            pg_sem_6_sub_10_marks_obtained = request.form['pg_sem_6_sub_10_marks_obtained']
+            pg_sem_6_sub_10_total_marks = request.form['pg_sem_6_sub_10_total_marks']
+            pg_sem_6_sub_11_name = request.form['pg_sem_6_sub_11_name']
+            pg_sem_6_sub_11_marks_obtained = request.form['pg_sem_6_sub_11_marks_obtained']
+            pg_sem_6_sub_11_total_marks = request.form['pg_sem_6_sub_11_total_marks']
+            pg_sem_6_sub_12_name = request.form['pg_sem_6_sub_12_name']
+            pg_sem_6_sub_12_marks_obtained = request.form['pg_sem_6_sub_12_marks_obtained']
+            pg_sem_6_sub_12_total_marks = request.form['pg_sem_6_sub_12_total_marks']
+            pg_sem_6_sub_13_name = request.form['pg_sem_6_sub_13_name']
+            pg_sem_6_sub_13_marks_obtained = request.form['pg_sem_6_sub_13_marks_obtained']
+            pg_sem_6_sub_13_total_marks = request.form['pg_sem_6_sub_13_total_marks']
+            pg_sem_6_sub_14_name = request.form['pg_sem_6_sub_14_name']
+            pg_sem_6_sub_14_marks_obtained = request.form['pg_sem_6_sub_14_marks_obtained']
+            pg_sem_6_sub_14_total_marks = request.form['pg_sem_6_sub_14_total_marks']
+            pg_sem_6_sub_15_name = request.form['pg_sem_6_sub_15_name']
+            pg_sem_6_sub_15_marks_obtained = request.form['pg_sem_6_sub_15_marks_obtained']
+            pg_sem_6_sub_15_total_marks = request.form['pg_sem_6_sub_15_total_marks']
+            pg_sem_6_sub_16_name = request.form['pg_sem_6_sub_16_name']
+            pg_sem_6_sub_16_marks_obtained = request.form['pg_sem_6_sub_16_marks_obtained']
+            pg_sem_6_sub_16_total_marks = request.form['pg_sem_6_sub_16_total_marks']
+            pg_sem_6_sub_17_name = request.form['pg_sem_6_sub_17_name']
+            pg_sem_6_sub_17_marks_obtained = request.form['pg_sem_6_sub_17_marks_obtained']
+            pg_sem_6_sub_17_total_marks = request.form['pg_sem_6_sub_17_total_marks']
+            pg_sem_6_sub_18_name = request.form['pg_sem_6_sub_18_name']
+            pg_sem_6_sub_18_marks_obtained = request.form['pg_sem_6_sub_18_marks_obtained']
+            pg_sem_6_sub_18_total_marks = request.form['pg_sem_6_sub_18_total_marks']
+            pg_sem_6_sub_19_name = request.form['pg_sem_6_sub_19_name']
+            pg_sem_6_sub_19_marks_obtained = request.form['pg_sem_6_sub_19_marks_obtained']
+            pg_sem_6_sub_19_total_marks = request.form['pg_sem_6_sub_19_total_marks']
+            pg_sem_6_sub_20_name = request.form['pg_sem_6_sub_20_name']
+            pg_sem_6_sub_20_marks_obtained = request.form['pg_sem_6_sub_20_marks_obtained']
+            pg_sem_6_sub_20_total_marks = request.form['pg_sem_6_sub_20_total_marks']
+
+
+            # Update pg_sem_6_info in the database
+            cursor.execute("""
+                UPDATE pg_sem_6
+                SET pg_enrollment_no = ?, pg_sem_6_session = ?, pg_sem_6_roll_no = ?, pg_sem_6_result = ?, pg_sem_6_sub_1_name = ?, pg_sem_6_sub_1_marks_obtained = ?, pg_sem_6_sub_1_total_marks = ?, pg_sem_6_sub_2_name = ?, pg_sem_6_sub_2_marks_obtained = ?, pg_sem_6_sub_2_total_marks = ?, pg_sem_6_sub_3_name = ?, pg_sem_6_sub_3_marks_obtained = ?, pg_sem_6_sub_3_total_marks = ?, pg_sem_6_sub_4_name = ?, pg_sem_6_sub_4_marks_obtained = ?, pg_sem_6_sub_4_total_marks = ?, pg_sem_6_sub_5_name = ?, pg_sem_6_sub_5_marks_obtained = ?, pg_sem_6_sub_5_total_marks = ?, pg_sem_6_sub_6_name = ?, pg_sem_6_sub_6_marks_obtained = ?, pg_sem_6_sub_6_total_marks = ?, pg_sem_6_sub_7_name = ?, pg_sem_6_sub_7_marks_obtained = ?, pg_sem_6_sub_7_total_marks = ?, pg_sem_6_sub_8_name = ?, pg_sem_6_sub_8_marks_obtained = ?, pg_sem_6_sub_8_total_marks = ?, pg_sem_6_sub_9_name = ?, pg_sem_6_sub_9_marks_obtained = ?, pg_sem_6_sub_9_total_marks = ?, pg_sem_6_sub_10_name = ?, pg_sem_6_sub_10_marks_obtained = ?, pg_sem_6_sub_10_total_marks = ?, pg_sem_6_sub_11_name = ?, pg_sem_6_sub_11_marks_obtained = ?, pg_sem_6_sub_11_total_marks = ?, pg_sem_6_sub_12_name = ?, pg_sem_6_sub_12_marks_obtained = ?, pg_sem_6_sub_12_total_marks = ?, pg_sem_6_sub_13_name = ?, pg_sem_6_sub_13_marks_obtained = ?, pg_sem_6_sub_13_total_marks = ?, pg_sem_6_sub_14_name = ?, pg_sem_6_sub_14_marks_obtained = ?, pg_sem_6_sub_14_total_marks = ?, pg_sem_6_sub_15_name = ?, pg_sem_6_sub_15_marks_obtained = ?, pg_sem_6_sub_15_total_marks = ?, pg_sem_6_sub_16_name = ?, pg_sem_6_sub_16_marks_obtained = ?, pg_sem_6_sub_16_total_marks = ?, pg_sem_6_sub_17_name = ?, pg_sem_6_sub_17_marks_obtained = ?, pg_sem_6_sub_17_total_marks = ?, pg_sem_6_sub_18_name = ?, pg_sem_6_sub_18_marks_obtained = ?, pg_sem_6_sub_18_total_marks = ?, pg_sem_6_sub_19_name = ?, pg_sem_6_sub_19_marks_obtained = ?, pg_sem_6_sub_19_total_marks = ?, pg_sem_6_sub_20_name = ?, pg_sem_6_sub_20_marks_obtained = ?, pg_sem_6_sub_20_total_marks = ?
+                WHERE aadhaar_no = ?
+            """,(pg_enrollment_no,pg_sem_6_session,pg_sem_6_roll_no,pg_sem_6_result,pg_sem_6_sub_1_name,
+                 pg_sem_6_sub_1_marks_obtained,pg_sem_6_sub_1_total_marks,pg_sem_6_sub_2_name,
+                 pg_sem_6_sub_2_marks_obtained,pg_sem_6_sub_2_total_marks,pg_sem_6_sub_3_name,
+                 pg_sem_6_sub_3_marks_obtained,pg_sem_6_sub_3_total_marks,pg_sem_6_sub_4_name,
+                 pg_sem_6_sub_4_marks_obtained,pg_sem_6_sub_4_total_marks,pg_sem_6_sub_5_name,
+                 pg_sem_6_sub_5_marks_obtained,pg_sem_6_sub_5_total_marks,pg_sem_6_sub_6_name,
+                 pg_sem_6_sub_6_marks_obtained,pg_sem_6_sub_6_total_marks,pg_sem_6_sub_7_name,
+                 pg_sem_6_sub_7_marks_obtained,pg_sem_6_sub_7_total_marks,pg_sem_6_sub_8_name,
+                 pg_sem_6_sub_8_marks_obtained,pg_sem_6_sub_8_total_marks,pg_sem_6_sub_9_name,
+                 pg_sem_6_sub_9_marks_obtained,pg_sem_6_sub_9_total_marks,pg_sem_6_sub_10_name,
+                 pg_sem_6_sub_10_marks_obtained,pg_sem_6_sub_10_total_marks,pg_sem_6_sub_11_name,
+                 pg_sem_6_sub_11_marks_obtained,pg_sem_6_sub_11_total_marks,pg_sem_6_sub_12_name,
+                 pg_sem_6_sub_12_marks_obtained,pg_sem_6_sub_12_total_marks,pg_sem_6_sub_13_name,
+                 pg_sem_6_sub_13_marks_obtained,pg_sem_6_sub_13_total_marks,pg_sem_6_sub_14_name,
+                 pg_sem_6_sub_14_marks_obtained,pg_sem_6_sub_14_total_marks,pg_sem_6_sub_15_name,
+                 pg_sem_6_sub_15_marks_obtained,pg_sem_6_sub_15_total_marks,pg_sem_6_sub_16_name,
+                 pg_sem_6_sub_16_marks_obtained,pg_sem_6_sub_16_total_marks,pg_sem_6_sub_17_name,
+                 pg_sem_6_sub_17_marks_obtained,pg_sem_6_sub_17_total_marks,pg_sem_6_sub_18_name,
+                 pg_sem_6_sub_18_marks_obtained,pg_sem_6_sub_18_total_marks,pg_sem_6_sub_19_name,
+                 pg_sem_6_sub_19_marks_obtained,pg_sem_6_sub_19_total_marks,pg_sem_6_sub_20_name,
+                 pg_sem_6_sub_20_marks_obtained,pg_sem_6_sub_20_total_marks,aadhaar_no))
+
+            # Commit changes
+            conn.commit()
+
+            # Redirect to the next form
+            return redirect(url_for('form_pg_sem_7'))  # replace 'next_form' with the actual name of the next form
+
+        else:
+            # Fetch pg_sem_6_info from the database
+            cursor.execute("SELECT * FROM pg_sem_6 WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+            pg_sem_6_info = cursor.fetchone()
+
+            # Pass the pg_sem_6_info to the template
+            return render_template('Student/student_info_forms/form_pg_sem_6.html', pg_sem_6=pg_sem_6_info)
+    except Exception as e:
+        app.logger.error(f"Exception occurred: {e}")
+        return str(e), 500
+
+@app.route('/form_pg_sem_7', methods=['GET', 'POST'])
+def form_pg_sem_7():
+    try:
+        if request.method == 'POST':
+            return form_pg_sem_7_post()
+        else:
+            # Fetch pg_sem_7_info from the database
+            cursor.execute("SELECT * FROM pg_sem_7 WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+            pg_sem_7_info = cursor.fetchone()
+
+            # If pg_sem_7_info is None, create a default pg_sem_7_info object
+            if pg_sem_7_info is None:
+                pg_sem_7_info = {
+                    'pg_enrollment_no': '',
+                    'pg_sem_7_session': '',
+                    'pg_sem_7_roll_no': '',
+                    'pg_sem_7_result': '',
+                    'pg_sem_7_sub_1_name': '',
+                    'pg_sem_7_sub_1_marks_obtained': '',
+                    'pg_sem_7_sub_1_total_marks': '',
+                    'pg_sem_7_sub_2_name': '',
+                    'pg_sem_7_sub_2_marks_obtained': '',
+                    'pg_sem_7_sub_2_total_marks': '',
+                    'pg_sem_7_sub_3_name': '',
+                    'pg_sem_7_sub_3_marks_obtained': '',
+                    'pg_sem_7_sub_3_total_marks': '',
+                    'pg_sem_7_sub_4_name': '',
+                    'pg_sem_7_sub_4_marks_obtained': '',
+                    'pg_sem_7_sub_4_total_marks': '',
+                    'pg_sem_7_sub_5_name': '',
+                    'pg_sem_7_sub_5_marks_obtained': '',
+                    'pg_sem_7_sub_5_total_marks': '',
+                    'pg_sem_7_sub_6_name': '',
+                    'pg_sem_7_sub_6_marks_obtained': '',
+                    'pg_sem_7_sub_6_total_marks': '',
+                    'pg_sem_7_sub_7_name': '',
+                    'pg_sem_7_sub_7_marks_obtained': '',
+                    'pg_sem_7_sub_7_total_marks': '',
+                    'pg_sem_7_sub_8_name': '',
+                    'pg_sem_7_sub_8_marks_obtained': '',
+                    'pg_sem_7_sub_8_total_marks': '',
+                    'pg_sem_7_sub_9_name': '',
+                    'pg_sem_7_sub_9_marks_obtained': '',
+                    'pg_sem_7_sub_9_total_marks': '',
+                    'pg_sem_7_sub_10_name': '',
+                    'pg_sem_7_sub_10_marks_obtained': '',
+                    'pg_sem_7_sub_10_total_marks': '',
+                    'pg_sem_7_sub_11_name': '',
+                    'pg_sem_7_sub_11_marks_obtained': '',
+                    'pg_sem_7_sub_11_total_marks': '',
+                    'pg_sem_7_sub_12_name': '',
+                    'pg_sem_7_sub_12_marks_obtained': '',
+                    'pg_sem_7_sub_12_total_marks': '',
+                    'pg_sem_7_sub_13_name': '',
+                    'pg_sem_7_sub_13_marks_obtained': '',
+                    'pg_sem_7_sub_13_total_marks': '',
+                    'pg_sem_7_sub_14_name': '',
+                    'pg_sem_7_sub_14_marks_obtained': '',
+                    'pg_sem_7_sub_14_total_marks': '',
+                    'pg_sem_7_sub_15_name': '',
+                    'pg_sem_7_sub_15_marks_obtained': '',
+                    'pg_sem_7_sub_15_total_marks': '',
+                    'pg_sem_7_sub_16_name': '',
+                    'pg_sem_7_sub_16_marks_obtained': '',
+                    'pg_sem_7_sub_16_total_marks': '',
+                    'pg_sem_7_sub_17_name': '',
+                    'pg_sem_7_sub_17_marks_obtained': '',
+                    'pg_sem_7_sub_17_total_marks': '',
+                    'pg_sem_7_sub_18_name': '',
+                    'pg_sem_7_sub_18_marks_obtained': '',
+                    'pg_sem_7_sub_18_total_marks': '',
+                    'pg_sem_7_sub_19_name': '',
+                    'pg_sem_7_sub_19_marks_obtained': '',
+                    'pg_sem_7_sub_19_total_marks': '',
+                    'pg_sem_7_sub_20_name': '',
+                    'pg_sem_7_sub_20_marks_obtained': '',
+                    'pg_sem_7_sub_20_total_marks': ''
+
+                    # Add more fields as needed
+                }
+
+            # Pass the pg_sem_7_info to the template
+            return render_template('Student/student_info_forms/form_pg_sem_7.html', pg_sem_7=pg_sem_7_info)
+    except Exception as e:
+        app.logger.error(f"Exception occurred: {e}")
+        return str(e), 500
+
+def form_pg_sem_7_post():
+    try:
+        if request.method == 'POST':
+            # Get form data
+            aadhaar_no = session['aadhaar_no']
+            pg_enrollment_no = request.form['pg_enrollment_no']
+            pg_sem_7_session = request.form['pg_sem_7_session']
+            pg_sem_7_roll_no = request.form['pg_sem_7_roll_no']
+            pg_sem_7_result = request.form['pg_sem_7_result']
+            pg_sem_7_sub_1_name = request.form['pg_sem_7_sub_1_name']
+            pg_sem_7_sub_1_marks_obtained = request.form['pg_sem_7_sub_1_marks_obtained']
+            pg_sem_7_sub_1_total_marks = request.form['pg_sem_7_sub_1_total_marks']
+            pg_sem_7_sub_2_name = request.form['pg_sem_7_sub_2_name']
+            pg_sem_7_sub_2_marks_obtained = request.form['pg_sem_7_sub_2_marks_obtained']
+            pg_sem_7_sub_2_total_marks = request.form['pg_sem_7_sub_2_total_marks']
+            pg_sem_7_sub_3_name = request.form['pg_sem_7_sub_3_name']
+            pg_sem_7_sub_3_marks_obtained = request.form['pg_sem_7_sub_3_marks_obtained']
+            pg_sem_7_sub_3_total_marks = request.form['pg_sem_7_sub_3_total_marks']
+            pg_sem_7_sub_4_name = request.form['pg_sem_7_sub_4_name']
+            pg_sem_7_sub_4_marks_obtained = request.form['pg_sem_7_sub_4_marks_obtained']
+            pg_sem_7_sub_4_total_marks = request.form['pg_sem_7_sub_4_total_marks']
+            pg_sem_7_sub_5_name = request.form['pg_sem_7_sub_5_name']
+            pg_sem_7_sub_5_marks_obtained = request.form['pg_sem_7_sub_5_marks_obtained']
+            pg_sem_7_sub_5_total_marks = request.form['pg_sem_7_sub_5_total_marks']
+            pg_sem_7_sub_6_name = request.form['pg_sem_7_sub_6_name']
+            pg_sem_7_sub_6_marks_obtained = request.form['pg_sem_7_sub_6_marks_obtained']
+            pg_sem_7_sub_6_total_marks = request.form['pg_sem_7_sub_6_total_marks']
+            pg_sem_7_sub_7_name = request.form['pg_sem_7_sub_7_name']
+            pg_sem_7_sub_7_marks_obtained = request.form['pg_sem_7_sub_7_marks_obtained']
+            pg_sem_7_sub_7_total_marks = request.form['pg_sem_7_sub_7_total_marks']
+            pg_sem_7_sub_8_name = request.form['pg_sem_7_sub_8_name']
+            pg_sem_7_sub_8_marks_obtained = request.form['pg_sem_7_sub_8_marks_obtained']
+            pg_sem_7_sub_8_total_marks = request.form['pg_sem_7_sub_8_total_marks']
+            pg_sem_7_sub_9_name = request.form['pg_sem_7_sub_9_name']
+            pg_sem_7_sub_9_marks_obtained = request.form['pg_sem_7_sub_9_marks_obtained']
+            pg_sem_7_sub_9_total_marks = request.form['pg_sem_7_sub_9_total_marks']
+            pg_sem_7_sub_10_name = request.form['pg_sem_7_sub_10_name']
+            pg_sem_7_sub_10_marks_obtained = request.form['pg_sem_7_sub_10_marks_obtained']
+            pg_sem_7_sub_10_total_marks = request.form['pg_sem_7_sub_10_total_marks']
+            pg_sem_7_sub_11_name = request.form['pg_sem_7_sub_11_name']
+            pg_sem_7_sub_11_marks_obtained = request.form['pg_sem_7_sub_11_marks_obtained']
+            pg_sem_7_sub_11_total_marks = request.form['pg_sem_7_sub_11_total_marks']
+            pg_sem_7_sub_12_name = request.form['pg_sem_7_sub_12_name']
+            pg_sem_7_sub_12_marks_obtained = request.form['pg_sem_7_sub_12_marks_obtained']
+            pg_sem_7_sub_12_total_marks = request.form['pg_sem_7_sub_12_total_marks']
+            pg_sem_7_sub_13_name = request.form['pg_sem_7_sub_13_name']
+            pg_sem_7_sub_13_marks_obtained = request.form['pg_sem_7_sub_13_marks_obtained']
+            pg_sem_7_sub_13_total_marks = request.form['pg_sem_7_sub_13_total_marks']
+            pg_sem_7_sub_14_name = request.form['pg_sem_7_sub_14_name']
+            pg_sem_7_sub_14_marks_obtained = request.form['pg_sem_7_sub_14_marks_obtained']
+            pg_sem_7_sub_14_total_marks = request.form['pg_sem_7_sub_14_total_marks']
+            pg_sem_7_sub_15_name = request.form['pg_sem_7_sub_15_name']
+            pg_sem_7_sub_15_marks_obtained = request.form['pg_sem_7_sub_15_marks_obtained']
+            pg_sem_7_sub_15_total_marks = request.form['pg_sem_7_sub_15_total_marks']
+            pg_sem_7_sub_16_name = request.form['pg_sem_7_sub_16_name']
+            pg_sem_7_sub_16_marks_obtained = request.form['pg_sem_7_sub_16_marks_obtained']
+            pg_sem_7_sub_16_total_marks = request.form['pg_sem_7_sub_16_total_marks']
+            pg_sem_7_sub_17_name = request.form['pg_sem_7_sub_17_name']
+            pg_sem_7_sub_17_marks_obtained = request.form['pg_sem_7_sub_17_marks_obtained']
+            pg_sem_7_sub_17_total_marks = request.form['pg_sem_7_sub_17_total_marks']
+            pg_sem_7_sub_18_name = request.form['pg_sem_7_sub_18_name']
+            pg_sem_7_sub_18_marks_obtained = request.form['pg_sem_7_sub_18_marks_obtained']
+            pg_sem_7_sub_18_total_marks = request.form['pg_sem_7_sub_18_total_marks']
+            pg_sem_7_sub_19_name = request.form['pg_sem_7_sub_19_name']
+            pg_sem_7_sub_19_marks_obtained = request.form['pg_sem_7_sub_19_marks_obtained']
+            pg_sem_7_sub_19_total_marks = request.form['pg_sem_7_sub_19_total_marks']
+            pg_sem_7_sub_20_name = request.form['pg_sem_7_sub_20_name']
+            pg_sem_7_sub_20_marks_obtained = request.form['pg_sem_7_sub_20_marks_obtained']
+            pg_sem_7_sub_20_total_marks = request.form['pg_sem_7_sub_20_total_marks']
+
+
+            # Update pg_sem_7_info in the database
+            cursor.execute("""
+                UPDATE pg_sem_7
+                SET pg_enrollment_no = ?, pg_sem_7_session = ?, pg_sem_7_roll_no = ?, pg_sem_7_result = ?, pg_sem_7_sub_1_name = ?, pg_sem_7_sub_1_marks_obtained = ?, pg_sem_7_sub_1_total_marks = ?, pg_sem_7_sub_2_name = ?, pg_sem_7_sub_2_marks_obtained = ?, pg_sem_7_sub_2_total_marks = ?, pg_sem_7_sub_3_name = ?, pg_sem_7_sub_3_marks_obtained = ?, pg_sem_7_sub_3_total_marks = ?, pg_sem_7_sub_4_name = ?, pg_sem_7_sub_4_marks_obtained = ?, pg_sem_7_sub_4_total_marks = ?, pg_sem_7_sub_5_name = ?, pg_sem_7_sub_5_marks_obtained = ?, pg_sem_7_sub_5_total_marks = ?, pg_sem_7_sub_6_name = ?, pg_sem_7_sub_6_marks_obtained = ?, pg_sem_7_sub_6_total_marks = ?, pg_sem_7_sub_7_name = ?, pg_sem_7_sub_7_marks_obtained = ?, pg_sem_7_sub_7_total_marks = ?, pg_sem_7_sub_8_name = ?, pg_sem_7_sub_8_marks_obtained = ?, pg_sem_7_sub_8_total_marks = ?, pg_sem_7_sub_9_name = ?, pg_sem_7_sub_9_marks_obtained = ?, pg_sem_7_sub_9_total_marks = ?, pg_sem_7_sub_10_name = ?, pg_sem_7_sub_10_marks_obtained = ?, pg_sem_7_sub_10_total_marks = ?, pg_sem_7_sub_11_name = ?, pg_sem_7_sub_11_marks_obtained = ?, pg_sem_7_sub_11_total_marks = ?, pg_sem_7_sub_12_name = ?, pg_sem_7_sub_12_marks_obtained = ?, pg_sem_7_sub_12_total_marks = ?, pg_sem_7_sub_13_name = ?, pg_sem_7_sub_13_marks_obtained = ?, pg_sem_7_sub_13_total_marks = ?, pg_sem_7_sub_14_name = ?, pg_sem_7_sub_14_marks_obtained = ?, pg_sem_7_sub_14_total_marks = ?, pg_sem_7_sub_15_name = ?, pg_sem_7_sub_15_marks_obtained = ?, pg_sem_7_sub_15_total_marks = ?, pg_sem_7_sub_16_name = ?, pg_sem_7_sub_16_marks_obtained = ?, pg_sem_7_sub_16_total_marks = ?, pg_sem_7_sub_17_name = ?, pg_sem_7_sub_17_marks_obtained = ?, pg_sem_7_sub_17_total_marks = ?, pg_sem_7_sub_18_name = ?, pg_sem_7_sub_18_marks_obtained = ?, pg_sem_7_sub_18_total_marks = ?, pg_sem_7_sub_19_name = ?, pg_sem_7_sub_19_marks_obtained = ?, pg_sem_7_sub_19_total_marks = ?, pg_sem_7_sub_20_name = ?, pg_sem_7_sub_20_marks_obtained = ?, pg_sem_7_sub_20_total_marks = ?
+                WHERE aadhaar_no = ?
+            """,(pg_enrollment_no,pg_sem_7_session,pg_sem_7_roll_no,pg_sem_7_result,pg_sem_7_sub_1_name,
+                 pg_sem_7_sub_1_marks_obtained,pg_sem_7_sub_1_total_marks,pg_sem_7_sub_2_name,
+                 pg_sem_7_sub_2_marks_obtained,pg_sem_7_sub_2_total_marks,pg_sem_7_sub_3_name,
+                 pg_sem_7_sub_3_marks_obtained,pg_sem_7_sub_3_total_marks,pg_sem_7_sub_4_name,
+                 pg_sem_7_sub_4_marks_obtained,pg_sem_7_sub_4_total_marks,pg_sem_7_sub_5_name,
+                 pg_sem_7_sub_5_marks_obtained,pg_sem_7_sub_5_total_marks,pg_sem_7_sub_6_name,
+                 pg_sem_7_sub_6_marks_obtained,pg_sem_7_sub_6_total_marks,pg_sem_7_sub_7_name,
+                 pg_sem_7_sub_7_marks_obtained,pg_sem_7_sub_7_total_marks,pg_sem_7_sub_8_name,
+                 pg_sem_7_sub_8_marks_obtained,pg_sem_7_sub_8_total_marks,pg_sem_7_sub_9_name,
+                 pg_sem_7_sub_9_marks_obtained,pg_sem_7_sub_9_total_marks,pg_sem_7_sub_10_name,
+                 pg_sem_7_sub_10_marks_obtained,pg_sem_7_sub_10_total_marks,pg_sem_7_sub_11_name,
+                 pg_sem_7_sub_11_marks_obtained,pg_sem_7_sub_11_total_marks,pg_sem_7_sub_12_name,
+                 pg_sem_7_sub_12_marks_obtained,pg_sem_7_sub_12_total_marks,pg_sem_7_sub_13_name,
+                 pg_sem_7_sub_13_marks_obtained,pg_sem_7_sub_13_total_marks,pg_sem_7_sub_14_name,
+                 pg_sem_7_sub_14_marks_obtained,pg_sem_7_sub_14_total_marks,pg_sem_7_sub_15_name,
+                 pg_sem_7_sub_15_marks_obtained,pg_sem_7_sub_15_total_marks,pg_sem_7_sub_16_name,
+                 pg_sem_7_sub_16_marks_obtained,pg_sem_7_sub_16_total_marks,pg_sem_7_sub_17_name,
+                 pg_sem_7_sub_17_marks_obtained,pg_sem_7_sub_17_total_marks,pg_sem_7_sub_18_name,
+                 pg_sem_7_sub_18_marks_obtained,pg_sem_7_sub_18_total_marks,pg_sem_7_sub_19_name,
+                 pg_sem_7_sub_19_marks_obtained,pg_sem_7_sub_19_total_marks,pg_sem_7_sub_20_name,
+                 pg_sem_7_sub_20_marks_obtained,pg_sem_7_sub_20_total_marks,aadhaar_no))
+
+            # Commit changes
+            conn.commit()
+
+            # Redirect to the next form
+            return redirect(url_for('form_pg_sem_8'))  # replace 'next_form' with the actual name of the next form
+
+        else:
+            # Fetch pg_sem_7_info from the database
+            cursor.execute("SELECT * FROM pg_sem_7 WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+            pg_sem_7_info = cursor.fetchone()
+
+            # Pass the pg_sem_7_info to the template
+            return render_template('Student/student_info_forms/form_pg_sem_7.html', pg_sem_7=pg_sem_7_info)
+    except Exception as e:
+        app.logger.error(f"Exception occurred: {e}")
+        return str(e), 500
+
+@app.route('/form_pg_sem_8', methods=['GET', 'POST'])
+def form_pg_sem_8():
+    try:
+        if request.method == 'POST':
+            return form_pg_sem_8_post()
+        else:
+            # Fetch pg_sem_8_info from the database
+            cursor.execute("SELECT * FROM pg_sem_8 WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+            pg_sem_8_info = cursor.fetchone()
+
+            # If pg_sem_8_info is None, create a default pg_sem_8_info object
+            if pg_sem_8_info is None:
+                pg_sem_8_info = {
+                    'pg_enrollment_no': '',
+                    'pg_sem_8_session': '',
+                    'pg_sem_8_roll_no': '',
+                    'pg_sem_8_result': '',
+                    'pg_sem_8_sub_1_name': '',
+                    'pg_sem_8_sub_1_marks_obtained': '',
+                    'pg_sem_8_sub_1_total_marks': '',
+                    'pg_sem_8_sub_2_name': '',
+                    'pg_sem_8_sub_2_marks_obtained': '',
+                    'pg_sem_8_sub_2_total_marks': '',
+                    'pg_sem_8_sub_3_name': '',
+                    'pg_sem_8_sub_3_marks_obtained': '',
+                    'pg_sem_8_sub_3_total_marks': '',
+                    'pg_sem_8_sub_4_name': '',
+                    'pg_sem_8_sub_4_marks_obtained': '',
+                    'pg_sem_8_sub_4_total_marks': '',
+                    'pg_sem_8_sub_5_name': '',
+                    'pg_sem_8_sub_5_marks_obtained': '',
+                    'pg_sem_8_sub_5_total_marks': '',
+                    'pg_sem_8_sub_6_name': '',
+                    'pg_sem_8_sub_6_marks_obtained': '',
+                    'pg_sem_8_sub_6_total_marks': '',
+                    'pg_sem_8_sub_7_name': '',
+                    'pg_sem_8_sub_7_marks_obtained': '',
+                    'pg_sem_8_sub_7_total_marks': '',
+                    'pg_sem_8_sub_8_name': '',
+                    'pg_sem_8_sub_8_marks_obtained': '',
+                    'pg_sem_8_sub_8_total_marks': '',
+                    'pg_sem_8_sub_9_name': '',
+                    'pg_sem_8_sub_9_marks_obtained': '',
+                    'pg_sem_8_sub_9_total_marks': '',
+                    'pg_sem_8_sub_10_name': '',
+                    'pg_sem_8_sub_10_marks_obtained': '',
+                    'pg_sem_8_sub_10_total_marks': '',
+                    'pg_sem_8_sub_11_name': '',
+                    'pg_sem_8_sub_11_marks_obtained': '',
+                    'pg_sem_8_sub_11_total_marks': '',
+                    'pg_sem_8_sub_12_name': '',
+                    'pg_sem_8_sub_12_marks_obtained': '',
+                    'pg_sem_8_sub_12_total_marks': '',
+                    'pg_sem_8_sub_13_name': '',
+                    'pg_sem_8_sub_13_marks_obtained': '',
+                    'pg_sem_8_sub_13_total_marks': '',
+                    'pg_sem_8_sub_14_name': '',
+                    'pg_sem_8_sub_14_marks_obtained': '',
+                    'pg_sem_8_sub_14_total_marks': '',
+                    'pg_sem_8_sub_15_name': '',
+                    'pg_sem_8_sub_15_marks_obtained': '',
+                    'pg_sem_8_sub_15_total_marks': '',
+                    'pg_sem_8_sub_16_name': '',
+                    'pg_sem_8_sub_16_marks_obtained': '',
+                    'pg_sem_8_sub_16_total_marks': '',
+                    'pg_sem_8_sub_17_name': '',
+                    'pg_sem_8_sub_17_marks_obtained': '',
+                    'pg_sem_8_sub_17_total_marks': '',
+                    'pg_sem_8_sub_18_name': '',
+                    'pg_sem_8_sub_18_marks_obtained': '',
+                    'pg_sem_8_sub_18_total_marks': '',
+                    'pg_sem_8_sub_19_name': '',
+                    'pg_sem_8_sub_19_marks_obtained': '',
+                    'pg_sem_8_sub_19_total_marks': '',
+                    'pg_sem_8_sub_20_name': '',
+                    'pg_sem_8_sub_20_marks_obtained': '',
+                    'pg_sem_8_sub_20_total_marks': ''
+
+                    # Add more fields as needed
+                }
+
+            # Pass the pg_sem_8_info to the template
+            return render_template('Student/student_info_forms/form_pg_sem_8.html', pg_sem_8=pg_sem_8_info)
+    except Exception as e:
+        app.logger.error(f"Exception occurred: {e}")
+        return str(e), 500
+
+def form_pg_sem_8_post():
+    try:
+        if request.method == 'POST':
+            # Get form data
+            aadhaar_no = session['aadhaar_no']
+            pg_enrollment_no = request.form['pg_enrollment_no']
+            pg_sem_8_session = request.form['pg_sem_8_session']
+            pg_sem_8_roll_no = request.form['pg_sem_8_roll_no']
+            pg_sem_8_result = request.form['pg_sem_8_result']
+            pg_sem_8_sub_1_name = request.form['pg_sem_8_sub_1_name']
+            pg_sem_8_sub_1_marks_obtained = request.form['pg_sem_8_sub_1_marks_obtained']
+            pg_sem_8_sub_1_total_marks = request.form['pg_sem_8_sub_1_total_marks']
+            pg_sem_8_sub_2_name = request.form['pg_sem_8_sub_2_name']
+            pg_sem_8_sub_2_marks_obtained = request.form['pg_sem_8_sub_2_marks_obtained']
+            pg_sem_8_sub_2_total_marks = request.form['pg_sem_8_sub_2_total_marks']
+            pg_sem_8_sub_3_name = request.form['pg_sem_8_sub_3_name']
+            pg_sem_8_sub_3_marks_obtained = request.form['pg_sem_8_sub_3_marks_obtained']
+            pg_sem_8_sub_3_total_marks = request.form['pg_sem_8_sub_3_total_marks']
+            pg_sem_8_sub_4_name = request.form['pg_sem_8_sub_4_name']
+            pg_sem_8_sub_4_marks_obtained = request.form['pg_sem_8_sub_4_marks_obtained']
+            pg_sem_8_sub_4_total_marks = request.form['pg_sem_8_sub_4_total_marks']
+            pg_sem_8_sub_5_name = request.form['pg_sem_8_sub_5_name']
+            pg_sem_8_sub_5_marks_obtained = request.form['pg_sem_8_sub_5_marks_obtained']
+            pg_sem_8_sub_5_total_marks = request.form['pg_sem_8_sub_5_total_marks']
+            pg_sem_8_sub_6_name = request.form['pg_sem_8_sub_6_name']
+            pg_sem_8_sub_6_marks_obtained = request.form['pg_sem_8_sub_6_marks_obtained']
+            pg_sem_8_sub_6_total_marks = request.form['pg_sem_8_sub_6_total_marks']
+            pg_sem_8_sub_7_name = request.form['pg_sem_8_sub_7_name']
+            pg_sem_8_sub_7_marks_obtained = request.form['pg_sem_8_sub_7_marks_obtained']
+            pg_sem_8_sub_7_total_marks = request.form['pg_sem_8_sub_7_total_marks']
+            pg_sem_8_sub_8_name = request.form['pg_sem_8_sub_8_name']
+            pg_sem_8_sub_8_marks_obtained = request.form['pg_sem_8_sub_8_marks_obtained']
+            pg_sem_8_sub_8_total_marks = request.form['pg_sem_8_sub_8_total_marks']
+            pg_sem_8_sub_9_name = request.form['pg_sem_8_sub_9_name']
+            pg_sem_8_sub_9_marks_obtained = request.form['pg_sem_8_sub_9_marks_obtained']
+            pg_sem_8_sub_9_total_marks = request.form['pg_sem_8_sub_9_total_marks']
+            pg_sem_8_sub_10_name = request.form['pg_sem_8_sub_10_name']
+            pg_sem_8_sub_10_marks_obtained = request.form['pg_sem_8_sub_10_marks_obtained']
+            pg_sem_8_sub_10_total_marks = request.form['pg_sem_8_sub_10_total_marks']
+            pg_sem_8_sub_11_name = request.form['pg_sem_8_sub_11_name']
+            pg_sem_8_sub_11_marks_obtained = request.form['pg_sem_8_sub_11_marks_obtained']
+            pg_sem_8_sub_11_total_marks = request.form['pg_sem_8_sub_11_total_marks']
+            pg_sem_8_sub_12_name = request.form['pg_sem_8_sub_12_name']
+            pg_sem_8_sub_12_marks_obtained = request.form['pg_sem_8_sub_12_marks_obtained']
+            pg_sem_8_sub_12_total_marks = request.form['pg_sem_8_sub_12_total_marks']
+            pg_sem_8_sub_13_name = request.form['pg_sem_8_sub_13_name']
+            pg_sem_8_sub_13_marks_obtained = request.form['pg_sem_8_sub_13_marks_obtained']
+            pg_sem_8_sub_13_total_marks = request.form['pg_sem_8_sub_13_total_marks']
+            pg_sem_8_sub_14_name = request.form['pg_sem_8_sub_14_name']
+            pg_sem_8_sub_14_marks_obtained = request.form['pg_sem_8_sub_14_marks_obtained']
+            pg_sem_8_sub_14_total_marks = request.form['pg_sem_8_sub_14_total_marks']
+            pg_sem_8_sub_15_name = request.form['pg_sem_8_sub_15_name']
+            pg_sem_8_sub_15_marks_obtained = request.form['pg_sem_8_sub_15_marks_obtained']
+            pg_sem_8_sub_15_total_marks = request.form['pg_sem_8_sub_15_total_marks']
+            pg_sem_8_sub_16_name = request.form['pg_sem_8_sub_16_name']
+            pg_sem_8_sub_16_marks_obtained = request.form['pg_sem_8_sub_16_marks_obtained']
+            pg_sem_8_sub_16_total_marks = request.form['pg_sem_8_sub_16_total_marks']
+            pg_sem_8_sub_17_name = request.form['pg_sem_8_sub_17_name']
+            pg_sem_8_sub_17_marks_obtained = request.form['pg_sem_8_sub_17_marks_obtained']
+            pg_sem_8_sub_17_total_marks = request.form['pg_sem_8_sub_17_total_marks']
+            pg_sem_8_sub_18_name = request.form['pg_sem_8_sub_18_name']
+            pg_sem_8_sub_18_marks_obtained = request.form['pg_sem_8_sub_18_marks_obtained']
+            pg_sem_8_sub_18_total_marks = request.form['pg_sem_8_sub_18_total_marks']
+            pg_sem_8_sub_19_name = request.form['pg_sem_8_sub_19_name']
+            pg_sem_8_sub_19_marks_obtained = request.form['pg_sem_8_sub_19_marks_obtained']
+            pg_sem_8_sub_19_total_marks = request.form['pg_sem_8_sub_19_total_marks']
+            pg_sem_8_sub_20_name = request.form['pg_sem_8_sub_20_name']
+            pg_sem_8_sub_20_marks_obtained = request.form['pg_sem_8_sub_20_marks_obtained']
+            pg_sem_8_sub_20_total_marks = request.form['pg_sem_8_sub_20_total_marks']
+
+
+            # Update pg_sem_8_info in the database
+            cursor.execute("""
+                UPDATE pg_sem_8
+                SET pg_enrollment_no = ?, pg_sem_8_session = ?, pg_sem_8_roll_no = ?, pg_sem_8_result = ?, pg_sem_8_sub_1_name = ?, pg_sem_8_sub_1_marks_obtained = ?, pg_sem_8_sub_1_total_marks = ?, pg_sem_8_sub_2_name = ?, pg_sem_8_sub_2_marks_obtained = ?, pg_sem_8_sub_2_total_marks = ?, pg_sem_8_sub_3_name = ?, pg_sem_8_sub_3_marks_obtained = ?, pg_sem_8_sub_3_total_marks = ?, pg_sem_8_sub_4_name = ?, pg_sem_8_sub_4_marks_obtained = ?, pg_sem_8_sub_4_total_marks = ?, pg_sem_8_sub_5_name = ?, pg_sem_8_sub_5_marks_obtained = ?, pg_sem_8_sub_5_total_marks = ?, pg_sem_8_sub_6_name = ?, pg_sem_8_sub_6_marks_obtained = ?, pg_sem_8_sub_6_total_marks = ?, pg_sem_8_sub_7_name = ?, pg_sem_8_sub_7_marks_obtained = ?, pg_sem_8_sub_7_total_marks = ?, pg_sem_8_sub_8_name = ?, pg_sem_8_sub_8_marks_obtained = ?, pg_sem_8_sub_8_total_marks = ?, pg_sem_8_sub_9_name = ?, pg_sem_8_sub_9_marks_obtained = ?, pg_sem_8_sub_9_total_marks = ?, pg_sem_8_sub_10_name = ?, pg_sem_8_sub_10_marks_obtained = ?, pg_sem_8_sub_10_total_marks = ?, pg_sem_8_sub_11_name = ?, pg_sem_8_sub_11_marks_obtained = ?, pg_sem_8_sub_11_total_marks = ?, pg_sem_8_sub_12_name = ?, pg_sem_8_sub_12_marks_obtained = ?, pg_sem_8_sub_12_total_marks = ?, pg_sem_8_sub_13_name = ?, pg_sem_8_sub_13_marks_obtained = ?, pg_sem_8_sub_13_total_marks = ?, pg_sem_8_sub_14_name = ?, pg_sem_8_sub_14_marks_obtained = ?, pg_sem_8_sub_14_total_marks = ?, pg_sem_8_sub_15_name = ?, pg_sem_8_sub_15_marks_obtained = ?, pg_sem_8_sub_15_total_marks = ?, pg_sem_8_sub_16_name = ?, pg_sem_8_sub_16_marks_obtained = ?, pg_sem_8_sub_16_total_marks = ?, pg_sem_8_sub_17_name = ?, pg_sem_8_sub_17_marks_obtained = ?, pg_sem_8_sub_17_total_marks = ?, pg_sem_8_sub_18_name = ?, pg_sem_8_sub_18_marks_obtained = ?, pg_sem_8_sub_18_total_marks = ?, pg_sem_8_sub_19_name = ?, pg_sem_8_sub_19_marks_obtained = ?, pg_sem_8_sub_19_total_marks = ?, pg_sem_8_sub_20_name = ?, pg_sem_8_sub_20_marks_obtained = ?, pg_sem_8_sub_20_total_marks = ?
+                WHERE aadhaar_no = ?
+            """,(pg_enrollment_no,pg_sem_8_session,pg_sem_8_roll_no,pg_sem_8_result,pg_sem_8_sub_1_name,
+                 pg_sem_8_sub_1_marks_obtained,pg_sem_8_sub_1_total_marks,pg_sem_8_sub_2_name,
+                 pg_sem_8_sub_2_marks_obtained,pg_sem_8_sub_2_total_marks,pg_sem_8_sub_3_name,
+                 pg_sem_8_sub_3_marks_obtained,pg_sem_8_sub_3_total_marks,pg_sem_8_sub_4_name,
+                 pg_sem_8_sub_4_marks_obtained,pg_sem_8_sub_4_total_marks,pg_sem_8_sub_5_name,
+                 pg_sem_8_sub_5_marks_obtained,pg_sem_8_sub_5_total_marks,pg_sem_8_sub_6_name,
+                 pg_sem_8_sub_6_marks_obtained,pg_sem_8_sub_6_total_marks,pg_sem_8_sub_7_name,
+                 pg_sem_8_sub_7_marks_obtained,pg_sem_8_sub_7_total_marks,pg_sem_8_sub_8_name,
+                 pg_sem_8_sub_8_marks_obtained,pg_sem_8_sub_8_total_marks,pg_sem_8_sub_9_name,
+                 pg_sem_8_sub_9_marks_obtained,pg_sem_8_sub_9_total_marks,pg_sem_8_sub_10_name,
+                 pg_sem_8_sub_10_marks_obtained,pg_sem_8_sub_10_total_marks,pg_sem_8_sub_11_name,
+                 pg_sem_8_sub_11_marks_obtained,pg_sem_8_sub_11_total_marks,pg_sem_8_sub_12_name,
+                 pg_sem_8_sub_12_marks_obtained,pg_sem_8_sub_12_total_marks,pg_sem_8_sub_13_name,
+                 pg_sem_8_sub_13_marks_obtained,pg_sem_8_sub_13_total_marks,pg_sem_8_sub_14_name,
+                 pg_sem_8_sub_14_marks_obtained,pg_sem_8_sub_14_total_marks,pg_sem_8_sub_15_name,
+                 pg_sem_8_sub_15_marks_obtained,pg_sem_8_sub_15_total_marks,pg_sem_8_sub_16_name,
+                 pg_sem_8_sub_16_marks_obtained,pg_sem_8_sub_16_total_marks,pg_sem_8_sub_17_name,
+                 pg_sem_8_sub_17_marks_obtained,pg_sem_8_sub_17_total_marks,pg_sem_8_sub_18_name,
+                 pg_sem_8_sub_18_marks_obtained,pg_sem_8_sub_18_total_marks,pg_sem_8_sub_19_name,
+                 pg_sem_8_sub_19_marks_obtained,pg_sem_8_sub_19_total_marks,pg_sem_8_sub_20_name,
+                 pg_sem_8_sub_20_marks_obtained,pg_sem_8_sub_20_total_marks,aadhaar_no))
+
+            # Commit changes
+            conn.commit()
+
+            # Redirect to the next form
+            return redirect(url_for('form_pg_sem_9'))  # replace 'next_form' with the actual name of the next form
+
+        else:
+            # Fetch pg_sem_8_info from the database
+            cursor.execute("SELECT * FROM pg_sem_8 WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+            pg_sem_8_info = cursor.fetchone()
+
+            # Pass the pg_sem_8_info to the template
+            return render_template('Student/student_info_forms/form_pg_sem_8.html', pg_sem_8=pg_sem_8_info)
+    except Exception as e:
+        app.logger.error(f"Exception occurred: {e}")
+        return str(e), 500
+
+@app.route('/form_pg_sem_9', methods=['GET', 'POST'])
+def form_pg_sem_9():
+    try:
+        if request.method == 'POST':
+            return form_pg_sem_9_post()
+        else:
+            # Fetch pg_sem_9_info from the database
+            cursor.execute("SELECT * FROM pg_sem_9 WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+            pg_sem_9_info = cursor.fetchone()
+
+            # If pg_sem_9_info is None, create a default pg_sem_9_info object
+            if pg_sem_9_info is None:
+                pg_sem_9_info = {
+                    'pg_enrollment_no': '',
+                    'pg_sem_9_session': '',
+                    'pg_sem_9_roll_no': '',
+                    'pg_sem_9_result': '',
+                    'pg_sem_9_sub_1_name': '',
+                    'pg_sem_9_sub_1_marks_obtained': '',
+                    'pg_sem_9_sub_1_total_marks': '',
+                    'pg_sem_9_sub_2_name': '',
+                    'pg_sem_9_sub_2_marks_obtained': '',
+                    'pg_sem_9_sub_2_total_marks': '',
+                    'pg_sem_9_sub_3_name': '',
+                    'pg_sem_9_sub_3_marks_obtained': '',
+                    'pg_sem_9_sub_3_total_marks': '',
+                    'pg_sem_9_sub_4_name': '',
+                    'pg_sem_9_sub_4_marks_obtained': '',
+                    'pg_sem_9_sub_4_total_marks': '',
+                    'pg_sem_9_sub_5_name': '',
+                    'pg_sem_9_sub_5_marks_obtained': '',
+                    'pg_sem_9_sub_5_total_marks': '',
+                    'pg_sem_9_sub_6_name': '',
+                    'pg_sem_9_sub_6_marks_obtained': '',
+                    'pg_sem_9_sub_6_total_marks': '',
+                    'pg_sem_9_sub_7_name': '',
+                    'pg_sem_9_sub_7_marks_obtained': '',
+                    'pg_sem_9_sub_7_total_marks': '',
+                    'pg_sem_9_sub_8_name': '',
+                    'pg_sem_9_sub_8_marks_obtained': '',
+                    'pg_sem_9_sub_8_total_marks': '',
+                    'pg_sem_9_sub_9_name': '',
+                    'pg_sem_9_sub_9_marks_obtained': '',
+                    'pg_sem_9_sub_9_total_marks': '',
+                    'pg_sem_9_sub_10_name': '',
+                    'pg_sem_9_sub_10_marks_obtained': '',
+                    'pg_sem_9_sub_10_total_marks': '',
+                    'pg_sem_9_sub_11_name': '',
+                    'pg_sem_9_sub_11_marks_obtained': '',
+                    'pg_sem_9_sub_11_total_marks': '',
+                    'pg_sem_9_sub_12_name': '',
+                    'pg_sem_9_sub_12_marks_obtained': '',
+                    'pg_sem_9_sub_12_total_marks': '',
+                    'pg_sem_9_sub_13_name': '',
+                    'pg_sem_9_sub_13_marks_obtained': '',
+                    'pg_sem_9_sub_13_total_marks': '',
+                    'pg_sem_9_sub_14_name': '',
+                    'pg_sem_9_sub_14_marks_obtained': '',
+                    'pg_sem_9_sub_14_total_marks': '',
+                    'pg_sem_9_sub_15_name': '',
+                    'pg_sem_9_sub_15_marks_obtained': '',
+                    'pg_sem_9_sub_15_total_marks': '',
+                    'pg_sem_9_sub_16_name': '',
+                    'pg_sem_9_sub_16_marks_obtained': '',
+                    'pg_sem_9_sub_16_total_marks': '',
+                    'pg_sem_9_sub_17_name': '',
+                    'pg_sem_9_sub_17_marks_obtained': '',
+                    'pg_sem_9_sub_17_total_marks': '',
+                    'pg_sem_9_sub_18_name': '',
+                    'pg_sem_9_sub_18_marks_obtained': '',
+                    'pg_sem_9_sub_18_total_marks': '',
+                    'pg_sem_9_sub_19_name': '',
+                    'pg_sem_9_sub_19_marks_obtained': '',
+                    'pg_sem_9_sub_19_total_marks': '',
+                    'pg_sem_9_sub_20_name': '',
+                    'pg_sem_9_sub_20_marks_obtained': '',
+                    'pg_sem_9_sub_20_total_marks': ''
+
+                    # Add more fields as needed
+                }
+
+            # Pass the pg_sem_9_info to the template
+            return render_template('Student/student_info_forms/form_pg_sem_9.html', pg_sem_9=pg_sem_9_info)
+    except Exception as e:
+        app.logger.error(f"Exception occurred: {e}")
+        return str(e), 500
+
+def form_pg_sem_9_post():
+    try:
+        if request.method == 'POST':
+            # Get form data
+            aadhaar_no = session['aadhaar_no']
+            pg_enrollment_no = request.form['pg_enrollment_no']
+            pg_sem_9_session = request.form['pg_sem_9_session']
+            pg_sem_9_roll_no = request.form['pg_sem_9_roll_no']
+            pg_sem_9_result = request.form['pg_sem_9_result']
+            pg_sem_9_sub_1_name = request.form['pg_sem_9_sub_1_name']
+            pg_sem_9_sub_1_marks_obtained = request.form['pg_sem_9_sub_1_marks_obtained']
+            pg_sem_9_sub_1_total_marks = request.form['pg_sem_9_sub_1_total_marks']
+            pg_sem_9_sub_2_name = request.form['pg_sem_9_sub_2_name']
+            pg_sem_9_sub_2_marks_obtained = request.form['pg_sem_9_sub_2_marks_obtained']
+            pg_sem_9_sub_2_total_marks = request.form['pg_sem_9_sub_2_total_marks']
+            pg_sem_9_sub_3_name = request.form['pg_sem_9_sub_3_name']
+            pg_sem_9_sub_3_marks_obtained = request.form['pg_sem_9_sub_3_marks_obtained']
+            pg_sem_9_sub_3_total_marks = request.form['pg_sem_9_sub_3_total_marks']
+            pg_sem_9_sub_4_name = request.form['pg_sem_9_sub_4_name']
+            pg_sem_9_sub_4_marks_obtained = request.form['pg_sem_9_sub_4_marks_obtained']
+            pg_sem_9_sub_4_total_marks = request.form['pg_sem_9_sub_4_total_marks']
+            pg_sem_9_sub_5_name = request.form['pg_sem_9_sub_5_name']
+            pg_sem_9_sub_5_marks_obtained = request.form['pg_sem_9_sub_5_marks_obtained']
+            pg_sem_9_sub_5_total_marks = request.form['pg_sem_9_sub_5_total_marks']
+            pg_sem_9_sub_6_name = request.form['pg_sem_9_sub_6_name']
+            pg_sem_9_sub_6_marks_obtained = request.form['pg_sem_9_sub_6_marks_obtained']
+            pg_sem_9_sub_6_total_marks = request.form['pg_sem_9_sub_6_total_marks']
+            pg_sem_9_sub_7_name = request.form['pg_sem_9_sub_7_name']
+            pg_sem_9_sub_7_marks_obtained = request.form['pg_sem_9_sub_7_marks_obtained']
+            pg_sem_9_sub_7_total_marks = request.form['pg_sem_9_sub_7_total_marks']
+            pg_sem_9_sub_8_name = request.form['pg_sem_9_sub_8_name']
+            pg_sem_9_sub_8_marks_obtained = request.form['pg_sem_9_sub_8_marks_obtained']
+            pg_sem_9_sub_8_total_marks = request.form['pg_sem_9_sub_8_total_marks']
+            pg_sem_9_sub_9_name = request.form['pg_sem_9_sub_9_name']
+            pg_sem_9_sub_9_marks_obtained = request.form['pg_sem_9_sub_9_marks_obtained']
+            pg_sem_9_sub_9_total_marks = request.form['pg_sem_9_sub_9_total_marks']
+            pg_sem_9_sub_10_name = request.form['pg_sem_9_sub_10_name']
+            pg_sem_9_sub_10_marks_obtained = request.form['pg_sem_9_sub_10_marks_obtained']
+            pg_sem_9_sub_10_total_marks = request.form['pg_sem_9_sub_10_total_marks']
+            pg_sem_9_sub_11_name = request.form['pg_sem_9_sub_11_name']
+            pg_sem_9_sub_11_marks_obtained = request.form['pg_sem_9_sub_11_marks_obtained']
+            pg_sem_9_sub_11_total_marks = request.form['pg_sem_9_sub_11_total_marks']
+            pg_sem_9_sub_12_name = request.form['pg_sem_9_sub_12_name']
+            pg_sem_9_sub_12_marks_obtained = request.form['pg_sem_9_sub_12_marks_obtained']
+            pg_sem_9_sub_12_total_marks = request.form['pg_sem_9_sub_12_total_marks']
+            pg_sem_9_sub_13_name = request.form['pg_sem_9_sub_13_name']
+            pg_sem_9_sub_13_marks_obtained = request.form['pg_sem_9_sub_13_marks_obtained']
+            pg_sem_9_sub_13_total_marks = request.form['pg_sem_9_sub_13_total_marks']
+            pg_sem_9_sub_14_name = request.form['pg_sem_9_sub_14_name']
+            pg_sem_9_sub_14_marks_obtained = request.form['pg_sem_9_sub_14_marks_obtained']
+            pg_sem_9_sub_14_total_marks = request.form['pg_sem_9_sub_14_total_marks']
+            pg_sem_9_sub_15_name = request.form['pg_sem_9_sub_15_name']
+            pg_sem_9_sub_15_marks_obtained = request.form['pg_sem_9_sub_15_marks_obtained']
+            pg_sem_9_sub_15_total_marks = request.form['pg_sem_9_sub_15_total_marks']
+            pg_sem_9_sub_16_name = request.form['pg_sem_9_sub_16_name']
+            pg_sem_9_sub_16_marks_obtained = request.form['pg_sem_9_sub_16_marks_obtained']
+            pg_sem_9_sub_16_total_marks = request.form['pg_sem_9_sub_16_total_marks']
+            pg_sem_9_sub_17_name = request.form['pg_sem_9_sub_17_name']
+            pg_sem_9_sub_17_marks_obtained = request.form['pg_sem_9_sub_17_marks_obtained']
+            pg_sem_9_sub_17_total_marks = request.form['pg_sem_9_sub_17_total_marks']
+            pg_sem_9_sub_18_name = request.form['pg_sem_9_sub_18_name']
+            pg_sem_9_sub_18_marks_obtained = request.form['pg_sem_9_sub_18_marks_obtained']
+            pg_sem_9_sub_18_total_marks = request.form['pg_sem_9_sub_18_total_marks']
+            pg_sem_9_sub_19_name = request.form['pg_sem_9_sub_19_name']
+            pg_sem_9_sub_19_marks_obtained = request.form['pg_sem_9_sub_19_marks_obtained']
+            pg_sem_9_sub_19_total_marks = request.form['pg_sem_9_sub_19_total_marks']
+            pg_sem_9_sub_20_name = request.form['pg_sem_9_sub_20_name']
+            pg_sem_9_sub_20_marks_obtained = request.form['pg_sem_9_sub_20_marks_obtained']
+            pg_sem_9_sub_20_total_marks = request.form['pg_sem_9_sub_20_total_marks']
+
+
+            # Update pg_sem_9_info in the database
+            cursor.execute("""
+                UPDATE pg_sem_9
+                SET pg_enrollment_no = ?, pg_sem_9_session = ?, pg_sem_9_roll_no = ?, pg_sem_9_result = ?, pg_sem_9_sub_1_name = ?, pg_sem_9_sub_1_marks_obtained = ?, pg_sem_9_sub_1_total_marks = ?, pg_sem_9_sub_2_name = ?, pg_sem_9_sub_2_marks_obtained = ?, pg_sem_9_sub_2_total_marks = ?, pg_sem_9_sub_3_name = ?, pg_sem_9_sub_3_marks_obtained = ?, pg_sem_9_sub_3_total_marks = ?, pg_sem_9_sub_4_name = ?, pg_sem_9_sub_4_marks_obtained = ?, pg_sem_9_sub_4_total_marks = ?, pg_sem_9_sub_5_name = ?, pg_sem_9_sub_5_marks_obtained = ?, pg_sem_9_sub_5_total_marks = ?, pg_sem_9_sub_6_name = ?, pg_sem_9_sub_6_marks_obtained = ?, pg_sem_9_sub_6_total_marks = ?, pg_sem_9_sub_7_name = ?, pg_sem_9_sub_7_marks_obtained = ?, pg_sem_9_sub_7_total_marks = ?, pg_sem_9_sub_8_name = ?, pg_sem_9_sub_8_marks_obtained = ?, pg_sem_9_sub_8_total_marks = ?, pg_sem_9_sub_9_name = ?, pg_sem_9_sub_9_marks_obtained = ?, pg_sem_9_sub_9_total_marks = ?, pg_sem_9_sub_10_name = ?, pg_sem_9_sub_10_marks_obtained = ?, pg_sem_9_sub_10_total_marks = ?, pg_sem_9_sub_11_name = ?, pg_sem_9_sub_11_marks_obtained = ?, pg_sem_9_sub_11_total_marks = ?, pg_sem_9_sub_12_name = ?, pg_sem_9_sub_12_marks_obtained = ?, pg_sem_9_sub_12_total_marks = ?, pg_sem_9_sub_13_name = ?, pg_sem_9_sub_13_marks_obtained = ?, pg_sem_9_sub_13_total_marks = ?, pg_sem_9_sub_14_name = ?, pg_sem_9_sub_14_marks_obtained = ?, pg_sem_9_sub_14_total_marks = ?, pg_sem_9_sub_15_name = ?, pg_sem_9_sub_15_marks_obtained = ?, pg_sem_9_sub_15_total_marks = ?, pg_sem_9_sub_16_name = ?, pg_sem_9_sub_16_marks_obtained = ?, pg_sem_9_sub_16_total_marks = ?, pg_sem_9_sub_17_name = ?, pg_sem_9_sub_17_marks_obtained = ?, pg_sem_9_sub_17_total_marks = ?, pg_sem_9_sub_18_name = ?, pg_sem_9_sub_18_marks_obtained = ?, pg_sem_9_sub_18_total_marks = ?, pg_sem_9_sub_19_name = ?, pg_sem_9_sub_19_marks_obtained = ?, pg_sem_9_sub_19_total_marks = ?, pg_sem_9_sub_20_name = ?, pg_sem_9_sub_20_marks_obtained = ?, pg_sem_9_sub_20_total_marks = ?
+                WHERE aadhaar_no = ?
+            """,(pg_enrollment_no,pg_sem_9_session,pg_sem_9_roll_no,pg_sem_9_result,pg_sem_9_sub_1_name,
+                 pg_sem_9_sub_1_marks_obtained,pg_sem_9_sub_1_total_marks,pg_sem_9_sub_2_name,
+                 pg_sem_9_sub_2_marks_obtained,pg_sem_9_sub_2_total_marks,pg_sem_9_sub_3_name,
+                 pg_sem_9_sub_3_marks_obtained,pg_sem_9_sub_3_total_marks,pg_sem_9_sub_4_name,
+                 pg_sem_9_sub_4_marks_obtained,pg_sem_9_sub_4_total_marks,pg_sem_9_sub_5_name,
+                 pg_sem_9_sub_5_marks_obtained,pg_sem_9_sub_5_total_marks,pg_sem_9_sub_6_name,
+                 pg_sem_9_sub_6_marks_obtained,pg_sem_9_sub_6_total_marks,pg_sem_9_sub_7_name,
+                 pg_sem_9_sub_7_marks_obtained,pg_sem_9_sub_7_total_marks,pg_sem_9_sub_8_name,
+                 pg_sem_9_sub_8_marks_obtained,pg_sem_9_sub_8_total_marks,pg_sem_9_sub_9_name,
+                 pg_sem_9_sub_9_marks_obtained,pg_sem_9_sub_9_total_marks,pg_sem_9_sub_10_name,
+                 pg_sem_9_sub_10_marks_obtained,pg_sem_9_sub_10_total_marks,pg_sem_9_sub_11_name,
+                 pg_sem_9_sub_11_marks_obtained,pg_sem_9_sub_11_total_marks,pg_sem_9_sub_12_name,
+                 pg_sem_9_sub_12_marks_obtained,pg_sem_9_sub_12_total_marks,pg_sem_9_sub_13_name,
+                 pg_sem_9_sub_13_marks_obtained,pg_sem_9_sub_13_total_marks,pg_sem_9_sub_14_name,
+                 pg_sem_9_sub_14_marks_obtained,pg_sem_9_sub_14_total_marks,pg_sem_9_sub_15_name,
+                 pg_sem_9_sub_15_marks_obtained,pg_sem_9_sub_15_total_marks,pg_sem_9_sub_16_name,
+                 pg_sem_9_sub_16_marks_obtained,pg_sem_9_sub_16_total_marks,pg_sem_9_sub_17_name,
+                 pg_sem_9_sub_17_marks_obtained,pg_sem_9_sub_17_total_marks,pg_sem_9_sub_18_name,
+                 pg_sem_9_sub_18_marks_obtained,pg_sem_9_sub_18_total_marks,pg_sem_9_sub_19_name,
+                 pg_sem_9_sub_19_marks_obtained,pg_sem_9_sub_19_total_marks,pg_sem_9_sub_20_name,
+                 pg_sem_9_sub_20_marks_obtained,pg_sem_9_sub_20_total_marks,aadhaar_no))
+
+            # Commit changes
+            conn.commit()
+
+            # Redirect to the next form
+            return redirect(url_for('form_pg_sem_10'))  # replace 'next_form' with the actual name of the next form
+
+        else:
+            # Fetch pg_sem_9_info from the database
+            cursor.execute("SELECT * FROM pg_sem_9 WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+            pg_sem_9_info = cursor.fetchone()
+
+            # Pass the pg_sem_9_info to the template
+            return render_template('Student/student_info_forms/form_pg_sem_9.html', pg_sem_9=pg_sem_9_info)
+    except Exception as e:
+        app.logger.error(f"Exception occurred: {e}")
+        return str(e), 500
+
+@app.route('/form_pg_sem_10', methods=['GET', 'POST'])
+def form_pg_sem_10():
+    try:
+        if request.method == 'POST':
+            return form_pg_sem_10_post()
+        else:
+            # Fetch pg_sem_10_info from the database
+            cursor.execute("SELECT * FROM pg_sem_10 WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+            pg_sem_10_info = cursor.fetchone()
+
+            # If pg_sem_10_info is None, create a default pg_sem_10_info object
+            if pg_sem_10_info is None:
+                pg_sem_10_info = {
+                    'pg_enrollment_no': '',
+                    'pg_sem_10_session': '',
+                    'pg_sem_10_roll_no': '',
+                    'pg_sem_10_result': '',
+                    'pg_sem_10_sub_1_name': '',
+                    'pg_sem_10_sub_1_marks_obtained': '',
+                    'pg_sem_10_sub_1_total_marks': '',
+                    'pg_sem_10_sub_2_name': '',
+                    'pg_sem_10_sub_2_marks_obtained': '',
+                    'pg_sem_10_sub_2_total_marks': '',
+                    'pg_sem_10_sub_3_name': '',
+                    'pg_sem_10_sub_3_marks_obtained': '',
+                    'pg_sem_10_sub_3_total_marks': '',
+                    'pg_sem_10_sub_4_name': '',
+                    'pg_sem_10_sub_4_marks_obtained': '',
+                    'pg_sem_10_sub_4_total_marks': '',
+                    'pg_sem_10_sub_5_name': '',
+                    'pg_sem_10_sub_5_marks_obtained': '',
+                    'pg_sem_10_sub_5_total_marks': '',
+                    'pg_sem_10_sub_6_name': '',
+                    'pg_sem_10_sub_6_marks_obtained': '',
+                    'pg_sem_10_sub_6_total_marks': '',
+                    'pg_sem_10_sub_7_name': '',
+                    'pg_sem_10_sub_7_marks_obtained': '',
+                    'pg_sem_10_sub_7_total_marks': '',
+                    'pg_sem_10_sub_8_name': '',
+                    'pg_sem_10_sub_8_marks_obtained': '',
+                    'pg_sem_10_sub_8_total_marks': '',
+                    'pg_sem_10_sub_9_name': '',
+                    'pg_sem_10_sub_9_marks_obtained': '',
+                    'pg_sem_10_sub_9_total_marks': '',
+                    'pg_sem_10_sub_10_name': '',
+                    'pg_sem_10_sub_10_marks_obtained': '',
+                    'pg_sem_10_sub_10_total_marks': '',
+                    'pg_sem_10_sub_11_name': '',
+                    'pg_sem_10_sub_11_marks_obtained': '',
+                    'pg_sem_10_sub_11_total_marks': '',
+                    'pg_sem_10_sub_12_name': '',
+                    'pg_sem_10_sub_12_marks_obtained': '',
+                    'pg_sem_10_sub_12_total_marks': '',
+                    'pg_sem_10_sub_13_name': '',
+                    'pg_sem_10_sub_13_marks_obtained': '',
+                    'pg_sem_10_sub_13_total_marks': '',
+                    'pg_sem_10_sub_14_name': '',
+                    'pg_sem_10_sub_14_marks_obtained': '',
+                    'pg_sem_10_sub_14_total_marks': '',
+                    'pg_sem_10_sub_15_name': '',
+                    'pg_sem_10_sub_15_marks_obtained': '',
+                    'pg_sem_10_sub_15_total_marks': '',
+                    'pg_sem_10_sub_16_name': '',
+                    'pg_sem_10_sub_16_marks_obtained': '',
+                    'pg_sem_10_sub_16_total_marks': '',
+                    'pg_sem_10_sub_17_name': '',
+                    'pg_sem_10_sub_17_marks_obtained': '',
+                    'pg_sem_10_sub_17_total_marks': '',
+                    'pg_sem_10_sub_18_name': '',
+                    'pg_sem_10_sub_18_marks_obtained': '',
+                    'pg_sem_10_sub_18_total_marks': '',
+                    'pg_sem_10_sub_19_name': '',
+                    'pg_sem_10_sub_19_marks_obtained': '',
+                    'pg_sem_10_sub_19_total_marks': '',
+                    'pg_sem_10_sub_20_name': '',
+                    'pg_sem_10_sub_20_marks_obtained': '',
+                    'pg_sem_10_sub_20_total_marks': ''
+
+                    # Add more fields as needed
+                }
+
+            # Pass the pg_sem_10_info to the template
+            return render_template('Student/student_info_forms/form_pg_sem_10.html', pg_sem_10=pg_sem_10_info)
+    except Exception as e:
+        app.logger.error(f"Exception occurred: {e}")
+        return str(e), 500
+
+def form_pg_sem_10_post():
+    try:
+        if request.method == 'POST':
+            # Get form data
+            aadhaar_no = session['aadhaar_no']
+            pg_enrollment_no = request.form['pg_enrollment_no']
+            pg_sem_10_session = request.form['pg_sem_10_session']
+            pg_sem_10_roll_no = request.form['pg_sem_10_roll_no']
+            pg_sem_10_result = request.form['pg_sem_10_result']
+            pg_sem_10_sub_1_name = request.form['pg_sem_10_sub_1_name']
+            pg_sem_10_sub_1_marks_obtained = request.form['pg_sem_10_sub_1_marks_obtained']
+            pg_sem_10_sub_1_total_marks = request.form['pg_sem_10_sub_1_total_marks']
+            pg_sem_10_sub_2_name = request.form['pg_sem_10_sub_2_name']
+            pg_sem_10_sub_2_marks_obtained = request.form['pg_sem_10_sub_2_marks_obtained']
+            pg_sem_10_sub_2_total_marks = request.form['pg_sem_10_sub_2_total_marks']
+            pg_sem_10_sub_3_name = request.form['pg_sem_10_sub_3_name']
+            pg_sem_10_sub_3_marks_obtained = request.form['pg_sem_10_sub_3_marks_obtained']
+            pg_sem_10_sub_3_total_marks = request.form['pg_sem_10_sub_3_total_marks']
+            pg_sem_10_sub_4_name = request.form['pg_sem_10_sub_4_name']
+            pg_sem_10_sub_4_marks_obtained = request.form['pg_sem_10_sub_4_marks_obtained']
+            pg_sem_10_sub_4_total_marks = request.form['pg_sem_10_sub_4_total_marks']
+            pg_sem_10_sub_5_name = request.form['pg_sem_10_sub_5_name']
+            pg_sem_10_sub_5_marks_obtained = request.form['pg_sem_10_sub_5_marks_obtained']
+            pg_sem_10_sub_5_total_marks = request.form['pg_sem_10_sub_5_total_marks']
+            pg_sem_10_sub_6_name = request.form['pg_sem_10_sub_6_name']
+            pg_sem_10_sub_6_marks_obtained = request.form['pg_sem_10_sub_6_marks_obtained']
+            pg_sem_10_sub_6_total_marks = request.form['pg_sem_10_sub_6_total_marks']
+            pg_sem_10_sub_7_name = request.form['pg_sem_10_sub_7_name']
+            pg_sem_10_sub_7_marks_obtained = request.form['pg_sem_10_sub_7_marks_obtained']
+            pg_sem_10_sub_7_total_marks = request.form['pg_sem_10_sub_7_total_marks']
+            pg_sem_10_sub_8_name = request.form['pg_sem_10_sub_8_name']
+            pg_sem_10_sub_8_marks_obtained = request.form['pg_sem_10_sub_8_marks_obtained']
+            pg_sem_10_sub_8_total_marks = request.form['pg_sem_10_sub_8_total_marks']
+            pg_sem_10_sub_9_name = request.form['pg_sem_10_sub_9_name']
+            pg_sem_10_sub_9_marks_obtained = request.form['pg_sem_10_sub_9_marks_obtained']
+            pg_sem_10_sub_9_total_marks = request.form['pg_sem_10_sub_9_total_marks']
+            pg_sem_10_sub_10_name = request.form['pg_sem_10_sub_10_name']
+            pg_sem_10_sub_10_marks_obtained = request.form['pg_sem_10_sub_10_marks_obtained']
+            pg_sem_10_sub_10_total_marks = request.form['pg_sem_10_sub_10_total_marks']
+            pg_sem_10_sub_11_name = request.form['pg_sem_10_sub_11_name']
+            pg_sem_10_sub_11_marks_obtained = request.form['pg_sem_10_sub_11_marks_obtained']
+            pg_sem_10_sub_11_total_marks = request.form['pg_sem_10_sub_11_total_marks']
+            pg_sem_10_sub_12_name = request.form['pg_sem_10_sub_12_name']
+            pg_sem_10_sub_12_marks_obtained = request.form['pg_sem_10_sub_12_marks_obtained']
+            pg_sem_10_sub_12_total_marks = request.form['pg_sem_10_sub_12_total_marks']
+            pg_sem_10_sub_13_name = request.form['pg_sem_10_sub_13_name']
+            pg_sem_10_sub_13_marks_obtained = request.form['pg_sem_10_sub_13_marks_obtained']
+            pg_sem_10_sub_13_total_marks = request.form['pg_sem_10_sub_13_total_marks']
+            pg_sem_10_sub_14_name = request.form['pg_sem_10_sub_14_name']
+            pg_sem_10_sub_14_marks_obtained = request.form['pg_sem_10_sub_14_marks_obtained']
+            pg_sem_10_sub_14_total_marks = request.form['pg_sem_10_sub_14_total_marks']
+            pg_sem_10_sub_15_name = request.form['pg_sem_10_sub_15_name']
+            pg_sem_10_sub_15_marks_obtained = request.form['pg_sem_10_sub_15_marks_obtained']
+            pg_sem_10_sub_15_total_marks = request.form['pg_sem_10_sub_15_total_marks']
+            pg_sem_10_sub_16_name = request.form['pg_sem_10_sub_16_name']
+            pg_sem_10_sub_16_marks_obtained = request.form['pg_sem_10_sub_16_marks_obtained']
+            pg_sem_10_sub_16_total_marks = request.form['pg_sem_10_sub_16_total_marks']
+            pg_sem_10_sub_17_name = request.form['pg_sem_10_sub_17_name']
+            pg_sem_10_sub_17_marks_obtained = request.form['pg_sem_10_sub_17_marks_obtained']
+            pg_sem_10_sub_17_total_marks = request.form['pg_sem_10_sub_17_total_marks']
+            pg_sem_10_sub_18_name = request.form['pg_sem_10_sub_18_name']
+            pg_sem_10_sub_18_marks_obtained = request.form['pg_sem_10_sub_18_marks_obtained']
+            pg_sem_10_sub_18_total_marks = request.form['pg_sem_10_sub_18_total_marks']
+            pg_sem_10_sub_19_name = request.form['pg_sem_10_sub_19_name']
+            pg_sem_10_sub_19_marks_obtained = request.form['pg_sem_10_sub_19_marks_obtained']
+            pg_sem_10_sub_19_total_marks = request.form['pg_sem_10_sub_19_total_marks']
+            pg_sem_10_sub_20_name = request.form['pg_sem_10_sub_20_name']
+            pg_sem_10_sub_20_marks_obtained = request.form['pg_sem_10_sub_20_marks_obtained']
+            pg_sem_10_sub_20_total_marks = request.form['pg_sem_10_sub_20_total_marks']
+
+
+            # Update pg_sem_10_info in the database
+            cursor.execute("""
+                UPDATE pg_sem_10
+                SET pg_enrollment_no = ?, pg_sem_10_session = ?, pg_sem_10_roll_no = ?, pg_sem_10_result = ?, pg_sem_10_sub_1_name = ?, pg_sem_10_sub_1_marks_obtained = ?, pg_sem_10_sub_1_total_marks = ?, pg_sem_10_sub_2_name = ?, pg_sem_10_sub_2_marks_obtained = ?, pg_sem_10_sub_2_total_marks = ?, pg_sem_10_sub_3_name = ?, pg_sem_10_sub_3_marks_obtained = ?, pg_sem_10_sub_3_total_marks = ?, pg_sem_10_sub_4_name = ?, pg_sem_10_sub_4_marks_obtained = ?, pg_sem_10_sub_4_total_marks = ?, pg_sem_10_sub_5_name = ?, pg_sem_10_sub_5_marks_obtained = ?, pg_sem_10_sub_5_total_marks = ?, pg_sem_10_sub_6_name = ?, pg_sem_10_sub_6_marks_obtained = ?, pg_sem_10_sub_6_total_marks = ?, pg_sem_10_sub_7_name = ?, pg_sem_10_sub_7_marks_obtained = ?, pg_sem_10_sub_7_total_marks = ?, pg_sem_10_sub_8_name = ?, pg_sem_10_sub_8_marks_obtained = ?, pg_sem_10_sub_8_total_marks = ?, pg_sem_10_sub_9_name = ?, pg_sem_10_sub_9_marks_obtained = ?, pg_sem_10_sub_9_total_marks = ?, pg_sem_10_sub_10_name = ?, pg_sem_10_sub_10_marks_obtained = ?, pg_sem_10_sub_10_total_marks = ?, pg_sem_10_sub_11_name = ?, pg_sem_10_sub_11_marks_obtained = ?, pg_sem_10_sub_11_total_marks = ?, pg_sem_10_sub_12_name = ?, pg_sem_10_sub_12_marks_obtained = ?, pg_sem_10_sub_12_total_marks = ?, pg_sem_10_sub_13_name = ?, pg_sem_10_sub_13_marks_obtained = ?, pg_sem_10_sub_13_total_marks = ?, pg_sem_10_sub_14_name = ?, pg_sem_10_sub_14_marks_obtained = ?, pg_sem_10_sub_14_total_marks = ?, pg_sem_10_sub_15_name = ?, pg_sem_10_sub_15_marks_obtained = ?, pg_sem_10_sub_15_total_marks = ?, pg_sem_10_sub_16_name = ?, pg_sem_10_sub_16_marks_obtained = ?, pg_sem_10_sub_16_total_marks = ?, pg_sem_10_sub_17_name = ?, pg_sem_10_sub_17_marks_obtained = ?, pg_sem_10_sub_17_total_marks = ?, pg_sem_10_sub_18_name = ?, pg_sem_10_sub_18_marks_obtained = ?, pg_sem_10_sub_18_total_marks = ?, pg_sem_10_sub_19_name = ?, pg_sem_10_sub_19_marks_obtained = ?, pg_sem_10_sub_19_total_marks = ?, pg_sem_10_sub_20_name = ?, pg_sem_10_sub_20_marks_obtained = ?, pg_sem_10_sub_20_total_marks = ?
+                WHERE aadhaar_no = ?
+            """,(pg_enrollment_no,pg_sem_10_session,pg_sem_10_roll_no,pg_sem_10_result,pg_sem_10_sub_1_name,
+                 pg_sem_10_sub_1_marks_obtained,pg_sem_10_sub_1_total_marks,pg_sem_10_sub_2_name,
+                 pg_sem_10_sub_2_marks_obtained,pg_sem_10_sub_2_total_marks,pg_sem_10_sub_3_name,
+                 pg_sem_10_sub_3_marks_obtained,pg_sem_10_sub_3_total_marks,pg_sem_10_sub_4_name,
+                 pg_sem_10_sub_4_marks_obtained,pg_sem_10_sub_4_total_marks,pg_sem_10_sub_5_name,
+                 pg_sem_10_sub_5_marks_obtained,pg_sem_10_sub_5_total_marks,pg_sem_10_sub_6_name,
+                 pg_sem_10_sub_6_marks_obtained,pg_sem_10_sub_6_total_marks,pg_sem_10_sub_7_name,
+                 pg_sem_10_sub_7_marks_obtained,pg_sem_10_sub_7_total_marks,pg_sem_10_sub_8_name,
+                 pg_sem_10_sub_8_marks_obtained,pg_sem_10_sub_8_total_marks,pg_sem_10_sub_9_name,
+                 pg_sem_10_sub_9_marks_obtained,pg_sem_10_sub_9_total_marks,pg_sem_10_sub_10_name,
+                 pg_sem_10_sub_10_marks_obtained,pg_sem_10_sub_10_total_marks,pg_sem_10_sub_11_name,
+                 pg_sem_10_sub_11_marks_obtained,pg_sem_10_sub_11_total_marks,pg_sem_10_sub_12_name,
+                 pg_sem_10_sub_12_marks_obtained,pg_sem_10_sub_12_total_marks,pg_sem_10_sub_13_name,
+                 pg_sem_10_sub_13_marks_obtained,pg_sem_10_sub_13_total_marks,pg_sem_10_sub_14_name,
+                 pg_sem_10_sub_14_marks_obtained,pg_sem_10_sub_14_total_marks,pg_sem_10_sub_15_name,
+                 pg_sem_10_sub_15_marks_obtained,pg_sem_10_sub_15_total_marks,pg_sem_10_sub_16_name,
+                 pg_sem_10_sub_16_marks_obtained,pg_sem_10_sub_16_total_marks,pg_sem_10_sub_17_name,
+                 pg_sem_10_sub_17_marks_obtained,pg_sem_10_sub_17_total_marks,pg_sem_10_sub_18_name,
+                 pg_sem_10_sub_18_marks_obtained,pg_sem_10_sub_18_total_marks,pg_sem_10_sub_19_name,
+                 pg_sem_10_sub_19_marks_obtained,pg_sem_10_sub_19_total_marks,pg_sem_10_sub_20_name,
+                 pg_sem_10_sub_20_marks_obtained,pg_sem_10_sub_20_total_marks,aadhaar_no))
+
+            # Commit changes
+            conn.commit()
+
+            # Redirect to the next form
+            return redirect(url_for('student_profile'))  # replace 'next_form' with the actual name of the next form
+
+        else:
+            # Fetch pg_sem_10_info from the database
+            cursor.execute("SELECT * FROM pg_sem_10 WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+            pg_sem_10_info = cursor.fetchone()
+
+            # Pass the pg_sem_10_info to the template
+            return render_template('Student/student_info_forms/form_pg_sem_10.html', pg_sem_10=pg_sem_10_info)
+    except Exception as e:
+        app.logger.error(f"Exception occurred: {e}")
+        return str(e), 500
 
 # Routes for student form
 ############################################

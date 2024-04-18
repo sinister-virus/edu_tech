@@ -7117,6 +7117,81 @@ def gc12():
     # Render the student_dashboard.html template and pass the pie chart HTML
     return render_template('Academic Performance/gc12.html', pie_charts=pie_charts_html)
 
+
+@app.route('/student_dashboard/g_ug_sem_1')
+def g_ug_sem_1():
+    pie_charts_html = []  # This list will store HTML representations of pie charts
+    j = 1  # Assuming the semester number is 1 for undergraduate semester 1
+
+    for i in range(1, 6):
+        # Execute the SQL query to fetch data for the ith subject
+        cursor.execute(f"SELECT ug_sem_{j}_sub_{i}_name, ug_sem_{j}_sub_{i}_marks_obtained, ug_sem_{j}_sub_{i}_total_marks FROM ug_sem_{j} WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+
+        # Fetch the data
+        data = cursor.fetchone()
+
+        if data:
+            # Plot the pie chart
+            labels = [data[0] + ' obtained marks', data[0] + ' total marks']
+            sizes = [data[1], str(int(data[2])-int(data[1]))]  # Calculating remaining marks
+            fig, ax = plt.subplots(figsize=(5, 5))
+            ax.pie(sizes, labels=labels, autopct='%1.1f%%')
+            ax.set_title(data[0] + ' Marks Distribution')
+
+            # Convert the plot to HTML
+            pie_chart_html = mpld3.fig_to_html(fig)
+            pie_charts_html.append(pie_chart_html)
+
+            # Close the plot to prevent memory leaks
+            plt.close(fig)
+
+    # Render the g_ug_sem_1.html template and pass the pie chart HTML
+    return render_template('Academic Performance/g_ug_sem_1.html', pie_charts=pie_charts_html)
+
+
+@app.route('/student_dashboard/g_ug_sem_2')
+def g_ug_sem_2():
+    pie_charts_html = []  # This list will store HTML representations of pie charts
+    j = 2  # Assuming the semester number is 2 for undergraduate semester 2
+
+    for i in range(1, 6):
+        # Execute the SQL query to fetch data for the ith subject
+        cursor.execute(f"SELECT ug_sem_{j}_sub_{i}_name, ug_sem_{j}_sub_{i}_marks_obtained, ug_sem_{j}_sub_{i}_total_marks FROM ug_sem_{j} WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+
+        # Fetch the data
+        data = cursor.fetchone()
+
+        if data is None:
+            # If no data is available for the subject, display an error
+            pie_charts_html.append(f"<p>Error: Marks not available for subject {i}</p>")
+        else:
+            if None in data:
+                # If any value is null, display an error for marks not available for that subject
+                pie_charts_html.append(f"<p>Error: Marks not available for subject {data[0]}</p>")
+            else:
+                # Plot the pie chart
+                labels = [data[0] + ' obtained marks', data[0] + ' total marks']
+                sizes = [data[1], data[2] - data[1]]  # Calculating remaining marks
+                fig, ax = plt.subplots(figsize=(5, 5))
+                ax.pie(sizes, labels=labels, autopct='%1.1f%%')
+                ax.set_title(data[0] + ' Marks Distribution')
+
+                # Convert the plot to HTML
+                pie_chart_html = mpld3.fig_to_html(fig)
+                pie_charts_html.append(pie_chart_html)
+
+                # Close the plot to prevent memory leaks
+                plt.close(fig)
+
+    # If no information is present at all, display an error
+    if not any(html for html in pie_charts_html):
+        pie_charts_html.append(f"<p>Error: No information available for semester {j}</p>")
+
+    # Render the g_ug_sem_2.html template and pass the pie chart HTML
+    return render_template('Academic Performance/g_ug_sem_2.html', pie_charts=pie_charts_html)
+
+
+
 if __name__ == '__main__':
     app.run()
 

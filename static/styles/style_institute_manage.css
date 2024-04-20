@@ -1,5 +1,10 @@
 main{
     flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    padding: 1px;
+    text-align: center;
 }
 
 main h1 {
@@ -8,4 +13,51 @@ main h1 {
     padding: 1px;
     text-align: center;
     color: #007EA7FF;
+}
+
+.select_class {
+    background: rgb(202, 230, 243);
+    color: #000000;
+    padding: 12px 25px;
+    font-size: 18px;
+    font-weight: bold;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition-duration: 0.3s;
+}
+
+#aadhaar_no {
+    text-align: center;
+    border-style: solid;
+    border-width: 2px;
+    border-color: black;
+    border-radius: 10px;
+    font-weight: normal;
+    font-size: 18px;
+}
+
+#user_type {
+    text-align: center;
+    border-style: solid;
+    border-width: 2px;
+    border-color: black;
+    border-radius: 10px;
+    font-weight: normal;
+    font-size: 18px;
+}
+
+#go{
+    color: white;
+    background-color: #4198ea;
+    border-style: solid;
+    border-width: 2px;
+    border-color: black;
+    border-radius: 10px;
+    cursor: pointer;
+    transition-duration: 0.3s;
+}
+
+#go:hover {
+    background-color: #007ea7;
 }

@@ -31,33 +31,54 @@
 
         <!-- Display the overview pie chart -->
         <form id="overview_form" action="/student_dashboard" method="post">
-        <div class="select_class">
-            <label for="select_class" class="select_class">Select class:</label>
-            <select id="select_class" class="select_class" onchange="submitForm(this)">
-                <option value="1">Class 1</option>
-                <option value="2">Class 2</option>
-                <option value="3">Class 3</option>
-                <option value="4">Class 4</option>
-                <option value="5">Class 5</option>
-                <option value="6">Class 6</option>
-                <option value="7">Class 7</option>
-                <option value="8">Class 8</option>
-                <option value="9">Class 9</option>
-                <option value="10">Class 10</option>
-                <option value="11">Class 11</option>
-                <option value="12">Class 12</option>
-            </select>
-            <button class="select_class" id="graph_gen"> Go</button>
-        </div>
+
+                <div class="select_view">
+
+                    <div>
+                        <label for="select_s_r" class="select_view">Select View:</label>
+                        <select id="select_s_r" class="select_view" onchange="submitForm(this)">
+                            <option value="0">Select</option>
+                            <option value="1">Stats</option>
+                            <option value="2">Report</option>
+                        </select>
+                    </div>
+
+                    <br>
+
+                    <div>
+                        <label for="select_level" class="select_view">Select Educational Level:</label>
+                        <select id="select_level" class="select_view" onchange="submitForm(this)">
+                            <option value="0">Select</option>
+                            <option value="1">School</option>
+                            <option value="2">Under Graduation</option>
+                            <option value="3">Post Graduation</option>
+                        </select>
+                    </div>
+                    <button class="select_view" id="btn_go"> Go</button>
+                </div>
         </form>
 
-        <!-- Display the pie charts in a grid -->
-        <div class="pie-chart-grid">
-            {% for pie_chart in pie_charts %}
-                <div class="pie-chart">
-                    {{ pie_chart | safe }}
-                </div>
-            {% endfor %}
+
+        <div class="bar-chart-grid">
+            <div class="bar-chart">
+                <h2>Marks Obtained vs Total Marks</h2>
+                {{ marks_total_img|safe }}
+            </div>
+
+            <div class="bar-chart">
+                <h2>Percentage vs Classes</h2>
+                {{ percentage_img|safe }}
+            </div>
+
+            <div class="bar-chart">
+                <h2>Grade vs Classes</h2>
+                {{ grade_img|safe }}
+            </div>
+
+            <div class="bar-chart">
+                <h2>CGPA vs Classes</h2>
+                {{ cgpa_img|safe }}
+            </div>
         </div>
     </main>
 
@@ -83,6 +104,6 @@
 		<img src="../../static/img/digital_india_logo.png" id="Digital_India_img" alt="Digital India Logo">
     </footer>
 
-    <script src="../../static/js/script_graph_gen.js"></script>
+    <script src="../../static/js/script_dashboard.js"></script>
 </body>
 </html>

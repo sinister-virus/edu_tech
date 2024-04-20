@@ -2,10 +2,13 @@ import os
 import pyodbc
 from flask import Flask, render_template, request, redirect, url_for, session
 from werkzeug.security import generate_password_hash,check_password_hash
-import matplotlib
 import matplotlib.pyplot as plt
 import mpld3
-# import numpy as np
+import seaborn as sns
+import pandas as pd
+import numpy as np
+from io import BytesIO
+import base64
 
 ############### database connection ###############
 # Get the current script's directory
@@ -20,6 +23,8 @@ conn_str = (r'DRIVER={Microsoft Access Driver (*.mdb, *.accdb)};'
 
 conn = pyodbc.connect(conn_str)
 cursor = conn.cursor()
+
+
 ############### database connection ###############
 
 app = Flask(__name__)
@@ -145,9 +150,12 @@ def admin_register_post():
 def admin_dashboard():
     return render_template('Admin/admin_dashboard.html')
 
+
 @app.route('/admin_manage')
 def admin_manage():
     return render_template('Admin/admin_manage.html')
+
+
 
 @app.route('/admin_profile')
 def admin_profile():
@@ -592,32 +600,274 @@ def student_register_post():
         app.logger.error(f"Exception occurred: {e}")
         return str(e),500
 
+# @app.route('/student_dashboard1')
+# def student_dashboard1():
+#
+#     marks_obtained = []
+#     total_marks = []
+#     percentage = []
+#     grade = []
+#     cgpa = []
+#
+#     for i in range(1,13):
+#         # Execute the SQL query
+#         cursor.execute(
+#             f"SELECT c_{i}_marks_obtained, c_{i}_total_marks, c_{i}_percentage, c_{i}_grade, c_{i}_cgpa FROM class_{i} WHERE aadhaar_no = ?",
+#             (session['aadhaar_no'],))
+#
+#         # Fetch all the rows
+#         data = cursor.fetchall()
+#
+#         marks_obtained_class = []
+#         total_marks_class = []
+#         percentage_class = []
+#         grade_class = []
+#         cgpa_class = []
+#
+#         if data:
+#             for row in data:
+#                 marks_obtained_class.append(row[0])
+#                 total_marks_class.append(row[1])
+#                 percentage_class.append(row[2])
+#                 grade_class.append(row[3])
+#                 cgpa_class.append(row[4])
+#
+#         marks_obtained.append(marks_obtained_class)
+#         total_marks.append(total_marks_class)
+#         percentage.append(percentage_class)
+#         grade.append(grade_class)
+#         cgpa.append(cgpa_class)
+#
+#     print(marks_obtained)
+#     print(total_marks)
+#     print(percentage)
+#     print(grade)
+#     print(cgpa)
+#
+#     # Convert nested lists to flat lists
+#     marks_obtained = [int(x[0]) for x in marks_obtained]
+#     total_marks = [int(x[0]) for x in total_marks]
+#     percentage = [float(x[0]) for x in percentage]
+#     grade = [x[0] for x in grade]
+#     cgpa = [float(x[0]) for x in cgpa]
+#
+#     class_labels = ["Class 1","Class 2","Class 3","Class 4","Class 5","Class 6","Class 7","Class 8","Class 9",
+#                     "Class 10","Class 11","Class 12"]
+#
+#     # Create bar graphs
+#     # Set the color palette
+#     colors = sns.color_palette("icefire", 5)
+#     # Marks Obtained vs Total Marks
+#     fig,ax = plt.subplots(figsize=(5,5))
+#
+#     # Width of each bar
+#     bar_width = 0.35
+#
+#     # Position of each bar on x-axis
+#     x = np.arange(len(class_labels))
+#
+#     # Plot the bars
+#     ax.bar(x - bar_width / 2,marks_obtained,bar_width,label='Marks Obtained', color=colors[0])
+#     ax.bar(x + bar_width / 2,total_marks,bar_width,label='Total Marks', color=colors[1])
+#
+#     # Add labels, title, and legend
+#     ax.set_xlabel('Classes')
+#     ax.set_ylabel('Marks')
+#     ax.set_title('Marks Obtained vs Total Marks')
+#     ax.set_xticks(x)
+#     ax.set_xticklabels(class_labels,rotation=45)
+#     ax.legend()
+#     marks_total_img = BytesIO()
+#     plt.savefig(marks_total_img,format='png')
+#     marks_total_img.seek(0)
+#     marks_total_img_encoded = base64.b64encode(marks_total_img.getvalue()).decode('utf-8')
+#     marks_total_img_html = f'<img src="data:image/png;base64,{marks_total_img_encoded}" alt="Marks Obtained vs Total Marks">'
+#
+#     # Percentage vs Classes
+#     plt.figure(figsize=(5, 5))
+#     plt.bar(class_labels, percentage, label="Percentage", color=colors[2])
+#     plt.xlabel('Classes')
+#     plt.ylabel('Percentage')
+#     plt.title('Percentage vs Classes')
+#     plt.xticks(rotation=45)
+#     plt.yticks([i for i in range(0,101,5)])
+#     plt.legend()
+#     percentage_img = BytesIO()
+#     plt.savefig(percentage_img, format='png')
+#     percentage_img.seek(0)
+#     percentage_img_encoded = base64.b64encode(percentage_img.getvalue()).decode('utf-8')
+#     percentage_img_html = f'<img src="data:image/png;base64,{percentage_img_encoded}" alt="Percentage vs Classes">'
+#
+#     # Grade vs Classes
+#     grade_mapping = {'A': 5, 'B': 4, 'C': 3, 'D': 2, 'E': 1, 'F': 0}
+#     numerical_grades = [grade_mapping[grade] for grade in grade]
+#     plt.figure(figsize=(5, 5))
+#     plt.bar(class_labels, numerical_grades, label="Grade", color=colors[3])
+#     plt.xlabel('Classes')
+#     plt.ylabel('Grade')
+#     plt.title('Grade vs Classes')
+#     plt.xticks(rotation=45)
+#     plt.yticks(range(6), ['F', 'E', 'D', 'C', 'B', 'A'])
+#     plt.legend()
+#     grade_img = BytesIO()
+#     plt.savefig(grade_img, format='png')
+#     grade_img.seek(0)
+#     grade_img_encoded = base64.b64encode(grade_img.getvalue()).decode('utf-8')
+#     grade_img_html = f'<img src="data:image/png;base64,{grade_img_encoded}" alt="Grade vs Classes">'
+#
+#     # CGPA vs Classes
+#     plt.figure(figsize=(5, 5))
+#     plt.bar(class_labels, cgpa, label="CGPA", color=colors[4])
+#     plt.xlabel('Classes')
+#     plt.ylabel('CGPA')
+#     plt.title('CGPA vs Classes')
+#     plt.xticks(rotation=45)
+#     plt.yticks([i for i in range(0,10,1)])
+#     plt.legend()
+#     cgpa_img = BytesIO()
+#     plt.savefig(cgpa_img, format='png')
+#     cgpa_img.seek(0)
+#     cgpa_img_encoded = base64.b64encode(cgpa_img.getvalue()).decode('utf-8')
+#     cgpa_img_html = f'<img src="data:image/png;base64,{cgpa_img_encoded}" alt="CGPA vs Classes">'
+#
+#     # Render the student_dashboard.html template and pass the bar graph images as HTML
+#     return render_template('Student/student_dashboard.html', marks_total_img=marks_total_img_html,percentage_img=percentage_img_html, grade_img=grade_img_html, cgpa_img=cgpa_img_html)
+
 @app.route('/student_dashboard')
 def student_dashboard():
-    pie_charts_html = []
-    j=1
-    for i in range(1, 6):
+
+    marks_obtained = []
+    total_marks = []
+    percentage = []
+    grade = []
+    cgpa = []
+
+    for i in range(1, 13):
         # Execute the SQL query
-        cursor.execute(f"SELECT c_{j}_sub_{i}_name, c_{j}_sub_{i}_marks_obtained, c_{j}_sub_{i}_total_marks FROM class_{j} WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+        cursor.execute(
+            f"SELECT c_{i}_marks_obtained, c_{i}_total_marks, c_{i}_percentage, c_{i}_grade, c_{i}_cgpa FROM class_{i} WHERE aadhaar_no = ?",
+            (session['aadhaar_no'],))
 
-        # Fetch the data
-        data = cursor.fetchone()
+        # Fetch all the rows
+        data = cursor.fetchall()
 
-        # Plot the pie chart
-        labels = [data[0] + ' obtained marks', data[0] + ' total marks']
-        sizes = [data[1], str(int(data[2])-int(data[1]))]
+        marks_obtained_class = []
+        total_marks_class = []
+        percentage_class = []
+        grade_class = []
+        cgpa_class = []
+
+        if data:
+            for row in data:
+                marks_obtained_class.append(row[0])
+                total_marks_class.append(row[1])
+                percentage_class.append(row[2])
+                grade_class.append(row[3])
+                cgpa_class.append(row[4])
+
+        marks_obtained.append(marks_obtained_class)
+        total_marks.append(total_marks_class)
+        percentage.append(percentage_class)
+        grade.append(grade_class)
+        cgpa.append(cgpa_class)
+
+    # Convert nested lists to flat lists
+    marks_obtained = [int(x[0]) if x else 0 for x in marks_obtained]
+    total_marks = [int(x[0]) if x else 0 for x in total_marks]
+
+    class_labels = ["Class 1", "Class 2", "Class 3", "Class 4", "Class 5", "Class 6", "Class 7", "Class 8", "Class 9",
+                    "Class 10", "Class 11", "Class 12"]
+
+    # Create bar graphs
+    # Set the color palette
+    colors = sns.color_palette("icefire", 5)
+
+    # Marks Obtained vs Total Marks
+    if marks_obtained and total_marks:
         fig,ax = plt.subplots(figsize=(5,5))
-        ax.pie(sizes, labels=labels, autopct='%1.1f%%')
-        ax.set_title(data[0] + ' Marks Distribution')
+        bar_width = 0.35
+        x = np.arange(len(class_labels))
+        ax.bar(x - bar_width / 2,marks_obtained,bar_width,label='Marks Obtained',color=colors[0])
+        ax.bar(x + bar_width / 2,total_marks,bar_width,label='Total Marks',color=colors[1])
+        ax.set_xlabel('Classes')
+        ax.set_ylabel('Marks')
+        ax.set_title('Marks Obtained vs Total Marks')
+        ax.set_xticks(x)
+        ax.set_xticklabels(class_labels,rotation=45)
+        ax.legend()
+        marks_total_img = BytesIO()
+        plt.savefig(marks_total_img,format='png')
+        marks_total_img.seek(0)
+        marks_total_img_encoded = base64.b64encode(marks_total_img.getvalue()).decode('utf-8')
+        marks_total_img_html = f'<img src="data:image/png;base64,{marks_total_img_encoded}" alt="Marks Obtained vs Total Marks">'
 
-        # Convert the plot to HTML
-        pie_chart_html = mpld3.fig_to_html(fig)
-        pie_charts_html.append(pie_chart_html)
+    # Check if the lists are not empty before converting them for other graphs
+    if percentage:
+        percentage = [float(x[0]) if x else 0.0 for x in percentage]
 
-    matplotlib.pyplot.close()
+        # Percentage vs Classes
+        plt.figure(figsize=(5, 5))
+        plt.bar(class_labels, percentage, label="Percentage", color=colors[2])
+        plt.xlabel('Classes')
+        plt.ylabel('Percentage')
+        plt.title('Percentage vs Classes')
+        plt.xticks(rotation=45)
+        plt.yticks([i for i in range(0, 101, 5)])
+        plt.legend()
+        percentage_img = BytesIO()
+        plt.savefig(percentage_img, format='png')
+        percentage_img.seek(0)
+        percentage_img_encoded = base64.b64encode(percentage_img.getvalue()).decode('utf-8')
+        percentage_img_html = f'<img src="data:image/png;base64,{percentage_img_encoded}" alt="Percentage vs Classes">'
+    else:
+        percentage_img_html = "<p>No data available for Percentage vs Classes</p>"
 
-    # Render the student_dashboard.html template and pass the pie chart HTML
-    return render_template('Student/student_dashboard.html', pie_charts=pie_charts_html)
+    # Check if the lists are not empty before converting them for Grade vs Classes
+    if grade:
+        grade_mapping = {'A': 5, 'B': 4, 'C': 3, 'D': 2, 'E': 1, 'F': 0}
+        numerical_grades = [grade_mapping[g[0]] if g else 0 for g in grade]
+
+        # Grade vs Classes
+        plt.figure(figsize=(5, 5))
+        plt.bar(class_labels, numerical_grades, label="Grade", color=colors[3])
+        plt.xlabel('Classes')
+        plt.ylabel('Grade')
+        plt.title('Grade vs Classes')
+        plt.xticks(rotation=45)
+        plt.yticks(range(6), ['F', 'E', 'D', 'C', 'B', 'A'])
+        plt.legend()
+        grade_img = BytesIO()
+        plt.savefig(grade_img, format='png')
+        grade_img.seek(0)
+        grade_img_encoded = base64.b64encode(grade_img.getvalue()).decode('utf-8')
+        grade_img_html = f'<img src="data:image/png;base64,{grade_img_encoded}" alt="Grade vs Classes">'
+    else:
+        grade_img_html = "<p>No data available for Grade vs Classes</p>"
+
+    # Check if the lists are not empty before converting them for CGPA vs Classes
+    if cgpa:
+        cgpa = [float(x[0]) if x else 0.0 for x in cgpa]
+
+        # CGPA vs Classes
+        plt.figure(figsize=(5, 5))
+        plt.bar(class_labels, cgpa, label="CGPA", color=colors[4])
+        plt.xlabel('Classes')
+        plt.ylabel('CGPA')
+        plt.title('CGPA vs Classes')
+        plt.xticks(rotation=45)
+        plt.yticks([i for i in range(0, 10, 1)])
+        plt.legend()
+        cgpa_img = BytesIO()
+        plt.savefig(cgpa_img, format='png')
+        cgpa_img.seek(0)
+        cgpa_img_encoded = base64.b64encode(cgpa_img.getvalue()).decode('utf-8')
+        cgpa_img_html = f'<img src="data:image/png;base64,{cgpa_img_encoded}" alt="CGPA vs Classes">'
+    else:
+        cgpa_img_html = "<p>No data available for CGPA vs Classes</p>"
+
+    # Render the student_dashboard.html template and pass the graph images as HTML
+    return render_template('Student/student_dashboard.html', marks_total_img=marks_total_img_html,
+                           percentage_img=percentage_img_html, grade_img=grade_img_html, cgpa_img=cgpa_img_html)
 
 @app.route('/student_manage')
 def student_manage():
@@ -628,6 +878,8 @@ def student_profile():
     # Execute SQL query to fetch student details
     cursor.execute("SELECT * FROM student_info WHERE aadhaar_no = ?", (session['aadhaar_no'],))
     student_details = cursor.fetchone()
+
+
 
     # Pass the student details to the template
     return render_template('Student/student_profile.html', student=student_details)
@@ -851,6 +1103,7 @@ def form_student_address_post():
         app.logger.error(f"Exception occurred: {e}")
         return str(e), 500
 
+
 @app.route('/form_c_1', methods=['GET', 'POST'])
 def form_c_1():
     if request.method == 'POST':
@@ -863,6 +1116,10 @@ def form_c_1():
         # If c_1_info is None, create a default c_1_info object
         if c_1_info is None:
             c_1_info = {
+				' c_1_year': '',
+				' c_1_board': '',
+				' c_1_roll_no': '',
+				' c_1_result': '',
                 ' c_1_sub_1_name': '',
                 ' c_1_sub_1_marks_obtained': '',
                 ' c_1_sub_1_total_marks': '',
@@ -918,6 +1175,10 @@ def form_c_1_post():
         if request.method == 'POST':
             # Get form data
             aadhaar_no = session['aadhaar_no']
+            c_1_year = request.form['c_1_year']
+            c_1_board = request.form['c_1_board']
+            c_1_roll_no = request.form['c_1_roll_no']
+            c_1_result = request.form['c_1_result']
             c_1_sub_1_name = request.form['c_1_sub_1_name']
             c_1_sub_1_marks_obtained = request.form['c_1_sub_1_marks_obtained']
             c_1_sub_1_total_marks = request.form['c_1_sub_1_total_marks']
@@ -964,12 +1225,93 @@ def form_c_1_post():
             c_1_sub_15_marks_obtained = request.form['c_1_sub_15_marks_obtained']
             c_1_sub_15_total_marks = request.form['c_1_sub_15_total_marks']
 
-            # Update c_1_info in the database
-            cursor.execute("""
-                UPDATE class_1
-                SET c_1_sub_1_name = ?, c_1_sub_1_marks_obtained = ?, c_1_sub_1_total_marks = ?, c_1_sub_2_name = ?, c_1_sub_2_marks_obtained = ?, c_1_sub_2_total_marks = ?, c_1_sub_3_name = ?, c_1_sub_3_marks_obtained = ?, c_1_sub_3_total_marks = ?, c_1_sub_4_name = ?, c_1_sub_4_marks_obtained = ?, c_1_sub_4_total_marks = ?, c_1_sub_5_name = ?, c_1_sub_5_marks_obtained = ?, c_1_sub_5_total_marks = ?, c_1_sub_6_name = ?, c_1_sub_6_marks_obtained = ?, c_1_sub_6_total_marks = ?, c_1_sub_7_name = ?, c_1_sub_7_marks_obtained = ?, c_1_sub_7_total_marks = ?, c_1_sub_8_name = ?, c_1_sub_8_marks_obtained = ?, c_1_sub_8_total_marks = ?, c_1_sub_9_name = ?, c_1_sub_9_marks_obtained = ?, c_1_sub_9_total_marks = ?, c_1_sub_10_name = ?, c_1_sub_10_marks_obtained = ?, c_1_sub_10_total_marks = ?, c_1_sub_11_name = ?, c_1_sub_11_marks_obtained = ?, c_1_sub_11_total_marks = ?, c_1_sub_12_name = ?, c_1_sub_12_marks_obtained = ?, c_1_sub_12_total_marks = ?, c_1_sub_13_name = ?, c_1_sub_13_marks_obtained = ?, c_1_sub_13_total_marks = ?, c_1_sub_14_name = ?, c_1_sub_14_marks_obtained = ?, c_1_sub_14_total_marks = ?, c_1_sub_15_name = ?, c_1_sub_15_marks_obtained = ?, c_1_sub_15_total_marks = ?
-                WHERE aadhaar_no = ?
-            """, (c_1_sub_1_name, c_1_sub_1_marks_obtained, c_1_sub_1_total_marks, c_1_sub_2_name, c_1_sub_2_marks_obtained, c_1_sub_2_total_marks, c_1_sub_3_name, c_1_sub_3_marks_obtained, c_1_sub_3_total_marks, c_1_sub_4_name, c_1_sub_4_marks_obtained, c_1_sub_4_total_marks, c_1_sub_5_name, c_1_sub_5_marks_obtained, c_1_sub_5_total_marks, c_1_sub_6_name, c_1_sub_6_marks_obtained, c_1_sub_6_total_marks, c_1_sub_7_name, c_1_sub_7_marks_obtained, c_1_sub_7_total_marks, c_1_sub_8_name, c_1_sub_8_marks_obtained, c_1_sub_8_total_marks, c_1_sub_9_name, c_1_sub_9_marks_obtained, c_1_sub_9_total_marks, c_1_sub_10_name, c_1_sub_10_marks_obtained, c_1_sub_10_total_marks, c_1_sub_11_name, c_1_sub_11_marks_obtained, c_1_sub_11_total_marks, c_1_sub_12_name, c_1_sub_12_marks_obtained, c_1_sub_12_total_marks, c_1_sub_13_name, c_1_sub_13_marks_obtained, c_1_sub_13_total_marks, c_1_sub_14_name, c_1_sub_14_marks_obtained, c_1_sub_14_total_marks, c_1_sub_15_name, c_1_sub_15_marks_obtained, c_1_sub_15_total_marks, aadhaar_no))
+            # Check if c_1_info already exists
+            cursor.execute("SELECT * FROM class_1 WHERE aadhaar_no = ?",(aadhaar_no,))
+            existing_c_1_info = cursor.fetchone()
+
+            if existing_c_1_info:
+                # Update c_1_info in the database
+                cursor.execute("""
+                    UPDATE class_1 
+                    SET 
+						c_1_year = ?, c_1_board = ?, c_1_roll_no = ?, c_1_result = ?,
+                        c_1_sub_1_name = ?, c_1_sub_1_marks_obtained = ?, c_1_sub_1_total_marks = ?, 
+                        c_1_sub_2_name = ?, c_1_sub_2_marks_obtained = ?, c_1_sub_2_total_marks = ?, 
+                        c_1_sub_3_name = ?, c_1_sub_3_marks_obtained = ?, c_1_sub_3_total_marks = ?, 
+                        c_1_sub_4_name = ?, c_1_sub_4_marks_obtained = ?, c_1_sub_4_total_marks = ?, 
+                        c_1_sub_5_name = ?, c_1_sub_5_marks_obtained = ?, c_1_sub_5_total_marks = ?, 
+                        c_1_sub_6_name = ?, c_1_sub_6_marks_obtained = ?, c_1_sub_6_total_marks = ?, 
+                        c_1_sub_7_name = ?, c_1_sub_7_marks_obtained = ?, c_1_sub_7_total_marks = ?, 
+                        c_1_sub_8_name = ?, c_1_sub_8_marks_obtained = ?, c_1_sub_8_total_marks = ?, 
+                        c_1_sub_9_name = ?, c_1_sub_9_marks_obtained = ?, c_1_sub_9_total_marks = ?, 
+                        c_1_sub_10_name = ?, c_1_sub_10_marks_obtained = ?, c_1_sub_10_total_marks = ?, 
+                        c_1_sub_11_name = ?, c_1_sub_11_marks_obtained = ?, c_1_sub_11_total_marks = ?, 
+                        c_1_sub_12_name = ?, c_1_sub_12_marks_obtained = ?, c_1_sub_12_total_marks = ?, 
+                        c_1_sub_13_name = ?, c_1_sub_13_marks_obtained = ?, c_1_sub_13_total_marks = ?, 
+                        c_1_sub_14_name = ?, c_1_sub_14_marks_obtained = ?, c_1_sub_14_total_marks = ?, 
+                        c_1_sub_15_name = ?, c_1_sub_15_marks_obtained = ?, c_1_sub_15_total_marks = ? 
+                    WHERE aadhaar_no = ?
+                """,(
+					c_1_year, c_1_board, c_1_roll_no, c_1_result,
+                    c_1_sub_1_name,c_1_sub_1_marks_obtained,c_1_sub_1_total_marks,
+                    c_1_sub_2_name,c_1_sub_2_marks_obtained,c_1_sub_2_total_marks,
+                    c_1_sub_3_name,c_1_sub_3_marks_obtained,c_1_sub_3_total_marks,
+                    c_1_sub_4_name,c_1_sub_4_marks_obtained,c_1_sub_4_total_marks,
+                    c_1_sub_5_name,c_1_sub_5_marks_obtained,c_1_sub_5_total_marks,
+                    c_1_sub_6_name,c_1_sub_6_marks_obtained,c_1_sub_6_total_marks,
+                    c_1_sub_7_name,c_1_sub_7_marks_obtained,c_1_sub_7_total_marks,
+                    c_1_sub_8_name,c_1_sub_8_marks_obtained,c_1_sub_8_total_marks,
+                    c_1_sub_9_name,c_1_sub_9_marks_obtained,c_1_sub_9_total_marks,
+                    c_1_sub_10_name,c_1_sub_10_marks_obtained,c_1_sub_10_total_marks,
+                    c_1_sub_11_name,c_1_sub_11_marks_obtained,c_1_sub_11_total_marks,
+                    c_1_sub_12_name,c_1_sub_12_marks_obtained,c_1_sub_12_total_marks,
+                    c_1_sub_13_name,c_1_sub_13_marks_obtained,c_1_sub_13_total_marks,
+                    c_1_sub_14_name,c_1_sub_14_marks_obtained,c_1_sub_14_total_marks,
+                    c_1_sub_15_name,c_1_sub_15_marks_obtained,c_1_sub_15_total_marks,
+                    aadhaar_no
+                ))
+            else:
+                # Insert new c_1_info into the database
+                cursor.execute("""
+                    INSERT INTO class_1 (
+                        aadhaar_no, 
+						c_1_year, c_1_board, c_1_roll_no, c_1_result,
+                        c_1_sub_1_name, c_1_sub_1_marks_obtained, c_1_sub_1_total_marks, 
+                        c_1_sub_2_name, c_1_sub_2_marks_obtained, c_1_sub_2_total_marks, 
+                        c_1_sub_3_name, c_1_sub_3_marks_obtained, c_1_sub_3_total_marks, 
+                        c_1_sub_4_name, c_1_sub_4_marks_obtained, c_1_sub_4_total_marks, 
+                        c_1_sub_5_name, c_1_sub_5_marks_obtained, c_1_sub_5_total_marks, 
+                        c_1_sub_6_name, c_1_sub_6_marks_obtained, c_1_sub_6_total_marks, 
+                        c_1_sub_7_name, c_1_sub_7_marks_obtained, c_1_sub_7_total_marks, 
+                        c_1_sub_8_name, c_1_sub_8_marks_obtained, c_1_sub_8_total_marks, 
+                        c_1_sub_9_name, c_1_sub_9_marks_obtained, c_1_sub_9_total_marks, 
+                        c_1_sub_10_name, c_1_sub_10_marks_obtained, c_1_sub_10_total_marks, 
+                        c_1_sub_11_name, c_1_sub_11_marks_obtained, c_1_sub_11_total_marks, 
+                        c_1_sub_12_name, c_1_sub_12_marks_obtained, c_1_sub_12_total_marks, 
+                        c_1_sub_13_name, c_1_sub_13_marks_obtained, c_1_sub_13_total_marks, 
+                        c_1_sub_14_name, c_1_sub_14_marks_obtained, c_1_sub_14_total_marks, 
+                        c_1_sub_15_name, c_1_sub_15_marks_obtained, c_1_sub_15_total_marks 
+                    ) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """,(
+                    aadhaar_no,
+					c_1_year, c_1_board, c_1_roll_no, c_1_result,
+                    c_1_sub_1_name,c_1_sub_1_marks_obtained,c_1_sub_1_total_marks,
+                    c_1_sub_2_name,c_1_sub_2_marks_obtained,c_1_sub_2_total_marks,
+                    c_1_sub_3_name,c_1_sub_3_marks_obtained,c_1_sub_3_total_marks,
+                    c_1_sub_4_name,c_1_sub_4_marks_obtained,c_1_sub_4_total_marks,
+                    c_1_sub_5_name,c_1_sub_5_marks_obtained,c_1_sub_5_total_marks,
+                    c_1_sub_6_name,c_1_sub_6_marks_obtained,c_1_sub_6_total_marks,
+                    c_1_sub_7_name,c_1_sub_7_marks_obtained,c_1_sub_7_total_marks,
+                    c_1_sub_8_name,c_1_sub_8_marks_obtained,c_1_sub_8_total_marks,
+                    c_1_sub_9_name,c_1_sub_9_marks_obtained,c_1_sub_9_total_marks,
+                    c_1_sub_10_name,c_1_sub_10_marks_obtained,c_1_sub_10_total_marks,
+                    c_1_sub_11_name,c_1_sub_11_marks_obtained,c_1_sub_11_total_marks,
+                    c_1_sub_12_name,c_1_sub_12_marks_obtained,c_1_sub_12_total_marks,
+                    c_1_sub_13_name,c_1_sub_13_marks_obtained,c_1_sub_13_total_marks,
+                    c_1_sub_14_name,c_1_sub_14_marks_obtained,c_1_sub_14_total_marks,
+                    c_1_sub_15_name,c_1_sub_15_marks_obtained,c_1_sub_15_total_marks
+                ))
 
             # Commit changes
             conn.commit()
@@ -988,6 +1330,7 @@ def form_c_1_post():
         app.logger.error(f"Exception occurred: {e}")
         return str(e), 500
 
+
 @app.route('/form_c_2', methods=['GET', 'POST'])
 def form_c_2():
     if request.method == 'POST':
@@ -1000,6 +1343,10 @@ def form_c_2():
         # If c_2_info is None, create a default c_2_info object
         if c_2_info is None:
             c_2_info = {
+                ' c_2_year': '',
+                ' c_2_board': '',
+                ' c_2_roll_no': '',
+                ' c_2_result': '',
                 ' c_2_sub_1_name': '',
                 ' c_2_sub_1_marks_obtained': '',
                 ' c_2_sub_1_total_marks': '',
@@ -1055,6 +1402,10 @@ def form_c_2_post():
         if request.method == 'POST':
             # Get form data
             aadhaar_no = session['aadhaar_no']
+            c_2_year = request.form['c_2_year']
+            c_2_board = request.form['c_2_board']
+            c_2_roll_no = request.form['c_2_roll_no']
+            c_2_result = request.form['c_2_result']
             c_2_sub_1_name = request.form['c_2_sub_1_name']
             c_2_sub_1_marks_obtained = request.form['c_2_sub_1_marks_obtained']
             c_2_sub_1_total_marks = request.form['c_2_sub_1_total_marks']
@@ -1101,15 +1452,94 @@ def form_c_2_post():
             c_2_sub_15_marks_obtained = request.form['c_2_sub_15_marks_obtained']
             c_2_sub_15_total_marks = request.form['c_2_sub_15_total_marks']
 
-            # Update c_2_info in the database
-            cursor.execute("""
-                UPDATE class_2
-                SET c_2_sub_1_name = ?, c_2_sub_1_marks_obtained = ?, c_2_sub_1_total_marks = ?, c_2_sub_2_name = ?, c_2_sub_2_marks_obtained = ?, c_2_sub_2_total_marks = ?, c_2_sub_3_name = ?, c_2_sub_3_marks_obtained = ?, c_2_sub_3_total_marks = ?, c_2_sub_4_name = ?, c_2_sub_4_marks_obtained = ?, c_2_sub_4_total_marks = ?, c_2_sub_5_name = ?, c_2_sub_5_marks_obtained = ?, c_2_sub_5_total_marks = ?, c_2_sub_6_name = ?, c_2_sub_6_marks_obtained = ?, c_2_sub_6_total_marks = ?, c_2_sub_7_name = ?, c_2_sub_7_marks_obtained = ?, c_2_sub_7_total_marks = ?, c_2_sub_8_name = ?, c_2_sub_8_marks_obtained = ?, c_2_sub_8_total_marks = ?, c_2_sub_9_name = ?, c_2_sub_9_marks_obtained = ?, c_2_sub_9_total_marks = ?, c_2_sub_10_name = ?, c_2_sub_10_marks_obtained = ?, c_2_sub_10_total_marks = ?, c_2_sub_11_name = ?, c_2_sub_11_marks_obtained = ?, c_2_sub_11_total_marks = ?, c_2_sub_12_name = ?, c_2_sub_12_marks_obtained = ?, c_2_sub_12_total_marks = ?, c_2_sub_13_name = ?, c_2_sub_13_marks_obtained = ?, c_2_sub_13_total_marks = ?, c_2_sub_14_name = ?, c_2_sub_14_marks_obtained = ?, c_2_sub_14_total_marks = ?, c_2_sub_15_name = ?, c_2_sub_15_marks_obtained = ?, c_2_sub_15_total_marks = ?
-                WHERE aadhaar_no = ?
-            """, (c_2_sub_1_name, c_2_sub_1_marks_obtained, c_2_sub_1_total_marks, c_2_sub_2_name, c_2_sub_2_marks_obtained, c_2_sub_2_total_marks, c_2_sub_3_name, c_2_sub_3_marks_obtained, c_2_sub_3_total_marks, c_2_sub_4_name, c_2_sub_4_marks_obtained, c_2_sub_4_total_marks, c_2_sub_5_name, c_2_sub_5_marks_obtained, c_2_sub_5_total_marks, c_2_sub_6_name, c_2_sub_6_marks_obtained, c_2_sub_6_total_marks, c_2_sub_7_name, c_2_sub_7_marks_obtained, c_2_sub_7_total_marks, c_2_sub_8_name, c_2_sub_8_marks_obtained, c_2_sub_8_total_marks, c_2_sub_9_name, c_2_sub_9_marks_obtained, c_2_sub_9_total_marks, c_2_sub_10_name, c_2_sub_10_marks_obtained, c_2_sub_10_total_marks, c_2_sub_11_name, c_2_sub_11_marks_obtained, c_2_sub_11_total_marks, c_2_sub_12_name, c_2_sub_12_marks_obtained, c_2_sub_12_total_marks, c_2_sub_13_name, c_2_sub_13_marks_obtained, c_2_sub_13_total_marks, c_2_sub_14_name, c_2_sub_14_marks_obtained, c_2_sub_14_total_marks, c_2_sub_15_name, c_2_sub_15_marks_obtained, c_2_sub_15_total_marks, aadhaar_no))
+            # Check if c_2_info already exists
+            cursor.execute("SELECT * FROM class_2 WHERE aadhaar_no = ?",(aadhaar_no,))
+            existing_c_2_info = cursor.fetchone()
 
-            # Commit changes
-            conn.commit()
+            if existing_c_2_info:
+                # Update c_2_info in the database
+                cursor.execute("""
+                    UPDATE class_2 
+                    SET 
+						c_2_year = ?, c_2_board = ?, c_2_roll_no = ?, c_2_result = ?,                    
+                        c_2_sub_1_name = ?, c_2_sub_1_marks_obtained = ?, c_2_sub_1_total_marks = ?, 
+                        c_2_sub_2_name = ?, c_2_sub_2_marks_obtained = ?, c_2_sub_2_total_marks = ?, 
+                        c_2_sub_3_name = ?, c_2_sub_3_marks_obtained = ?, c_2_sub_3_total_marks = ?, 
+                        c_2_sub_4_name = ?, c_2_sub_4_marks_obtained = ?, c_2_sub_4_total_marks = ?, 
+                        c_2_sub_5_name = ?, c_2_sub_5_marks_obtained = ?, c_2_sub_5_total_marks = ?, 
+                        c_2_sub_6_name = ?, c_2_sub_6_marks_obtained = ?, c_2_sub_6_total_marks = ?, 
+                        c_2_sub_7_name = ?, c_2_sub_7_marks_obtained = ?, c_2_sub_7_total_marks = ?, 
+                        c_2_sub_8_name = ?, c_2_sub_8_marks_obtained = ?, c_2_sub_8_total_marks = ?, 
+                        c_2_sub_9_name = ?, c_2_sub_9_marks_obtained = ?, c_2_sub_9_total_marks = ?, 
+                        c_2_sub_10_name = ?, c_2_sub_10_marks_obtained = ?, c_2_sub_10_total_marks = ?, 
+                        c_2_sub_11_name = ?, c_2_sub_11_marks_obtained = ?, c_2_sub_11_total_marks = ?, 
+                        c_2_sub_12_name = ?, c_2_sub_12_marks_obtained = ?, c_2_sub_12_total_marks = ?, 
+                        c_2_sub_13_name = ?, c_2_sub_13_marks_obtained = ?, c_2_sub_13_total_marks = ?, 
+                        c_2_sub_14_name = ?, c_2_sub_14_marks_obtained = ?, c_2_sub_14_total_marks = ?, 
+                        c_2_sub_15_name = ?, c_2_sub_15_marks_obtained = ?, c_2_sub_15_total_marks = ? 
+                    WHERE aadhaar_no = ?
+                """,(
+                    c_2_year,c_2_board,c_2_roll_no,c_2_result,
+                    c_2_sub_1_name,c_2_sub_1_marks_obtained,c_2_sub_1_total_marks,
+                    c_2_sub_2_name,c_2_sub_2_marks_obtained,c_2_sub_2_total_marks,
+                    c_2_sub_3_name,c_2_sub_3_marks_obtained,c_2_sub_3_total_marks,
+                    c_2_sub_4_name,c_2_sub_4_marks_obtained,c_2_sub_4_total_marks,
+                    c_2_sub_5_name,c_2_sub_5_marks_obtained,c_2_sub_5_total_marks,
+                    c_2_sub_6_name,c_2_sub_6_marks_obtained,c_2_sub_6_total_marks,
+                    c_2_sub_7_name,c_2_sub_7_marks_obtained,c_2_sub_7_total_marks,
+                    c_2_sub_8_name,c_2_sub_8_marks_obtained,c_2_sub_8_total_marks,
+                    c_2_sub_9_name,c_2_sub_9_marks_obtained,c_2_sub_9_total_marks,
+                    c_2_sub_10_name,c_2_sub_10_marks_obtained,c_2_sub_10_total_marks,
+                    c_2_sub_11_name,c_2_sub_11_marks_obtained,c_2_sub_11_total_marks,
+                    c_2_sub_12_name,c_2_sub_12_marks_obtained,c_2_sub_12_total_marks,
+                    c_2_sub_13_name,c_2_sub_13_marks_obtained,c_2_sub_13_total_marks,
+                    c_2_sub_14_name,c_2_sub_14_marks_obtained,c_2_sub_14_total_marks,
+                    c_2_sub_15_name,c_2_sub_15_marks_obtained,c_2_sub_15_total_marks,
+                    aadhaar_no
+                ))
+            else:
+                # Insert new c_2_info into the database
+                cursor.execute("""
+                    INSERT INTO class_2 (
+                        aadhaar_no,
+						c_2_year, c_2_board, c_2_roll_no, c_2_result,                         
+                        c_2_sub_1_name, c_2_sub_1_marks_obtained, c_2_sub_1_total_marks, 
+                        c_2_sub_2_name, c_2_sub_2_marks_obtained, c_2_sub_2_total_marks, 
+                        c_2_sub_3_name, c_2_sub_3_marks_obtained, c_2_sub_3_total_marks, 
+                        c_2_sub_4_name, c_2_sub_4_marks_obtained, c_2_sub_4_total_marks, 
+                        c_2_sub_5_name, c_2_sub_5_marks_obtained, c_2_sub_5_total_marks, 
+                        c_2_sub_6_name, c_2_sub_6_marks_obtained, c_2_sub_6_total_marks, 
+                        c_2_sub_7_name, c_2_sub_7_marks_obtained, c_2_sub_7_total_marks, 
+                        c_2_sub_8_name, c_2_sub_8_marks_obtained, c_2_sub_8_total_marks, 
+                        c_2_sub_9_name, c_2_sub_9_marks_obtained, c_2_sub_9_total_marks, 
+                        c_2_sub_10_name, c_2_sub_10_marks_obtained, c_2_sub_10_total_marks, 
+                        c_2_sub_11_name, c_2_sub_11_marks_obtained, c_2_sub_11_total_marks, 
+                        c_2_sub_12_name, c_2_sub_12_marks_obtained, c_2_sub_12_total_marks, 
+                        c_2_sub_13_name, c_2_sub_13_marks_obtained, c_2_sub_13_total_marks, 
+                        c_2_sub_14_name, c_2_sub_14_marks_obtained, c_2_sub_14_total_marks, 
+                        c_2_sub_15_name, c_2_sub_15_marks_obtained, c_2_sub_15_total_marks 
+                    ) 
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """,(
+                    aadhaar_no,
+                    c_2_year,c_2_board,c_2_roll_no,c_2_result,
+                    c_2_sub_1_name,c_2_sub_1_marks_obtained,c_2_sub_1_total_marks,
+                    c_2_sub_2_name,c_2_sub_2_marks_obtained,c_2_sub_2_total_marks,
+                    c_2_sub_3_name,c_2_sub_3_marks_obtained,c_2_sub_3_total_marks,
+                    c_2_sub_4_name,c_2_sub_4_marks_obtained,c_2_sub_4_total_marks,
+                    c_2_sub_5_name,c_2_sub_5_marks_obtained,c_2_sub_5_total_marks,
+                    c_2_sub_6_name,c_2_sub_6_marks_obtained,c_2_sub_6_total_marks,
+                    c_2_sub_7_name,c_2_sub_7_marks_obtained,c_2_sub_7_total_marks,
+                    c_2_sub_8_name,c_2_sub_8_marks_obtained,c_2_sub_8_total_marks,
+                    c_2_sub_9_name,c_2_sub_9_marks_obtained,c_2_sub_9_total_marks,
+                    c_2_sub_10_name,c_2_sub_10_marks_obtained,c_2_sub_10_total_marks,
+                    c_2_sub_11_name,c_2_sub_11_marks_obtained,c_2_sub_11_total_marks,
+                    c_2_sub_12_name,c_2_sub_12_marks_obtained,c_2_sub_12_total_marks,
+                    c_2_sub_13_name,c_2_sub_13_marks_obtained,c_2_sub_13_total_marks,
+                    c_2_sub_14_name,c_2_sub_14_marks_obtained,c_2_sub_14_total_marks,
+                    c_2_sub_15_name,c_2_sub_15_marks_obtained,c_2_sub_15_total_marks
+                ))
+
 
             # Redirect to the next form
             return redirect(url_for('form_c_3'))  # replace 'next_form' with the actual name of the next form
@@ -1138,6 +1568,10 @@ def form_c_3():
         # If c_3_info is None, create a default c_3_info object
         if c_3_info is None:
             c_3_info = {
+                ' c_3_year': '',
+                ' c_3_board': '',
+                ' c_3_roll_no': '',
+                ' c_3_result': '',
                 ' c_3_sub_1_name': '',
                 ' c_3_sub_1_marks_obtained': '',
                 ' c_3_sub_1_total_marks': '',
@@ -1193,6 +1627,10 @@ def form_c_3_post():
         if request.method == 'POST':
             # Get form data
             aadhaar_no = session['aadhaar_no']
+            c_3_year = request.form['c_3_year']
+            c_3_board = request.form['c_3_board']
+            c_3_roll_no = request.form['c_3_roll_no']
+            c_3_result = request.form['c_3_result']
             c_3_sub_1_name = request.form['c_3_sub_1_name']
             c_3_sub_1_marks_obtained = request.form['c_3_sub_1_marks_obtained']
             c_3_sub_1_total_marks = request.form['c_3_sub_1_total_marks']
@@ -1242,9 +1680,9 @@ def form_c_3_post():
             # Update c_3_info in the database
             cursor.execute("""
                 UPDATE class_3
-                SET c_3_sub_1_name = ?, c_3_sub_1_marks_obtained = ?, c_3_sub_1_total_marks = ?, c_3_sub_2_name = ?, c_3_sub_2_marks_obtained = ?, c_3_sub_2_total_marks = ?, c_3_sub_3_name = ?, c_3_sub_3_marks_obtained = ?, c_3_sub_3_total_marks = ?, c_3_sub_4_name = ?, c_3_sub_4_marks_obtained = ?, c_3_sub_4_total_marks = ?, c_3_sub_5_name = ?, c_3_sub_5_marks_obtained = ?, c_3_sub_5_total_marks = ?, c_3_sub_6_name = ?, c_3_sub_6_marks_obtained = ?, c_3_sub_6_total_marks = ?, c_3_sub_7_name = ?, c_3_sub_7_marks_obtained = ?, c_3_sub_7_total_marks = ?, c_3_sub_8_name = ?, c_3_sub_8_marks_obtained = ?, c_3_sub_8_total_marks = ?, c_3_sub_9_name = ?, c_3_sub_9_marks_obtained = ?, c_3_sub_9_total_marks = ?, c_3_sub_10_name = ?, c_3_sub_10_marks_obtained = ?, c_3_sub_10_total_marks = ?, c_3_sub_11_name = ?, c_3_sub_11_marks_obtained = ?, c_3_sub_11_total_marks = ?, c_3_sub_12_name = ?, c_3_sub_12_marks_obtained = ?, c_3_sub_12_total_marks = ?, c_3_sub_13_name = ?, c_3_sub_13_marks_obtained = ?, c_3_sub_13_total_marks = ?, c_3_sub_14_name = ?, c_3_sub_14_marks_obtained = ?, c_3_sub_14_total_marks = ?, c_3_sub_15_name = ?, c_3_sub_15_marks_obtained = ?, c_3_sub_15_total_marks = ?
+                SET c_3_year = ?, c_3_board = ?, c_3_roll_no = ?, c_3_result = ?, c_3_sub_1_name = ?, c_3_sub_1_marks_obtained = ?, c_3_sub_1_total_marks = ?, c_3_sub_2_name = ?, c_3_sub_2_marks_obtained = ?, c_3_sub_2_total_marks = ?, c_3_sub_3_name = ?, c_3_sub_3_marks_obtained = ?, c_3_sub_3_total_marks = ?, c_3_sub_4_name = ?, c_3_sub_4_marks_obtained = ?, c_3_sub_4_total_marks = ?, c_3_sub_5_name = ?, c_3_sub_5_marks_obtained = ?, c_3_sub_5_total_marks = ?, c_3_sub_6_name = ?, c_3_sub_6_marks_obtained = ?, c_3_sub_6_total_marks = ?, c_3_sub_7_name = ?, c_3_sub_7_marks_obtained = ?, c_3_sub_7_total_marks = ?, c_3_sub_8_name = ?, c_3_sub_8_marks_obtained = ?, c_3_sub_8_total_marks = ?, c_3_sub_9_name = ?, c_3_sub_9_marks_obtained = ?, c_3_sub_9_total_marks = ?, c_3_sub_10_name = ?, c_3_sub_10_marks_obtained = ?, c_3_sub_10_total_marks = ?, c_3_sub_11_name = ?, c_3_sub_11_marks_obtained = ?, c_3_sub_11_total_marks = ?, c_3_sub_12_name = ?, c_3_sub_12_marks_obtained = ?, c_3_sub_12_total_marks = ?, c_3_sub_13_name = ?, c_3_sub_13_marks_obtained = ?, c_3_sub_13_total_marks = ?, c_3_sub_14_name = ?, c_3_sub_14_marks_obtained = ?, c_3_sub_14_total_marks = ?, c_3_sub_15_name = ?, c_3_sub_15_marks_obtained = ?, c_3_sub_15_total_marks = ?
                 WHERE aadhaar_no = ?
-            """, (c_3_sub_1_name, c_3_sub_1_marks_obtained, c_3_sub_1_total_marks, c_3_sub_2_name, c_3_sub_2_marks_obtained, c_3_sub_2_total_marks, c_3_sub_3_name, c_3_sub_3_marks_obtained, c_3_sub_3_total_marks, c_3_sub_4_name, c_3_sub_4_marks_obtained, c_3_sub_4_total_marks, c_3_sub_5_name, c_3_sub_5_marks_obtained, c_3_sub_5_total_marks, c_3_sub_6_name, c_3_sub_6_marks_obtained, c_3_sub_6_total_marks, c_3_sub_7_name, c_3_sub_7_marks_obtained, c_3_sub_7_total_marks, c_3_sub_8_name, c_3_sub_8_marks_obtained, c_3_sub_8_total_marks, c_3_sub_9_name, c_3_sub_9_marks_obtained, c_3_sub_9_total_marks, c_3_sub_10_name, c_3_sub_10_marks_obtained, c_3_sub_10_total_marks, c_3_sub_11_name, c_3_sub_11_marks_obtained, c_3_sub_11_total_marks, c_3_sub_12_name, c_3_sub_12_marks_obtained, c_3_sub_12_total_marks, c_3_sub_13_name, c_3_sub_13_marks_obtained, c_3_sub_13_total_marks, c_3_sub_14_name, c_3_sub_14_marks_obtained, c_3_sub_14_total_marks, c_3_sub_15_name, c_3_sub_15_marks_obtained, c_3_sub_15_total_marks, aadhaar_no))
+            """, (c_3_year, c_3_board, c_3_roll_no, c_3_result, c_3_sub_1_name, c_3_sub_1_marks_obtained, c_3_sub_1_total_marks, c_3_sub_2_name, c_3_sub_2_marks_obtained, c_3_sub_2_total_marks, c_3_sub_3_name, c_3_sub_3_marks_obtained, c_3_sub_3_total_marks, c_3_sub_4_name, c_3_sub_4_marks_obtained, c_3_sub_4_total_marks, c_3_sub_5_name, c_3_sub_5_marks_obtained, c_3_sub_5_total_marks, c_3_sub_6_name, c_3_sub_6_marks_obtained, c_3_sub_6_total_marks, c_3_sub_7_name, c_3_sub_7_marks_obtained, c_3_sub_7_total_marks, c_3_sub_8_name, c_3_sub_8_marks_obtained, c_3_sub_8_total_marks, c_3_sub_9_name, c_3_sub_9_marks_obtained, c_3_sub_9_total_marks, c_3_sub_10_name, c_3_sub_10_marks_obtained, c_3_sub_10_total_marks, c_3_sub_11_name, c_3_sub_11_marks_obtained, c_3_sub_11_total_marks, c_3_sub_12_name, c_3_sub_12_marks_obtained, c_3_sub_12_total_marks, c_3_sub_13_name, c_3_sub_13_marks_obtained, c_3_sub_13_total_marks, c_3_sub_14_name, c_3_sub_14_marks_obtained, c_3_sub_14_total_marks, c_3_sub_15_name, c_3_sub_15_marks_obtained, c_3_sub_15_total_marks, aadhaar_no))
 
             # Commit changes
             conn.commit()
@@ -1276,6 +1714,10 @@ def form_c_4():
         # If c_4_info is None, create a default c_4_info object
         if c_4_info is None:
             c_4_info = {
+                ' c_4_year': '',
+                ' c_4_board': '',
+                ' c_4_roll_no': '',
+                ' c_4_result': '',
                 ' c_4_sub_1_name': '',
                 ' c_4_sub_1_marks_obtained': '',
                 ' c_4_sub_1_total_marks': '',
@@ -1331,6 +1773,10 @@ def form_c_4_post():
         if request.method == 'POST':
             # Get form data
             aadhaar_no = session['aadhaar_no']
+            c_4_year = request.form['c_4_year']
+            c_4_board = request.form['c_4_board']
+            c_4_roll_no = request.form['c_4_roll_no']
+            c_4_result = request.form['c_4_result']
             c_4_sub_1_name = request.form['c_4_sub_1_name']
             c_4_sub_1_marks_obtained = request.form['c_4_sub_1_marks_obtained']
             c_4_sub_1_total_marks = request.form['c_4_sub_1_total_marks']
@@ -1380,9 +1826,9 @@ def form_c_4_post():
             # Update c_4_info in the database
             cursor.execute("""
                 UPDATE class_4
-                SET c_4_sub_1_name = ?, c_4_sub_1_marks_obtained = ?, c_4_sub_1_total_marks = ?, c_4_sub_2_name = ?, c_4_sub_2_marks_obtained = ?, c_4_sub_2_total_marks = ?, c_4_sub_3_name = ?, c_4_sub_3_marks_obtained = ?, c_4_sub_3_total_marks = ?, c_4_sub_4_name = ?, c_4_sub_4_marks_obtained = ?, c_4_sub_4_total_marks = ?, c_4_sub_5_name = ?, c_4_sub_5_marks_obtained = ?, c_4_sub_5_total_marks = ?, c_4_sub_6_name = ?, c_4_sub_6_marks_obtained = ?, c_4_sub_6_total_marks = ?, c_4_sub_7_name = ?, c_4_sub_7_marks_obtained = ?, c_4_sub_7_total_marks = ?, c_4_sub_8_name = ?, c_4_sub_8_marks_obtained = ?, c_4_sub_8_total_marks = ?, c_4_sub_9_name = ?, c_4_sub_9_marks_obtained = ?, c_4_sub_9_total_marks = ?, c_4_sub_10_name = ?, c_4_sub_10_marks_obtained = ?, c_4_sub_10_total_marks = ?, c_4_sub_11_name = ?, c_4_sub_11_marks_obtained = ?, c_4_sub_11_total_marks = ?, c_4_sub_12_name = ?, c_4_sub_12_marks_obtained = ?, c_4_sub_12_total_marks = ?, c_4_sub_13_name = ?, c_4_sub_13_marks_obtained = ?, c_4_sub_13_total_marks = ?, c_4_sub_14_name = ?, c_4_sub_14_marks_obtained = ?, c_4_sub_14_total_marks = ?, c_4_sub_15_name = ?, c_4_sub_15_marks_obtained = ?, c_4_sub_15_total_marks = ?
+                SET c_4_year = ?, c_4_board = ?, c_4_roll_no = ?, c_4_result = ?, c_4_sub_1_name = ?, c_4_sub_1_marks_obtained = ?, c_4_sub_1_total_marks = ?, c_4_sub_2_name = ?, c_4_sub_2_marks_obtained = ?, c_4_sub_2_total_marks = ?, c_4_sub_3_name = ?, c_4_sub_3_marks_obtained = ?, c_4_sub_3_total_marks = ?, c_4_sub_4_name = ?, c_4_sub_4_marks_obtained = ?, c_4_sub_4_total_marks = ?, c_4_sub_5_name = ?, c_4_sub_5_marks_obtained = ?, c_4_sub_5_total_marks = ?, c_4_sub_6_name = ?, c_4_sub_6_marks_obtained = ?, c_4_sub_6_total_marks = ?, c_4_sub_7_name = ?, c_4_sub_7_marks_obtained = ?, c_4_sub_7_total_marks = ?, c_4_sub_8_name = ?, c_4_sub_8_marks_obtained = ?, c_4_sub_8_total_marks = ?, c_4_sub_9_name = ?, c_4_sub_9_marks_obtained = ?, c_4_sub_9_total_marks = ?, c_4_sub_10_name = ?, c_4_sub_10_marks_obtained = ?, c_4_sub_10_total_marks = ?, c_4_sub_11_name = ?, c_4_sub_11_marks_obtained = ?, c_4_sub_11_total_marks = ?, c_4_sub_12_name = ?, c_4_sub_12_marks_obtained = ?, c_4_sub_12_total_marks = ?, c_4_sub_13_name = ?, c_4_sub_13_marks_obtained = ?, c_4_sub_13_total_marks = ?, c_4_sub_14_name = ?, c_4_sub_14_marks_obtained = ?, c_4_sub_14_total_marks = ?, c_4_sub_15_name = ?, c_4_sub_15_marks_obtained = ?, c_4_sub_15_total_marks = ?
                 WHERE aadhaar_no = ?
-            """, (c_4_sub_1_name, c_4_sub_1_marks_obtained, c_4_sub_1_total_marks, c_4_sub_2_name, c_4_sub_2_marks_obtained, c_4_sub_2_total_marks, c_4_sub_3_name, c_4_sub_3_marks_obtained, c_4_sub_3_total_marks, c_4_sub_4_name, c_4_sub_4_marks_obtained, c_4_sub_4_total_marks, c_4_sub_5_name, c_4_sub_5_marks_obtained, c_4_sub_5_total_marks, c_4_sub_6_name, c_4_sub_6_marks_obtained, c_4_sub_6_total_marks, c_4_sub_7_name, c_4_sub_7_marks_obtained, c_4_sub_7_total_marks, c_4_sub_8_name, c_4_sub_8_marks_obtained, c_4_sub_8_total_marks, c_4_sub_9_name, c_4_sub_9_marks_obtained, c_4_sub_9_total_marks, c_4_sub_10_name, c_4_sub_10_marks_obtained, c_4_sub_10_total_marks, c_4_sub_11_name, c_4_sub_11_marks_obtained, c_4_sub_11_total_marks, c_4_sub_12_name, c_4_sub_12_marks_obtained, c_4_sub_12_total_marks, c_4_sub_13_name, c_4_sub_13_marks_obtained, c_4_sub_13_total_marks, c_4_sub_14_name, c_4_sub_14_marks_obtained, c_4_sub_14_total_marks, c_4_sub_15_name, c_4_sub_15_marks_obtained, c_4_sub_15_total_marks, aadhaar_no))
+            """, (c_4_year, c_4_board, c_4_roll_no, c_4_result,c_4_sub_1_name, c_4_sub_1_marks_obtained, c_4_sub_1_total_marks, c_4_sub_2_name, c_4_sub_2_marks_obtained, c_4_sub_2_total_marks, c_4_sub_3_name, c_4_sub_3_marks_obtained, c_4_sub_3_total_marks, c_4_sub_4_name, c_4_sub_4_marks_obtained, c_4_sub_4_total_marks, c_4_sub_5_name, c_4_sub_5_marks_obtained, c_4_sub_5_total_marks, c_4_sub_6_name, c_4_sub_6_marks_obtained, c_4_sub_6_total_marks, c_4_sub_7_name, c_4_sub_7_marks_obtained, c_4_sub_7_total_marks, c_4_sub_8_name, c_4_sub_8_marks_obtained, c_4_sub_8_total_marks, c_4_sub_9_name, c_4_sub_9_marks_obtained, c_4_sub_9_total_marks, c_4_sub_10_name, c_4_sub_10_marks_obtained, c_4_sub_10_total_marks, c_4_sub_11_name, c_4_sub_11_marks_obtained, c_4_sub_11_total_marks, c_4_sub_12_name, c_4_sub_12_marks_obtained, c_4_sub_12_total_marks, c_4_sub_13_name, c_4_sub_13_marks_obtained, c_4_sub_13_total_marks, c_4_sub_14_name, c_4_sub_14_marks_obtained, c_4_sub_14_total_marks, c_4_sub_15_name, c_4_sub_15_marks_obtained, c_4_sub_15_total_marks, aadhaar_no))
 
             # Commit changes
             conn.commit()
@@ -1414,6 +1860,10 @@ def form_c_5():
         # If c_5_info is None, create a default c_5_info object
         if c_5_info is None:
             c_5_info = {
+                ' c_5_year': '',
+                ' c_5_board': '',
+                ' c_5_roll_no': '',
+                ' c_5_result': '',
                 ' c_5_sub_1_name': '',
                 ' c_5_sub_1_marks_obtained': '',
                 ' c_5_sub_1_total_marks': '',
@@ -1469,6 +1919,10 @@ def form_c_5_post():
         if request.method == 'POST':
             # Get form data
             aadhaar_no = session['aadhaar_no']
+            c_5_year = request.form['c_5_year']
+            c_5_board = request.form['c_5_board']
+            c_5_roll_no = request.form['c_5_roll_no']
+            c_5_result = request.form['c_5_result']
             c_5_sub_1_name = request.form['c_5_sub_1_name']
             c_5_sub_1_marks_obtained = request.form['c_5_sub_1_marks_obtained']
             c_5_sub_1_total_marks = request.form['c_5_sub_1_total_marks']
@@ -1518,9 +1972,9 @@ def form_c_5_post():
             # Update c_5_info in the database
             cursor.execute("""
                 UPDATE class_5
-                SET c_5_sub_1_name = ?, c_5_sub_1_marks_obtained = ?, c_5_sub_1_total_marks = ?, c_5_sub_2_name = ?, c_5_sub_2_marks_obtained = ?, c_5_sub_2_total_marks = ?, c_5_sub_3_name = ?, c_5_sub_3_marks_obtained = ?, c_5_sub_3_total_marks = ?, c_5_sub_4_name = ?, c_5_sub_4_marks_obtained = ?, c_5_sub_4_total_marks = ?, c_5_sub_5_name = ?, c_5_sub_5_marks_obtained = ?, c_5_sub_5_total_marks = ?, c_5_sub_6_name = ?, c_5_sub_6_marks_obtained = ?, c_5_sub_6_total_marks = ?, c_5_sub_7_name = ?, c_5_sub_7_marks_obtained = ?, c_5_sub_7_total_marks = ?, c_5_sub_8_name = ?, c_5_sub_8_marks_obtained = ?, c_5_sub_8_total_marks = ?, c_5_sub_9_name = ?, c_5_sub_9_marks_obtained = ?, c_5_sub_9_total_marks = ?, c_5_sub_10_name = ?, c_5_sub_10_marks_obtained = ?, c_5_sub_10_total_marks = ?, c_5_sub_11_name = ?, c_5_sub_11_marks_obtained = ?, c_5_sub_11_total_marks = ?, c_5_sub_12_name = ?, c_5_sub_12_marks_obtained = ?, c_5_sub_12_total_marks = ?, c_5_sub_13_name = ?, c_5_sub_13_marks_obtained = ?, c_5_sub_13_total_marks = ?, c_5_sub_14_name = ?, c_5_sub_14_marks_obtained = ?, c_5_sub_14_total_marks = ?, c_5_sub_15_name = ?, c_5_sub_15_marks_obtained = ?, c_5_sub_15_total_marks = ?
+                SET c_5_year = ?, c_5_board = ?, c_5_roll_no = ?, c_5_result = ?, c_5_sub_1_name = ?, c_5_sub_1_marks_obtained = ?, c_5_sub_1_total_marks = ?, c_5_sub_2_name = ?, c_5_sub_2_marks_obtained = ?, c_5_sub_2_total_marks = ?, c_5_sub_3_name = ?, c_5_sub_3_marks_obtained = ?, c_5_sub_3_total_marks = ?, c_5_sub_4_name = ?, c_5_sub_4_marks_obtained = ?, c_5_sub_4_total_marks = ?, c_5_sub_5_name = ?, c_5_sub_5_marks_obtained = ?, c_5_sub_5_total_marks = ?, c_5_sub_6_name = ?, c_5_sub_6_marks_obtained = ?, c_5_sub_6_total_marks = ?, c_5_sub_7_name = ?, c_5_sub_7_marks_obtained = ?, c_5_sub_7_total_marks = ?, c_5_sub_8_name = ?, c_5_sub_8_marks_obtained = ?, c_5_sub_8_total_marks = ?, c_5_sub_9_name = ?, c_5_sub_9_marks_obtained = ?, c_5_sub_9_total_marks = ?, c_5_sub_10_name = ?, c_5_sub_10_marks_obtained = ?, c_5_sub_10_total_marks = ?, c_5_sub_11_name = ?, c_5_sub_11_marks_obtained = ?, c_5_sub_11_total_marks = ?, c_5_sub_12_name = ?, c_5_sub_12_marks_obtained = ?, c_5_sub_12_total_marks = ?, c_5_sub_13_name = ?, c_5_sub_13_marks_obtained = ?, c_5_sub_13_total_marks = ?, c_5_sub_14_name = ?, c_5_sub_14_marks_obtained = ?, c_5_sub_14_total_marks = ?, c_5_sub_15_name = ?, c_5_sub_15_marks_obtained = ?, c_5_sub_15_total_marks = ?
                 WHERE aadhaar_no = ?
-            """, (c_5_sub_1_name, c_5_sub_1_marks_obtained, c_5_sub_1_total_marks, c_5_sub_2_name, c_5_sub_2_marks_obtained, c_5_sub_2_total_marks, c_5_sub_3_name, c_5_sub_3_marks_obtained, c_5_sub_3_total_marks, c_5_sub_4_name, c_5_sub_4_marks_obtained, c_5_sub_4_total_marks, c_5_sub_5_name, c_5_sub_5_marks_obtained, c_5_sub_5_total_marks, c_5_sub_6_name, c_5_sub_6_marks_obtained, c_5_sub_6_total_marks, c_5_sub_7_name, c_5_sub_7_marks_obtained, c_5_sub_7_total_marks, c_5_sub_8_name, c_5_sub_8_marks_obtained, c_5_sub_8_total_marks, c_5_sub_9_name, c_5_sub_9_marks_obtained, c_5_sub_9_total_marks, c_5_sub_10_name, c_5_sub_10_marks_obtained, c_5_sub_10_total_marks, c_5_sub_11_name, c_5_sub_11_marks_obtained, c_5_sub_11_total_marks, c_5_sub_12_name, c_5_sub_12_marks_obtained, c_5_sub_12_total_marks, c_5_sub_13_name, c_5_sub_13_marks_obtained, c_5_sub_13_total_marks, c_5_sub_14_name, c_5_sub_14_marks_obtained, c_5_sub_14_total_marks, c_5_sub_15_name, c_5_sub_15_marks_obtained, c_5_sub_15_total_marks, aadhaar_no))
+            """, (c_5_year, c_5_board, c_5_roll_no, c_5_result, c_5_sub_1_name, c_5_sub_1_marks_obtained, c_5_sub_1_total_marks, c_5_sub_2_name, c_5_sub_2_marks_obtained, c_5_sub_2_total_marks, c_5_sub_3_name, c_5_sub_3_marks_obtained, c_5_sub_3_total_marks, c_5_sub_4_name, c_5_sub_4_marks_obtained, c_5_sub_4_total_marks, c_5_sub_5_name, c_5_sub_5_marks_obtained, c_5_sub_5_total_marks, c_5_sub_6_name, c_5_sub_6_marks_obtained, c_5_sub_6_total_marks, c_5_sub_7_name, c_5_sub_7_marks_obtained, c_5_sub_7_total_marks, c_5_sub_8_name, c_5_sub_8_marks_obtained, c_5_sub_8_total_marks, c_5_sub_9_name, c_5_sub_9_marks_obtained, c_5_sub_9_total_marks, c_5_sub_10_name, c_5_sub_10_marks_obtained, c_5_sub_10_total_marks, c_5_sub_11_name, c_5_sub_11_marks_obtained, c_5_sub_11_total_marks, c_5_sub_12_name, c_5_sub_12_marks_obtained, c_5_sub_12_total_marks, c_5_sub_13_name, c_5_sub_13_marks_obtained, c_5_sub_13_total_marks, c_5_sub_14_name, c_5_sub_14_marks_obtained, c_5_sub_14_total_marks, c_5_sub_15_name, c_5_sub_15_marks_obtained, c_5_sub_15_total_marks, aadhaar_no))
 
             # Commit changes
             conn.commit()
@@ -1551,6 +2005,10 @@ def form_c_6():
         # If c_6_info is None, create a default c_6_info object
         if c_6_info is None:
             c_6_info = {
+                ' c_6_year': '',
+                ' c_6_board': '',
+                ' c_6_roll_no': '',
+                ' c_6_result': '',
                 ' c_6_sub_1_name': '',
                 ' c_6_sub_1_marks_obtained': '',
                 ' c_6_sub_1_total_marks': '',
@@ -1606,6 +2064,10 @@ def form_c_6_post():
         if request.method == 'POST':
             # Get form data
             aadhaar_no = session['aadhaar_no']
+            c_6_year = request.form['c_6_year']
+            c_6_board = request.form['c_6_board']
+            c_6_roll_no = request.form['c_6_roll_no']
+            c_6_result = request.form['c_6_result']
             c_6_sub_1_name = request.form['c_6_sub_1_name']
             c_6_sub_1_marks_obtained = request.form['c_6_sub_1_marks_obtained']
             c_6_sub_1_total_marks = request.form['c_6_sub_1_total_marks']
@@ -1655,9 +2117,9 @@ def form_c_6_post():
             # Update c_6_info in the database
             cursor.execute("""
                 UPDATE class_6
-                SET c_6_sub_1_name = ?, c_6_sub_1_marks_obtained = ?, c_6_sub_1_total_marks = ?, c_6_sub_2_name = ?, c_6_sub_2_marks_obtained = ?, c_6_sub_2_total_marks = ?, c_6_sub_3_name = ?, c_6_sub_3_marks_obtained = ?, c_6_sub_3_total_marks = ?, c_6_sub_4_name = ?, c_6_sub_4_marks_obtained = ?, c_6_sub_4_total_marks = ?, c_6_sub_5_name = ?, c_6_sub_5_marks_obtained = ?, c_6_sub_5_total_marks = ?, c_6_sub_6_name = ?, c_6_sub_6_marks_obtained = ?, c_6_sub_6_total_marks = ?, c_6_sub_7_name = ?, c_6_sub_7_marks_obtained = ?, c_6_sub_7_total_marks = ?, c_6_sub_8_name = ?, c_6_sub_8_marks_obtained = ?, c_6_sub_8_total_marks = ?, c_6_sub_9_name = ?, c_6_sub_9_marks_obtained = ?, c_6_sub_9_total_marks = ?, c_6_sub_10_name = ?, c_6_sub_10_marks_obtained = ?, c_6_sub_10_total_marks = ?, c_6_sub_11_name = ?, c_6_sub_11_marks_obtained = ?, c_6_sub_11_total_marks = ?, c_6_sub_12_name = ?, c_6_sub_12_marks_obtained = ?, c_6_sub_12_total_marks = ?, c_6_sub_13_name = ?, c_6_sub_13_marks_obtained = ?, c_6_sub_13_total_marks = ?, c_6_sub_14_name = ?, c_6_sub_14_marks_obtained = ?, c_6_sub_14_total_marks = ?, c_6_sub_15_name = ?, c_6_sub_15_marks_obtained = ?, c_6_sub_15_total_marks = ?
+                SET c_6_year = ?, c_6_board = ?, c_6_roll_no = ?, c_6_result = ?, c_6_sub_1_name = ?, c_6_sub_1_marks_obtained = ?, c_6_sub_1_total_marks = ?, c_6_sub_2_name = ?, c_6_sub_2_marks_obtained = ?, c_6_sub_2_total_marks = ?, c_6_sub_3_name = ?, c_6_sub_3_marks_obtained = ?, c_6_sub_3_total_marks = ?, c_6_sub_4_name = ?, c_6_sub_4_marks_obtained = ?, c_6_sub_4_total_marks = ?, c_6_sub_5_name = ?, c_6_sub_5_marks_obtained = ?, c_6_sub_5_total_marks = ?, c_6_sub_6_name = ?, c_6_sub_6_marks_obtained = ?, c_6_sub_6_total_marks = ?, c_6_sub_7_name = ?, c_6_sub_7_marks_obtained = ?, c_6_sub_7_total_marks = ?, c_6_sub_8_name = ?, c_6_sub_8_marks_obtained = ?, c_6_sub_8_total_marks = ?, c_6_sub_9_name = ?, c_6_sub_9_marks_obtained = ?, c_6_sub_9_total_marks = ?, c_6_sub_10_name = ?, c_6_sub_10_marks_obtained = ?, c_6_sub_10_total_marks = ?, c_6_sub_11_name = ?, c_6_sub_11_marks_obtained = ?, c_6_sub_11_total_marks = ?, c_6_sub_12_name = ?, c_6_sub_12_marks_obtained = ?, c_6_sub_12_total_marks = ?, c_6_sub_13_name = ?, c_6_sub_13_marks_obtained = ?, c_6_sub_13_total_marks = ?, c_6_sub_14_name = ?, c_6_sub_14_marks_obtained = ?, c_6_sub_14_total_marks = ?, c_6_sub_15_name = ?, c_6_sub_15_marks_obtained = ?, c_6_sub_15_total_marks = ?
                 WHERE aadhaar_no = ?
-            """, (c_6_sub_1_name, c_6_sub_1_marks_obtained, c_6_sub_1_total_marks, c_6_sub_2_name, c_6_sub_2_marks_obtained, c_6_sub_2_total_marks, c_6_sub_3_name, c_6_sub_3_marks_obtained, c_6_sub_3_total_marks, c_6_sub_4_name, c_6_sub_4_marks_obtained, c_6_sub_4_total_marks, c_6_sub_5_name, c_6_sub_5_marks_obtained, c_6_sub_5_total_marks, c_6_sub_6_name, c_6_sub_6_marks_obtained, c_6_sub_6_total_marks, c_6_sub_7_name, c_6_sub_7_marks_obtained, c_6_sub_7_total_marks, c_6_sub_8_name, c_6_sub_8_marks_obtained, c_6_sub_8_total_marks, c_6_sub_9_name, c_6_sub_9_marks_obtained, c_6_sub_9_total_marks, c_6_sub_10_name, c_6_sub_10_marks_obtained, c_6_sub_10_total_marks, c_6_sub_11_name, c_6_sub_11_marks_obtained, c_6_sub_11_total_marks, c_6_sub_12_name, c_6_sub_12_marks_obtained, c_6_sub_12_total_marks, c_6_sub_13_name, c_6_sub_13_marks_obtained, c_6_sub_13_total_marks, c_6_sub_14_name, c_6_sub_14_marks_obtained, c_6_sub_14_total_marks, c_6_sub_15_name, c_6_sub_15_marks_obtained, c_6_sub_15_total_marks, aadhaar_no))
+            """, (c_6_year, c_6_board, c_6_roll_no, c_6_result, c_6_sub_1_name, c_6_sub_1_marks_obtained, c_6_sub_1_total_marks, c_6_sub_2_name, c_6_sub_2_marks_obtained, c_6_sub_2_total_marks, c_6_sub_3_name, c_6_sub_3_marks_obtained, c_6_sub_3_total_marks, c_6_sub_4_name, c_6_sub_4_marks_obtained, c_6_sub_4_total_marks, c_6_sub_5_name, c_6_sub_5_marks_obtained, c_6_sub_5_total_marks, c_6_sub_6_name, c_6_sub_6_marks_obtained, c_6_sub_6_total_marks, c_6_sub_7_name, c_6_sub_7_marks_obtained, c_6_sub_7_total_marks, c_6_sub_8_name, c_6_sub_8_marks_obtained, c_6_sub_8_total_marks, c_6_sub_9_name, c_6_sub_9_marks_obtained, c_6_sub_9_total_marks, c_6_sub_10_name, c_6_sub_10_marks_obtained, c_6_sub_10_total_marks, c_6_sub_11_name, c_6_sub_11_marks_obtained, c_6_sub_11_total_marks, c_6_sub_12_name, c_6_sub_12_marks_obtained, c_6_sub_12_total_marks, c_6_sub_13_name, c_6_sub_13_marks_obtained, c_6_sub_13_total_marks, c_6_sub_14_name, c_6_sub_14_marks_obtained, c_6_sub_14_total_marks, c_6_sub_15_name, c_6_sub_15_marks_obtained, c_6_sub_15_total_marks, aadhaar_no))
 
             # Commit changes
             conn.commit()
@@ -1689,6 +2151,10 @@ def form_c_7():
         # If c_7_info is None, create a default c_7_info object
         if c_7_info is None:
             c_7_info = {
+                ' c_7_year': '',
+                ' c_7_board': '',
+                ' c_7_roll_no': '',
+                ' c_7_result': '',
                 ' c_7_sub_1_name': '',
                 ' c_7_sub_1_marks_obtained': '',
                 ' c_7_sub_1_total_marks': '',
@@ -1744,6 +2210,10 @@ def form_c_7_post():
         if request.method == 'POST':
             # Get form data
             aadhaar_no = session['aadhaar_no']
+            c_7_year = request.form['c_7_year']
+            c_7_board = request.form['c_7_board']
+            c_7_roll_no = request.form['c_7_roll_no']
+            c_7_result = request.form['c_7_result']
             c_7_sub_1_name = request.form['c_7_sub_1_name']
             c_7_sub_1_marks_obtained = request.form['c_7_sub_1_marks_obtained']
             c_7_sub_1_total_marks = request.form['c_7_sub_1_total_marks']
@@ -1793,9 +2263,9 @@ def form_c_7_post():
             # Update c_7_info in the database
             cursor.execute("""
                 UPDATE class_7
-                SET c_7_sub_1_name = ?, c_7_sub_1_marks_obtained = ?, c_7_sub_1_total_marks = ?, c_7_sub_2_name = ?, c_7_sub_2_marks_obtained = ?, c_7_sub_2_total_marks = ?, c_7_sub_3_name = ?, c_7_sub_3_marks_obtained = ?, c_7_sub_3_total_marks = ?, c_7_sub_4_name = ?, c_7_sub_4_marks_obtained = ?, c_7_sub_4_total_marks = ?, c_7_sub_5_name = ?, c_7_sub_5_marks_obtained = ?, c_7_sub_5_total_marks = ?, c_7_sub_6_name = ?, c_7_sub_6_marks_obtained = ?, c_7_sub_6_total_marks = ?, c_7_sub_7_name = ?, c_7_sub_7_marks_obtained = ?, c_7_sub_7_total_marks = ?, c_7_sub_8_name = ?, c_7_sub_8_marks_obtained = ?, c_7_sub_8_total_marks = ?, c_7_sub_9_name = ?, c_7_sub_9_marks_obtained = ?, c_7_sub_9_total_marks = ?, c_7_sub_10_name = ?, c_7_sub_10_marks_obtained = ?, c_7_sub_10_total_marks = ?, c_7_sub_11_name = ?, c_7_sub_11_marks_obtained = ?, c_7_sub_11_total_marks = ?, c_7_sub_12_name = ?, c_7_sub_12_marks_obtained = ?, c_7_sub_12_total_marks = ?, c_7_sub_13_name = ?, c_7_sub_13_marks_obtained = ?, c_7_sub_13_total_marks = ?, c_7_sub_14_name = ?, c_7_sub_14_marks_obtained = ?, c_7_sub_14_total_marks = ?, c_7_sub_15_name = ?, c_7_sub_15_marks_obtained = ?, c_7_sub_15_total_marks = ?
+                SET c_7_year = ?, c_7_board = ?, c_7_roll_no = ?, c_7_result = ?, c_7_sub_1_name = ?, c_7_sub_1_marks_obtained = ?, c_7_sub_1_total_marks = ?, c_7_sub_2_name = ?, c_7_sub_2_marks_obtained = ?, c_7_sub_2_total_marks = ?, c_7_sub_3_name = ?, c_7_sub_3_marks_obtained = ?, c_7_sub_3_total_marks = ?, c_7_sub_4_name = ?, c_7_sub_4_marks_obtained = ?, c_7_sub_4_total_marks = ?, c_7_sub_5_name = ?, c_7_sub_5_marks_obtained = ?, c_7_sub_5_total_marks = ?, c_7_sub_6_name = ?, c_7_sub_6_marks_obtained = ?, c_7_sub_6_total_marks = ?, c_7_sub_7_name = ?, c_7_sub_7_marks_obtained = ?, c_7_sub_7_total_marks = ?, c_7_sub_8_name = ?, c_7_sub_8_marks_obtained = ?, c_7_sub_8_total_marks = ?, c_7_sub_9_name = ?, c_7_sub_9_marks_obtained = ?, c_7_sub_9_total_marks = ?, c_7_sub_10_name = ?, c_7_sub_10_marks_obtained = ?, c_7_sub_10_total_marks = ?, c_7_sub_11_name = ?, c_7_sub_11_marks_obtained = ?, c_7_sub_11_total_marks = ?, c_7_sub_12_name = ?, c_7_sub_12_marks_obtained = ?, c_7_sub_12_total_marks = ?, c_7_sub_13_name = ?, c_7_sub_13_marks_obtained = ?, c_7_sub_13_total_marks = ?, c_7_sub_14_name = ?, c_7_sub_14_marks_obtained = ?, c_7_sub_14_total_marks = ?, c_7_sub_15_name = ?, c_7_sub_15_marks_obtained = ?, c_7_sub_15_total_marks = ?
                 WHERE aadhaar_no = ?
-            """, (c_7_sub_1_name, c_7_sub_1_marks_obtained, c_7_sub_1_total_marks, c_7_sub_2_name, c_7_sub_2_marks_obtained, c_7_sub_2_total_marks, c_7_sub_3_name, c_7_sub_3_marks_obtained, c_7_sub_3_total_marks, c_7_sub_4_name, c_7_sub_4_marks_obtained, c_7_sub_4_total_marks, c_7_sub_5_name, c_7_sub_5_marks_obtained, c_7_sub_5_total_marks, c_7_sub_6_name, c_7_sub_6_marks_obtained, c_7_sub_6_total_marks, c_7_sub_7_name, c_7_sub_7_marks_obtained, c_7_sub_7_total_marks, c_7_sub_8_name, c_7_sub_8_marks_obtained, c_7_sub_8_total_marks, c_7_sub_9_name, c_7_sub_9_marks_obtained, c_7_sub_9_total_marks, c_7_sub_10_name, c_7_sub_10_marks_obtained, c_7_sub_10_total_marks, c_7_sub_11_name, c_7_sub_11_marks_obtained, c_7_sub_11_total_marks, c_7_sub_12_name, c_7_sub_12_marks_obtained, c_7_sub_12_total_marks, c_7_sub_13_name, c_7_sub_13_marks_obtained, c_7_sub_13_total_marks, c_7_sub_14_name, c_7_sub_14_marks_obtained, c_7_sub_14_total_marks, c_7_sub_15_name, c_7_sub_15_marks_obtained, c_7_sub_15_total_marks, aadhaar_no))
+            """, (c_7_year, c_7_board, c_7_roll_no, c_7_result, c_7_sub_1_name, c_7_sub_1_marks_obtained, c_7_sub_1_total_marks, c_7_sub_2_name, c_7_sub_2_marks_obtained, c_7_sub_2_total_marks, c_7_sub_3_name, c_7_sub_3_marks_obtained, c_7_sub_3_total_marks, c_7_sub_4_name, c_7_sub_4_marks_obtained, c_7_sub_4_total_marks, c_7_sub_5_name, c_7_sub_5_marks_obtained, c_7_sub_5_total_marks, c_7_sub_6_name, c_7_sub_6_marks_obtained, c_7_sub_6_total_marks, c_7_sub_7_name, c_7_sub_7_marks_obtained, c_7_sub_7_total_marks, c_7_sub_8_name, c_7_sub_8_marks_obtained, c_7_sub_8_total_marks, c_7_sub_9_name, c_7_sub_9_marks_obtained, c_7_sub_9_total_marks, c_7_sub_10_name, c_7_sub_10_marks_obtained, c_7_sub_10_total_marks, c_7_sub_11_name, c_7_sub_11_marks_obtained, c_7_sub_11_total_marks, c_7_sub_12_name, c_7_sub_12_marks_obtained, c_7_sub_12_total_marks, c_7_sub_13_name, c_7_sub_13_marks_obtained, c_7_sub_13_total_marks, c_7_sub_14_name, c_7_sub_14_marks_obtained, c_7_sub_14_total_marks, c_7_sub_15_name, c_7_sub_15_marks_obtained, c_7_sub_15_total_marks, aadhaar_no))
 
             # Commit changes
             conn.commit()
@@ -1827,6 +2297,10 @@ def form_c_8():
         # If c_8_info is None, create a default c_8_info object
         if c_8_info is None:
             c_8_info = {
+                ' c_8_year': '',
+                ' c_8_board': '',
+                ' c_8_roll_no': '',
+                ' c_8_result': '',
                 ' c_8_sub_1_name': '',
                 ' c_8_sub_1_marks_obtained': '',
                 ' c_8_sub_1_total_marks': '',
@@ -1882,6 +2356,10 @@ def form_c_8_post():
         if request.method == 'POST':
             # Get form data
             aadhaar_no = session['aadhaar_no']
+            c_8_year = request.form['c_8_year']
+            c_8_board = request.form['c_8_board']
+            c_8_roll_no = request.form['c_8_roll_no']
+            c_8_result = request.form['c_8_result']
             c_8_sub_1_name = request.form['c_8_sub_1_name']
             c_8_sub_1_marks_obtained = request.form['c_8_sub_1_marks_obtained']
             c_8_sub_1_total_marks = request.form['c_8_sub_1_total_marks']
@@ -1931,9 +2409,9 @@ def form_c_8_post():
             # Update c_8_info in the database
             cursor.execute("""
                 UPDATE class_8
-                SET c_8_sub_1_name = ?, c_8_sub_1_marks_obtained = ?, c_8_sub_1_total_marks = ?, c_8_sub_2_name = ?, c_8_sub_2_marks_obtained = ?, c_8_sub_2_total_marks = ?, c_8_sub_3_name = ?, c_8_sub_3_marks_obtained = ?, c_8_sub_3_total_marks = ?, c_8_sub_4_name = ?, c_8_sub_4_marks_obtained = ?, c_8_sub_4_total_marks = ?, c_8_sub_5_name = ?, c_8_sub_5_marks_obtained = ?, c_8_sub_5_total_marks = ?, c_8_sub_6_name = ?, c_8_sub_6_marks_obtained = ?, c_8_sub_6_total_marks = ?, c_8_sub_7_name = ?, c_8_sub_7_marks_obtained = ?, c_8_sub_7_total_marks = ?, c_8_sub_8_name = ?, c_8_sub_8_marks_obtained = ?, c_8_sub_8_total_marks = ?, c_8_sub_9_name = ?, c_8_sub_9_marks_obtained = ?, c_8_sub_9_total_marks = ?, c_8_sub_10_name = ?, c_8_sub_10_marks_obtained = ?, c_8_sub_10_total_marks = ?, c_8_sub_11_name = ?, c_8_sub_11_marks_obtained = ?, c_8_sub_11_total_marks = ?, c_8_sub_12_name = ?, c_8_sub_12_marks_obtained = ?, c_8_sub_12_total_marks = ?, c_8_sub_13_name = ?, c_8_sub_13_marks_obtained = ?, c_8_sub_13_total_marks = ?, c_8_sub_14_name = ?, c_8_sub_14_marks_obtained = ?, c_8_sub_14_total_marks = ?, c_8_sub_15_name = ?, c_8_sub_15_marks_obtained = ?, c_8_sub_15_total_marks = ?
+                SET c_8_year = ?, c_8_board = ?, c_8_roll_no = ?, c_8_result = ?, c_8_sub_1_name = ?, c_8_sub_1_marks_obtained = ?, c_8_sub_1_total_marks = ?, c_8_sub_2_name = ?, c_8_sub_2_marks_obtained = ?, c_8_sub_2_total_marks = ?, c_8_sub_3_name = ?, c_8_sub_3_marks_obtained = ?, c_8_sub_3_total_marks = ?, c_8_sub_4_name = ?, c_8_sub_4_marks_obtained = ?, c_8_sub_4_total_marks = ?, c_8_sub_5_name = ?, c_8_sub_5_marks_obtained = ?, c_8_sub_5_total_marks = ?, c_8_sub_6_name = ?, c_8_sub_6_marks_obtained = ?, c_8_sub_6_total_marks = ?, c_8_sub_7_name = ?, c_8_sub_7_marks_obtained = ?, c_8_sub_7_total_marks = ?, c_8_sub_8_name = ?, c_8_sub_8_marks_obtained = ?, c_8_sub_8_total_marks = ?, c_8_sub_9_name = ?, c_8_sub_9_marks_obtained = ?, c_8_sub_9_total_marks = ?, c_8_sub_10_name = ?, c_8_sub_10_marks_obtained = ?, c_8_sub_10_total_marks = ?, c_8_sub_11_name = ?, c_8_sub_11_marks_obtained = ?, c_8_sub_11_total_marks = ?, c_8_sub_12_name = ?, c_8_sub_12_marks_obtained = ?, c_8_sub_12_total_marks = ?, c_8_sub_13_name = ?, c_8_sub_13_marks_obtained = ?, c_8_sub_13_total_marks = ?, c_8_sub_14_name = ?, c_8_sub_14_marks_obtained = ?, c_8_sub_14_total_marks = ?, c_8_sub_15_name = ?, c_8_sub_15_marks_obtained = ?, c_8_sub_15_total_marks = ?
                 WHERE aadhaar_no = ?
-            """, (c_8_sub_1_name, c_8_sub_1_marks_obtained, c_8_sub_1_total_marks, c_8_sub_2_name, c_8_sub_2_marks_obtained, c_8_sub_2_total_marks, c_8_sub_3_name, c_8_sub_3_marks_obtained, c_8_sub_3_total_marks, c_8_sub_4_name, c_8_sub_4_marks_obtained, c_8_sub_4_total_marks, c_8_sub_5_name, c_8_sub_5_marks_obtained, c_8_sub_5_total_marks, c_8_sub_6_name, c_8_sub_6_marks_obtained, c_8_sub_6_total_marks, c_8_sub_7_name, c_8_sub_7_marks_obtained, c_8_sub_7_total_marks, c_8_sub_8_name, c_8_sub_8_marks_obtained, c_8_sub_8_total_marks, c_8_sub_9_name, c_8_sub_9_marks_obtained, c_8_sub_9_total_marks, c_8_sub_10_name, c_8_sub_10_marks_obtained, c_8_sub_10_total_marks, c_8_sub_11_name, c_8_sub_11_marks_obtained, c_8_sub_11_total_marks, c_8_sub_12_name, c_8_sub_12_marks_obtained, c_8_sub_12_total_marks, c_8_sub_13_name, c_8_sub_13_marks_obtained, c_8_sub_13_total_marks, c_8_sub_14_name, c_8_sub_14_marks_obtained, c_8_sub_14_total_marks, c_8_sub_15_name, c_8_sub_15_marks_obtained, c_8_sub_15_total_marks, aadhaar_no))
+            """, (c_8_year, c_8_board, c_8_roll_no, c_8_result, c_8_sub_1_name, c_8_sub_1_marks_obtained, c_8_sub_1_total_marks, c_8_sub_2_name, c_8_sub_2_marks_obtained, c_8_sub_2_total_marks, c_8_sub_3_name, c_8_sub_3_marks_obtained, c_8_sub_3_total_marks, c_8_sub_4_name, c_8_sub_4_marks_obtained, c_8_sub_4_total_marks, c_8_sub_5_name, c_8_sub_5_marks_obtained, c_8_sub_5_total_marks, c_8_sub_6_name, c_8_sub_6_marks_obtained, c_8_sub_6_total_marks, c_8_sub_7_name, c_8_sub_7_marks_obtained, c_8_sub_7_total_marks, c_8_sub_8_name, c_8_sub_8_marks_obtained, c_8_sub_8_total_marks, c_8_sub_9_name, c_8_sub_9_marks_obtained, c_8_sub_9_total_marks, c_8_sub_10_name, c_8_sub_10_marks_obtained, c_8_sub_10_total_marks, c_8_sub_11_name, c_8_sub_11_marks_obtained, c_8_sub_11_total_marks, c_8_sub_12_name, c_8_sub_12_marks_obtained, c_8_sub_12_total_marks, c_8_sub_13_name, c_8_sub_13_marks_obtained, c_8_sub_13_total_marks, c_8_sub_14_name, c_8_sub_14_marks_obtained, c_8_sub_14_total_marks, c_8_sub_15_name, c_8_sub_15_marks_obtained, c_8_sub_15_total_marks, aadhaar_no))
 
             # Commit changes
             conn.commit()
@@ -1965,6 +2443,10 @@ def form_c_9():
         # If c_9_info is None, create a default c_9_info object
         if c_9_info is None:
             c_9_info = {
+                ' c_9_year': '',
+                ' c_9_board': '',
+                ' c_9_roll_no': '',
+                ' c_9_result': '',
                 ' c_9_sub_1_name': '',
                 ' c_9_sub_1_marks_obtained': '',
                 ' c_9_sub_1_total_marks': '',
@@ -2020,6 +2502,10 @@ def form_c_9_post():
         if request.method == 'POST':
             # Get form data
             aadhaar_no = session['aadhaar_no']
+            c_9_year = request.form['c_9_year']
+            c_9_board = request.form['c_9_board']
+            c_9_roll_no = request.form['c_9_roll_no']
+            c_9_result = request.form['c_9_result']
             c_9_sub_1_name = request.form['c_9_sub_1_name']
             c_9_sub_1_marks_obtained = request.form['c_9_sub_1_marks_obtained']
             c_9_sub_1_total_marks = request.form['c_9_sub_1_total_marks']
@@ -2069,9 +2555,9 @@ def form_c_9_post():
             # Update c_9_info in the database
             cursor.execute("""
                 UPDATE class_9
-                SET c_9_sub_1_name = ?, c_9_sub_1_marks_obtained = ?, c_9_sub_1_total_marks = ?, c_9_sub_2_name = ?, c_9_sub_2_marks_obtained = ?, c_9_sub_2_total_marks = ?, c_9_sub_3_name = ?, c_9_sub_3_marks_obtained = ?, c_9_sub_3_total_marks = ?, c_9_sub_4_name = ?, c_9_sub_4_marks_obtained = ?, c_9_sub_4_total_marks = ?, c_9_sub_5_name = ?, c_9_sub_5_marks_obtained = ?, c_9_sub_5_total_marks = ?, c_9_sub_6_name = ?, c_9_sub_6_marks_obtained = ?, c_9_sub_6_total_marks = ?, c_9_sub_7_name = ?, c_9_sub_7_marks_obtained = ?, c_9_sub_7_total_marks = ?, c_9_sub_8_name = ?, c_9_sub_8_marks_obtained = ?, c_9_sub_8_total_marks = ?, c_9_sub_9_name = ?, c_9_sub_9_marks_obtained = ?, c_9_sub_9_total_marks = ?, c_9_sub_10_name = ?, c_9_sub_10_marks_obtained = ?, c_9_sub_10_total_marks = ?, c_9_sub_11_name = ?, c_9_sub_11_marks_obtained = ?, c_9_sub_11_total_marks = ?, c_9_sub_12_name = ?, c_9_sub_12_marks_obtained = ?, c_9_sub_12_total_marks = ?, c_9_sub_13_name = ?, c_9_sub_13_marks_obtained = ?, c_9_sub_13_total_marks = ?, c_9_sub_14_name = ?, c_9_sub_14_marks_obtained = ?, c_9_sub_14_total_marks = ?, c_9_sub_15_name = ?, c_9_sub_15_marks_obtained = ?, c_9_sub_15_total_marks = ?
+                SET c_9_year = ?, c_9_board = ?, c_9_roll_no = ?, c_9_result = ?, c_9_sub_1_name = ?, c_9_sub_1_marks_obtained = ?, c_9_sub_1_total_marks = ?, c_9_sub_2_name = ?, c_9_sub_2_marks_obtained = ?, c_9_sub_2_total_marks = ?, c_9_sub_3_name = ?, c_9_sub_3_marks_obtained = ?, c_9_sub_3_total_marks = ?, c_9_sub_4_name = ?, c_9_sub_4_marks_obtained = ?, c_9_sub_4_total_marks = ?, c_9_sub_5_name = ?, c_9_sub_5_marks_obtained = ?, c_9_sub_5_total_marks = ?, c_9_sub_6_name = ?, c_9_sub_6_marks_obtained = ?, c_9_sub_6_total_marks = ?, c_9_sub_7_name = ?, c_9_sub_7_marks_obtained = ?, c_9_sub_7_total_marks = ?, c_9_sub_8_name = ?, c_9_sub_8_marks_obtained = ?, c_9_sub_8_total_marks = ?, c_9_sub_9_name = ?, c_9_sub_9_marks_obtained = ?, c_9_sub_9_total_marks = ?, c_9_sub_10_name = ?, c_9_sub_10_marks_obtained = ?, c_9_sub_10_total_marks = ?, c_9_sub_11_name = ?, c_9_sub_11_marks_obtained = ?, c_9_sub_11_total_marks = ?, c_9_sub_12_name = ?, c_9_sub_12_marks_obtained = ?, c_9_sub_12_total_marks = ?, c_9_sub_13_name = ?, c_9_sub_13_marks_obtained = ?, c_9_sub_13_total_marks = ?, c_9_sub_14_name = ?, c_9_sub_14_marks_obtained = ?, c_9_sub_14_total_marks = ?, c_9_sub_15_name = ?, c_9_sub_15_marks_obtained = ?, c_9_sub_15_total_marks = ?
                 WHERE aadhaar_no = ?
-            """, (c_9_sub_1_name, c_9_sub_1_marks_obtained, c_9_sub_1_total_marks, c_9_sub_2_name, c_9_sub_2_marks_obtained, c_9_sub_2_total_marks, c_9_sub_3_name, c_9_sub_3_marks_obtained, c_9_sub_3_total_marks, c_9_sub_4_name, c_9_sub_4_marks_obtained, c_9_sub_4_total_marks, c_9_sub_5_name, c_9_sub_5_marks_obtained, c_9_sub_5_total_marks, c_9_sub_6_name, c_9_sub_6_marks_obtained, c_9_sub_6_total_marks, c_9_sub_7_name, c_9_sub_7_marks_obtained, c_9_sub_7_total_marks, c_9_sub_8_name, c_9_sub_8_marks_obtained, c_9_sub_8_total_marks, c_9_sub_9_name, c_9_sub_9_marks_obtained, c_9_sub_9_total_marks, c_9_sub_10_name, c_9_sub_10_marks_obtained, c_9_sub_10_total_marks, c_9_sub_11_name, c_9_sub_11_marks_obtained, c_9_sub_11_total_marks, c_9_sub_12_name, c_9_sub_12_marks_obtained, c_9_sub_12_total_marks, c_9_sub_13_name, c_9_sub_13_marks_obtained, c_9_sub_13_total_marks, c_9_sub_14_name, c_9_sub_14_marks_obtained, c_9_sub_14_total_marks, c_9_sub_15_name, c_9_sub_15_marks_obtained, c_9_sub_15_total_marks, aadhaar_no))
+            """, (c_9_year, c_9_board, c_9_roll_no, c_9_result, c_9_sub_1_name, c_9_sub_1_marks_obtained, c_9_sub_1_total_marks, c_9_sub_2_name, c_9_sub_2_marks_obtained, c_9_sub_2_total_marks, c_9_sub_3_name, c_9_sub_3_marks_obtained, c_9_sub_3_total_marks, c_9_sub_4_name, c_9_sub_4_marks_obtained, c_9_sub_4_total_marks, c_9_sub_5_name, c_9_sub_5_marks_obtained, c_9_sub_5_total_marks, c_9_sub_6_name, c_9_sub_6_marks_obtained, c_9_sub_6_total_marks, c_9_sub_7_name, c_9_sub_7_marks_obtained, c_9_sub_7_total_marks, c_9_sub_8_name, c_9_sub_8_marks_obtained, c_9_sub_8_total_marks, c_9_sub_9_name, c_9_sub_9_marks_obtained, c_9_sub_9_total_marks, c_9_sub_10_name, c_9_sub_10_marks_obtained, c_9_sub_10_total_marks, c_9_sub_11_name, c_9_sub_11_marks_obtained, c_9_sub_11_total_marks, c_9_sub_12_name, c_9_sub_12_marks_obtained, c_9_sub_12_total_marks, c_9_sub_13_name, c_9_sub_13_marks_obtained, c_9_sub_13_total_marks, c_9_sub_14_name, c_9_sub_14_marks_obtained, c_9_sub_14_total_marks, c_9_sub_15_name, c_9_sub_15_marks_obtained, c_9_sub_15_total_marks, aadhaar_no))
 
             # Commit changes
             conn.commit()
@@ -2103,6 +2589,10 @@ def form_c_10():
         # If c_10_info is None, create a default c_10_info object
         if c_10_info is None:
             c_10_info = {
+                ' c_10_year': '',
+                ' c_10_board': '',
+                ' c_10_roll_no': '',
+                ' c_10_result': '',
                 ' c_10_sub_1_name': '',
                 ' c_10_sub_1_marks_obtained': '',
                 ' c_10_sub_1_total_marks': '',
@@ -2158,6 +2648,10 @@ def form_c_10_post():
         if request.method == 'POST':
             # Get form data
             aadhaar_no = session['aadhaar_no']
+            c_10_year = request.form['c_10_year']
+            c_10_board = request.form['c_10_board']
+            c_10_roll_no = request.form['c_10_roll_no']
+            c_10_result = request.form['c_10_result']
             c_10_sub_1_name = request.form['c_10_sub_1_name']
             c_10_sub_1_marks_obtained = request.form['c_10_sub_1_marks_obtained']
             c_10_sub_1_total_marks = request.form['c_10_sub_1_total_marks']
@@ -2207,9 +2701,9 @@ def form_c_10_post():
             # Update c_10_info in the database
             cursor.execute("""
                 UPDATE class_10
-                SET c_10_sub_1_name = ?, c_10_sub_1_marks_obtained = ?, c_10_sub_1_total_marks = ?, c_10_sub_2_name = ?, c_10_sub_2_marks_obtained = ?, c_10_sub_2_total_marks = ?, c_10_sub_3_name = ?, c_10_sub_3_marks_obtained = ?, c_10_sub_3_total_marks = ?, c_10_sub_4_name = ?, c_10_sub_4_marks_obtained = ?, c_10_sub_4_total_marks = ?, c_10_sub_5_name = ?, c_10_sub_5_marks_obtained = ?, c_10_sub_5_total_marks = ?, c_10_sub_6_name = ?, c_10_sub_6_marks_obtained = ?, c_10_sub_6_total_marks = ?, c_10_sub_7_name = ?, c_10_sub_7_marks_obtained = ?, c_10_sub_7_total_marks = ?, c_10_sub_8_name = ?, c_10_sub_8_marks_obtained = ?, c_10_sub_8_total_marks = ?, c_10_sub_9_name = ?, c_10_sub_9_marks_obtained = ?, c_10_sub_9_total_marks = ?, c_10_sub_10_name = ?, c_10_sub_10_marks_obtained = ?, c_10_sub_10_total_marks = ?, c_10_sub_11_name = ?, c_10_sub_11_marks_obtained = ?, c_10_sub_11_total_marks = ?, c_10_sub_12_name = ?, c_10_sub_12_marks_obtained = ?, c_10_sub_12_total_marks = ?, c_10_sub_13_name = ?, c_10_sub_13_marks_obtained = ?, c_10_sub_13_total_marks = ?, c_10_sub_14_name = ?, c_10_sub_14_marks_obtained = ?, c_10_sub_14_total_marks = ?, c_10_sub_15_name = ?, c_10_sub_15_marks_obtained = ?, c_10_sub_15_total_marks = ?
+                SET c_10_year = ?, c_10_board = ?, c_10_roll_no = ?, c_10_result = ?, c_10_sub_1_name = ?, c_10_sub_1_marks_obtained = ?, c_10_sub_1_total_marks = ?, c_10_sub_2_name = ?, c_10_sub_2_marks_obtained = ?, c_10_sub_2_total_marks = ?, c_10_sub_3_name = ?, c_10_sub_3_marks_obtained = ?, c_10_sub_3_total_marks = ?, c_10_sub_4_name = ?, c_10_sub_4_marks_obtained = ?, c_10_sub_4_total_marks = ?, c_10_sub_5_name = ?, c_10_sub_5_marks_obtained = ?, c_10_sub_5_total_marks = ?, c_10_sub_6_name = ?, c_10_sub_6_marks_obtained = ?, c_10_sub_6_total_marks = ?, c_10_sub_7_name = ?, c_10_sub_7_marks_obtained = ?, c_10_sub_7_total_marks = ?, c_10_sub_8_name = ?, c_10_sub_8_marks_obtained = ?, c_10_sub_8_total_marks = ?, c_10_sub_9_name = ?, c_10_sub_9_marks_obtained = ?, c_10_sub_9_total_marks = ?, c_10_sub_10_name = ?, c_10_sub_10_marks_obtained = ?, c_10_sub_10_total_marks = ?, c_10_sub_11_name = ?, c_10_sub_11_marks_obtained = ?, c_10_sub_11_total_marks = ?, c_10_sub_12_name = ?, c_10_sub_12_marks_obtained = ?, c_10_sub_12_total_marks = ?, c_10_sub_13_name = ?, c_10_sub_13_marks_obtained = ?, c_10_sub_13_total_marks = ?, c_10_sub_14_name = ?, c_10_sub_14_marks_obtained = ?, c_10_sub_14_total_marks = ?, c_10_sub_15_name = ?, c_10_sub_15_marks_obtained = ?, c_10_sub_15_total_marks = ?
                 WHERE aadhaar_no = ?
-            """, (c_10_sub_1_name, c_10_sub_1_marks_obtained, c_10_sub_1_total_marks, c_10_sub_2_name, c_10_sub_2_marks_obtained, c_10_sub_2_total_marks, c_10_sub_3_name, c_10_sub_3_marks_obtained, c_10_sub_3_total_marks, c_10_sub_4_name, c_10_sub_4_marks_obtained, c_10_sub_4_total_marks, c_10_sub_5_name, c_10_sub_5_marks_obtained, c_10_sub_5_total_marks, c_10_sub_6_name, c_10_sub_6_marks_obtained, c_10_sub_6_total_marks, c_10_sub_7_name, c_10_sub_7_marks_obtained, c_10_sub_7_total_marks, c_10_sub_8_name, c_10_sub_8_marks_obtained, c_10_sub_8_total_marks, c_10_sub_9_name, c_10_sub_9_marks_obtained, c_10_sub_9_total_marks, c_10_sub_10_name, c_10_sub_10_marks_obtained, c_10_sub_10_total_marks, c_10_sub_11_name, c_10_sub_11_marks_obtained, c_10_sub_11_total_marks, c_10_sub_12_name, c_10_sub_12_marks_obtained, c_10_sub_12_total_marks, c_10_sub_13_name, c_10_sub_13_marks_obtained, c_10_sub_13_total_marks, c_10_sub_14_name, c_10_sub_14_marks_obtained, c_10_sub_14_total_marks, c_10_sub_15_name, c_10_sub_15_marks_obtained, c_10_sub_15_total_marks, aadhaar_no))
+            """, (c_10_year, c_10_board, c_10_roll_no, c_10_result, c_10_sub_1_name, c_10_sub_1_marks_obtained, c_10_sub_1_total_marks, c_10_sub_2_name, c_10_sub_2_marks_obtained, c_10_sub_2_total_marks, c_10_sub_3_name, c_10_sub_3_marks_obtained, c_10_sub_3_total_marks, c_10_sub_4_name, c_10_sub_4_marks_obtained, c_10_sub_4_total_marks, c_10_sub_5_name, c_10_sub_5_marks_obtained, c_10_sub_5_total_marks, c_10_sub_6_name, c_10_sub_6_marks_obtained, c_10_sub_6_total_marks, c_10_sub_7_name, c_10_sub_7_marks_obtained, c_10_sub_7_total_marks, c_10_sub_8_name, c_10_sub_8_marks_obtained, c_10_sub_8_total_marks, c_10_sub_9_name, c_10_sub_9_marks_obtained, c_10_sub_9_total_marks, c_10_sub_10_name, c_10_sub_10_marks_obtained, c_10_sub_10_total_marks, c_10_sub_11_name, c_10_sub_11_marks_obtained, c_10_sub_11_total_marks, c_10_sub_12_name, c_10_sub_12_marks_obtained, c_10_sub_12_total_marks, c_10_sub_13_name, c_10_sub_13_marks_obtained, c_10_sub_13_total_marks, c_10_sub_14_name, c_10_sub_14_marks_obtained, c_10_sub_14_total_marks, c_10_sub_15_name, c_10_sub_15_marks_obtained, c_10_sub_15_total_marks, aadhaar_no))
 
             # Commit changes
             conn.commit()
@@ -2241,6 +2735,10 @@ def form_c_11():
         # If c_11_info is None, create a default c_11_info object
         if c_11_info is None:
             c_11_info = {
+                ' c_11_year': '',
+                ' c_11_board': '',
+                ' c_11_roll_no': '',
+                ' c_11_result': '',
                 ' c_11_sub_1_name': '',
                 ' c_11_sub_1_marks_obtained': '',
                 ' c_11_sub_1_total_marks': '',
@@ -2266,6 +2764,10 @@ def form_c_11_post():
         if request.method == 'POST':
             # Get form data
             aadhaar_no = session['aadhaar_no']
+            c_11_year = request.form['c_11_year']
+            c_11_board = request.form['c_11_board']
+            c_11_roll_no = request.form['c_11_roll_no']
+            c_11_result = request.form['c_11_result']
             c_11_sub_1_name = request.form['c_11_sub_1_name']
             c_11_sub_1_marks_obtained = request.form['c_11_sub_1_marks_obtained']
             c_11_sub_1_total_marks = request.form['c_11_sub_1_total_marks']
@@ -2286,9 +2788,9 @@ def form_c_11_post():
             # Update c_11_info in the database
             cursor.execute("""
                 UPDATE class_11
-                SET c_11_sub_1_name = ?, c_11_sub_1_marks_obtained = ?, c_11_sub_1_total_marks = ?, c_11_sub_2_name = ?, c_11_sub_2_marks_obtained = ?, c_11_sub_2_total_marks = ?, c_11_sub_3_name = ?, c_11_sub_3_marks_obtained = ?, c_11_sub_3_total_marks = ?, c_11_sub_4_name = ?, c_11_sub_4_marks_obtained = ?, c_11_sub_4_total_marks = ?, c_11_sub_5_name = ?, c_11_sub_5_marks_obtained = ?, c_11_sub_5_total_marks = ?
+                SET c_11_year = ?, c_11_board = ?, c_11_roll_no = ?, c_11_result = ?, c_11_sub_1_name = ?, c_11_sub_1_marks_obtained = ?, c_11_sub_1_total_marks = ?, c_11_sub_2_name = ?, c_11_sub_2_marks_obtained = ?, c_11_sub_2_total_marks = ?, c_11_sub_3_name = ?, c_11_sub_3_marks_obtained = ?, c_11_sub_3_total_marks = ?, c_11_sub_4_name = ?, c_11_sub_4_marks_obtained = ?, c_11_sub_4_total_marks = ?, c_11_sub_5_name = ?, c_11_sub_5_marks_obtained = ?, c_11_sub_5_total_marks = ?
                 WHERE aadhaar_no = ?
-            """, (c_11_sub_1_name, c_11_sub_1_marks_obtained, c_11_sub_1_total_marks, c_11_sub_2_name, c_11_sub_2_marks_obtained, c_11_sub_2_total_marks, c_11_sub_3_name, c_11_sub_3_marks_obtained, c_11_sub_3_total_marks, c_11_sub_4_name, c_11_sub_4_marks_obtained, c_11_sub_4_total_marks, c_11_sub_5_name, c_11_sub_5_marks_obtained, c_11_sub_5_total_marks, aadhaar_no))
+            """, (c_11_year, c_11_board, c_11_roll_no, c_11_result, c_11_sub_1_name, c_11_sub_1_marks_obtained, c_11_sub_1_total_marks, c_11_sub_2_name, c_11_sub_2_marks_obtained, c_11_sub_2_total_marks, c_11_sub_3_name, c_11_sub_3_marks_obtained, c_11_sub_3_total_marks, c_11_sub_4_name, c_11_sub_4_marks_obtained, c_11_sub_4_total_marks, c_11_sub_5_name, c_11_sub_5_marks_obtained, c_11_sub_5_total_marks, aadhaar_no))
 
             # Commit changes
             conn.commit()
@@ -2320,6 +2822,10 @@ def form_c_12():
         # If c_12_info is None, create a default c_12_info object
         if c_12_info is None:
             c_12_info = {
+                ' c_12_year': '',
+                ' c_12_board': '',
+                ' c_12_roll_no': '',
+                ' c_12_result': '',
                 ' c_12_sub_1_name': '',
                 ' c_12_sub_1_marks_obtained': '',
                 ' c_12_sub_1_total_marks': '',
@@ -2345,6 +2851,10 @@ def form_c_12_post():
         if request.method == 'POST':
             # Get form data
             aadhaar_no = session['aadhaar_no']
+            c_12_year = request.form['c_12_year']
+            c_12_board = request.form['c_12_board']
+            c_12_roll_no = request.form['c_12_roll_no']
+            c_12_result = request.form['c_12_result']
             c_12_sub_1_name = request.form['c_12_sub_1_name']
             c_12_sub_1_marks_obtained = request.form['c_12_sub_1_marks_obtained']
             c_12_sub_1_total_marks = request.form['c_12_sub_1_total_marks']
@@ -2365,9 +2875,9 @@ def form_c_12_post():
             # Update c_12_info in the database
             cursor.execute("""
                 UPDATE class_12
-                SET c_12_sub_1_name = ?, c_12_sub_1_marks_obtained = ?, c_12_sub_1_total_marks = ?, c_12_sub_2_name = ?, c_12_sub_2_marks_obtained = ?, c_12_sub_2_total_marks = ?, c_12_sub_3_name = ?, c_12_sub_3_marks_obtained = ?, c_12_sub_3_total_marks = ?, c_12_sub_4_name = ?, c_12_sub_4_marks_obtained = ?, c_12_sub_4_total_marks = ?, c_12_sub_5_name = ?, c_12_sub_5_marks_obtained = ?, c_12_sub_5_total_marks = ?
+                SET c_12_year = ?, c_12_board = ?, c_12_roll_no = ?, c_12_result = ?, c_12_sub_1_name = ?, c_12_sub_1_marks_obtained = ?, c_12_sub_1_total_marks = ?, c_12_sub_2_name = ?, c_12_sub_2_marks_obtained = ?, c_12_sub_2_total_marks = ?, c_12_sub_3_name = ?, c_12_sub_3_marks_obtained = ?, c_12_sub_3_total_marks = ?, c_12_sub_4_name = ?, c_12_sub_4_marks_obtained = ?, c_12_sub_4_total_marks = ?, c_12_sub_5_name = ?, c_12_sub_5_marks_obtained = ?, c_12_sub_5_total_marks = ?
                 WHERE aadhaar_no = ?
-            """, (c_12_sub_1_name, c_12_sub_1_marks_obtained, c_12_sub_1_total_marks, c_12_sub_2_name, c_12_sub_2_marks_obtained, c_12_sub_2_total_marks, c_12_sub_3_name, c_12_sub_3_marks_obtained, c_12_sub_3_total_marks, c_12_sub_4_name, c_12_sub_4_marks_obtained, c_12_sub_4_total_marks, c_12_sub_5_name, c_12_sub_5_marks_obtained, c_12_sub_5_total_marks, aadhaar_no))
+            """, (c_12_year, c_12_board, c_12_roll_no, c_12_result, c_12_sub_1_name, c_12_sub_1_marks_obtained, c_12_sub_1_total_marks, c_12_sub_2_name, c_12_sub_2_marks_obtained, c_12_sub_2_total_marks, c_12_sub_3_name, c_12_sub_3_marks_obtained, c_12_sub_3_total_marks, c_12_sub_4_name, c_12_sub_4_marks_obtained, c_12_sub_4_total_marks, c_12_sub_5_name, c_12_sub_5_marks_obtained, c_12_sub_5_total_marks, aadhaar_no))
 
             # Commit changes
             conn.commit()
@@ -6799,18 +7309,31 @@ def gc1():
         # Fetch the data
         data = cursor.fetchone()
 
-        # Plot the pie chart
-        labels = [data[0] + ' obtained marks', data[0] + ' total marks']
-        sizes = [data[1], str(int(data[2])-int(data[1]))]
-        fig,ax = plt.subplots(figsize=(5,5))
-        ax.pie(sizes, labels=labels, autopct='%1.1f%%')
-        ax.set_title(data[0] + ' Marks Distribution')
+        if data is None:
+            # If no data is available for the subject, display an error
+            pie_charts_html.append(f"<p>Error: Marks not available for subject {i}</p>")
+        else:
+            if None in data:
+                # If any value is null, display an error for marks not available for that subject
+                pie_charts_html.append(f"<p>Error: Marks not available for subject {data[0]}</p>")
+            else:
+                # Plot the pie chart
+                labels = [data[0] + ' obtained marks',data[0] + ' total marks']
+                sizes = [data[1],str(int(data[2]) - int(data[1]))]  # Calculating remaining marks
+                fig,ax = plt.subplots(figsize=(5,5))
+                ax.pie(sizes,labels=labels,autopct='%1.1f%%')
+                ax.set_title(data[0] + ' Marks Distribution')
 
-        # Convert the plot to HTML
-        pie_chart_html = mpld3.fig_to_html(fig)
-        pie_charts_html.append(pie_chart_html)
+                # Convert the plot to HTML
+                pie_chart_html = mpld3.fig_to_html(fig)
+                pie_charts_html.append(pie_chart_html)
 
-    matplotlib.pyplot.close()
+                # Close the plot to prevent memory leaks
+                plt.close(fig)
+
+    # If no information is present at all, display an error
+    if not any(html for html in pie_charts_html):
+        pie_charts_html.append(f"<p>Error: No information available for class {j}</p>")
 
     # Render the student_dashboard.html template and pass the pie chart HTML
     return render_template('Academic Performance/gc1.html', pie_charts=pie_charts_html)
@@ -6826,18 +7349,31 @@ def gc2():
         # Fetch the data
         data = cursor.fetchone()
 
-        # Plot the pie chart
-        labels = [data[0] + ' obtained marks', data[0] + ' total marks']
-        sizes = [data[1], str(int(data[2])-int(data[1]))]
-        fig,ax = plt.subplots(figsize=(5,5))
-        ax.pie(sizes, labels=labels, autopct='%1.1f%%')
-        ax.set_title(data[0] + ' Marks Distribution')
+        if data is None:
+            # If no data is available for the subject, display an error
+            pie_charts_html.append(f"<p>Error: Marks not available for subject {i}</p>")
+        else:
+            if None in data:
+                # If any value is null, display an error for marks not available for that subject
+                pie_charts_html.append(f"<p>Error: Marks not available for subject {data[0]}</p>")
+            else:
+                # Plot the pie chart
+                labels = [data[0] + ' obtained marks',data[0] + ' total marks']
+                sizes = [data[1],str(int(data[2]) - int(data[1]))]  # Calculating remaining marks
+                fig,ax = plt.subplots(figsize=(5,5))
+                ax.pie(sizes,labels=labels,autopct='%1.1f%%')
+                ax.set_title(data[0] + ' Marks Distribution')
 
-        # Convert the plot to HTML
-        pie_chart_html = mpld3.fig_to_html(fig)
-        pie_charts_html.append(pie_chart_html)
+                # Convert the plot to HTML
+                pie_chart_html = mpld3.fig_to_html(fig)
+                pie_charts_html.append(pie_chart_html)
 
-    matplotlib.pyplot.close()
+                # Close the plot to prevent memory leaks
+                plt.close(fig)
+
+    # If no information is present at all, display an error
+    if not any(html for html in pie_charts_html):
+        pie_charts_html.append(f"<p>Error: No information available for class {j}</p>")
 
     # Render the student_dashboard.html template and pass the pie chart HTML
     return render_template('Academic Performance/gc2.html', pie_charts=pie_charts_html)
@@ -6853,18 +7389,31 @@ def gc3():
         # Fetch the data
         data = cursor.fetchone()
 
-        # Plot the pie chart
-        labels = [data[0] + ' obtained marks', data[0] + ' total marks']
-        sizes = [data[1], str(int(data[2])-int(data[1]))]
-        fig,ax = plt.subplots(figsize=(5,5))
-        ax.pie(sizes, labels=labels, autopct='%1.1f%%')
-        ax.set_title(data[0] + ' Marks Distribution')
+        if data is None:
+            # If no data is available for the subject, display an error
+            pie_charts_html.append(f"<p>Error: Marks not available for subject {i}</p>")
+        else:
+            if None in data:
+                # If any value is null, display an error for marks not available for that subject
+                pie_charts_html.append(f"<p>Error: Marks not available for subject {data[0]}</p>")
+            else:
+                # Plot the pie chart
+                labels = [data[0] + ' obtained marks',data[0] + ' total marks']
+                sizes = [data[1],str(int(data[2]) - int(data[1]))]  # Calculating remaining marks
+                fig,ax = plt.subplots(figsize=(5,5))
+                ax.pie(sizes,labels=labels,autopct='%1.1f%%')
+                ax.set_title(data[0] + ' Marks Distribution')
 
-        # Convert the plot to HTML
-        pie_chart_html = mpld3.fig_to_html(fig)
-        pie_charts_html.append(pie_chart_html)
+                # Convert the plot to HTML
+                pie_chart_html = mpld3.fig_to_html(fig)
+                pie_charts_html.append(pie_chart_html)
 
-    matplotlib.pyplot.close()
+                # Close the plot to prevent memory leaks
+                plt.close(fig)
+
+    # If no information is present at all, display an error
+    if not any(html for html in pie_charts_html):
+        pie_charts_html.append(f"<p>Error: No information available for class {j}</p>")
 
     # Render the student_dashboard.html template and pass the pie chart HTML
     return render_template('Academic Performance/gc3.html', pie_charts=pie_charts_html)
@@ -6880,18 +7429,31 @@ def gc4():
         # Fetch the data
         data = cursor.fetchone()
 
-        # Plot the pie chart
-        labels = [data[0] + ' obtained marks', data[0] + ' total marks']
-        sizes = [data[1], str(int(data[2])-int(data[1]))]
-        fig,ax = plt.subplots(figsize=(5,5))
-        ax.pie(sizes, labels=labels, autopct='%1.1f%%')
-        ax.set_title(data[0] + ' Marks Distribution')
+        if data is None:
+            # If no data is available for the subject, display an error
+            pie_charts_html.append(f"<p>Error: Marks not available for subject {i}</p>")
+        else:
+            if None in data:
+                # If any value is null, display an error for marks not available for that subject
+                pie_charts_html.append(f"<p>Error: Marks not available for subject {data[0]}</p>")
+            else:
+                # Plot the pie chart
+                labels = [data[0] + ' obtained marks',data[0] + ' total marks']
+                sizes = [data[1],str(int(data[2]) - int(data[1]))]  # Calculating remaining marks
+                fig,ax = plt.subplots(figsize=(5,5))
+                ax.pie(sizes,labels=labels,autopct='%1.1f%%')
+                ax.set_title(data[0] + ' Marks Distribution')
 
-        # Convert the plot to HTML
-        pie_chart_html = mpld3.fig_to_html(fig)
-        pie_charts_html.append(pie_chart_html)
+                # Convert the plot to HTML
+                pie_chart_html = mpld3.fig_to_html(fig)
+                pie_charts_html.append(pie_chart_html)
 
-    matplotlib.pyplot.close()
+                # Close the plot to prevent memory leaks
+                plt.close(fig)
+
+    # If no information is present at all, display an error
+    if not any(html for html in pie_charts_html):
+        pie_charts_html.append(f"<p>Error: No information available for class {j}</p>")
 
     # Render the student_dashboard.html template and pass the pie chart HTML
     return render_template('Academic Performance/gc4.html', pie_charts=pie_charts_html)
@@ -6907,18 +7469,31 @@ def gc5():
         # Fetch the data
         data = cursor.fetchone()
 
-        # Plot the pie chart
-        labels = [data[0] + ' obtained marks', data[0] + ' total marks']
-        sizes = [data[1], str(int(data[2])-int(data[1]))]
-        fig,ax = plt.subplots(figsize=(5,5))
-        ax.pie(sizes, labels=labels, autopct='%1.1f%%')
-        ax.set_title(data[0] + ' Marks Distribution')
+        if data is None:
+            # If no data is available for the subject, display an error
+            pie_charts_html.append(f"<p>Error: Marks not available for subject {i}</p>")
+        else:
+            if None in data:
+                # If any value is null, display an error for marks not available for that subject
+                pie_charts_html.append(f"<p>Error: Marks not available for subject {data[0]}</p>")
+            else:
+                # Plot the pie chart
+                labels = [data[0] + ' obtained marks',data[0] + ' total marks']
+                sizes = [data[1],str(int(data[2]) - int(data[1]))]  # Calculating remaining marks
+                fig,ax = plt.subplots(figsize=(5,5))
+                ax.pie(sizes,labels=labels,autopct='%1.1f%%')
+                ax.set_title(data[0] + ' Marks Distribution')
 
-        # Convert the plot to HTML
-        pie_chart_html = mpld3.fig_to_html(fig)
-        pie_charts_html.append(pie_chart_html)
+                # Convert the plot to HTML
+                pie_chart_html = mpld3.fig_to_html(fig)
+                pie_charts_html.append(pie_chart_html)
 
-    matplotlib.pyplot.close()
+                # Close the plot to prevent memory leaks
+                plt.close(fig)
+
+    # If no information is present at all, display an error
+    if not any(html for html in pie_charts_html):
+        pie_charts_html.append(f"<p>Error: No information available for class {j}</p>")
 
     # Render the student_dashboard.html template and pass the pie chart HTML
     return render_template('Academic Performance/gc5.html', pie_charts=pie_charts_html)
@@ -6934,18 +7509,31 @@ def gc6():
         # Fetch the data
         data = cursor.fetchone()
 
-        # Plot the pie chart
-        labels = [data[0] + ' obtained marks', data[0] + ' total marks']
-        sizes = [data[1], str(int(data[2])-int(data[1]))]
-        fig,ax = plt.subplots(figsize=(5,5))
-        ax.pie(sizes, labels=labels, autopct='%1.1f%%')
-        ax.set_title(data[0] + ' Marks Distribution')
+        if data is None:
+            # If no data is available for the subject, display an error
+            pie_charts_html.append(f"<p>Error: Marks not available for subject {i}</p>")
+        else:
+            if None in data:
+                # If any value is null, display an error for marks not available for that subject
+                pie_charts_html.append(f"<p>Error: Marks not available for subject {data[0]}</p>")
+            else:
+                # Plot the pie chart
+                labels = [data[0] + ' obtained marks',data[0] + ' total marks']
+                sizes = [data[1],str(int(data[2]) - int(data[1]))]  # Calculating remaining marks
+                fig,ax = plt.subplots(figsize=(5,5))
+                ax.pie(sizes,labels=labels,autopct='%1.1f%%')
+                ax.set_title(data[0] + ' Marks Distribution')
 
-        # Convert the plot to HTML
-        pie_chart_html = mpld3.fig_to_html(fig)
-        pie_charts_html.append(pie_chart_html)
+                # Convert the plot to HTML
+                pie_chart_html = mpld3.fig_to_html(fig)
+                pie_charts_html.append(pie_chart_html)
 
-    matplotlib.pyplot.close()
+                # Close the plot to prevent memory leaks
+                plt.close(fig)
+
+    # If no information is present at all, display an error
+    if not any(html for html in pie_charts_html):
+        pie_charts_html.append(f"<p>Error: No information available for class {j}</p>")
 
     # Render the student_dashboard.html template and pass the pie chart HTML
     return render_template('Academic Performance/gc6.html', pie_charts=pie_charts_html)
@@ -6961,18 +7549,31 @@ def gc7():
         # Fetch the data
         data = cursor.fetchone()
 
-        # Plot the pie chart
-        labels = [data[0] + ' obtained marks', data[0] + ' total marks']
-        sizes = [data[1], str(int(data[2])-int(data[1]))]
-        fig,ax = plt.subplots(figsize=(5,5))
-        ax.pie(sizes, labels=labels, autopct='%1.1f%%')
-        ax.set_title(data[0] + ' Marks Distribution')
+        if data is None:
+            # If no data is available for the subject, display an error
+            pie_charts_html.append(f"<p>Error: Marks not available for subject {i}</p>")
+        else:
+            if None in data:
+                # If any value is null, display an error for marks not available for that subject
+                pie_charts_html.append(f"<p>Error: Marks not available for subject {data[0]}</p>")
+            else:
+                # Plot the pie chart
+                labels = [data[0] + ' obtained marks',data[0] + ' total marks']
+                sizes = [data[1],str(int(data[2]) - int(data[1]))]  # Calculating remaining marks
+                fig,ax = plt.subplots(figsize=(5,5))
+                ax.pie(sizes,labels=labels,autopct='%1.1f%%')
+                ax.set_title(data[0] + ' Marks Distribution')
 
-        # Convert the plot to HTML
-        pie_chart_html = mpld3.fig_to_html(fig)
-        pie_charts_html.append(pie_chart_html)
+                # Convert the plot to HTML
+                pie_chart_html = mpld3.fig_to_html(fig)
+                pie_charts_html.append(pie_chart_html)
 
-    matplotlib.pyplot.close()
+                # Close the plot to prevent memory leaks
+                plt.close(fig)
+
+    # If no information is present at all, display an error
+    if not any(html for html in pie_charts_html):
+        pie_charts_html.append(f"<p>Error: No information available for class {j}</p>")
 
     # Render the student_dashboard.html template and pass the pie chart HTML
     return render_template('Academic Performance/gc7.html', pie_charts=pie_charts_html)
@@ -6988,18 +7589,31 @@ def gc8():
         # Fetch the data
         data = cursor.fetchone()
 
-        # Plot the pie chart
-        labels = [data[0] + ' obtained marks', data[0] + ' total marks']
-        sizes = [data[1], str(int(data[2])-int(data[1]))]
-        fig,ax = plt.subplots(figsize=(5,5))
-        ax.pie(sizes, labels=labels, autopct='%1.1f%%')
-        ax.set_title(data[0] + ' Marks Distribution')
+        if data is None:
+            # If no data is available for the subject, display an error
+            pie_charts_html.append(f"<p>Error: Marks not available for subject {i}</p>")
+        else:
+            if None in data:
+                # If any value is null, display an error for marks not available for that subject
+                pie_charts_html.append(f"<p>Error: Marks not available for subject {data[0]}</p>")
+            else:
+                # Plot the pie chart
+                labels = [data[0] + ' obtained marks',data[0] + ' total marks']
+                sizes = [data[1],str(int(data[2]) - int(data[1]))]  # Calculating remaining marks
+                fig,ax = plt.subplots(figsize=(5,5))
+                ax.pie(sizes,labels=labels,autopct='%1.1f%%')
+                ax.set_title(data[0] + ' Marks Distribution')
 
-        # Convert the plot to HTML
-        pie_chart_html = mpld3.fig_to_html(fig)
-        pie_charts_html.append(pie_chart_html)
+                # Convert the plot to HTML
+                pie_chart_html = mpld3.fig_to_html(fig)
+                pie_charts_html.append(pie_chart_html)
 
-    matplotlib.pyplot.close()
+                # Close the plot to prevent memory leaks
+                plt.close(fig)
+
+    # If no information is present at all, display an error
+    if not any(html for html in pie_charts_html):
+        pie_charts_html.append(f"<p>Error: No information available for class {j}</p>")
 
     # Render the student_dashboard.html template and pass the pie chart HTML
     return render_template('Academic Performance/gc8.html', pie_charts=pie_charts_html)
@@ -7015,18 +7629,31 @@ def gc9():
         # Fetch the data
         data = cursor.fetchone()
 
-        # Plot the pie chart
-        labels = [data[0] + ' obtained marks', data[0] + ' total marks']
-        sizes = [data[1], str(int(data[2])-int(data[1]))]
-        fig,ax = plt.subplots(figsize=(5,5))
-        ax.pie(sizes, labels=labels, autopct='%1.1f%%')
-        ax.set_title(data[0] + ' Marks Distribution')
+        if data is None:
+            # If no data is available for the subject, display an error
+            pie_charts_html.append(f"<p>Error: Marks not available for subject {i}</p>")
+        else:
+            if None in data:
+                # If any value is null, display an error for marks not available for that subject
+                pie_charts_html.append(f"<p>Error: Marks not available for subject {data[0]}</p>")
+            else:
+                # Plot the pie chart
+                labels = [data[0] + ' obtained marks',data[0] + ' total marks']
+                sizes = [data[1],str(int(data[2]) - int(data[1]))]  # Calculating remaining marks
+                fig,ax = plt.subplots(figsize=(5,5))
+                ax.pie(sizes,labels=labels,autopct='%1.1f%%')
+                ax.set_title(data[0] + ' Marks Distribution')
 
-        # Convert the plot to HTML
-        pie_chart_html = mpld3.fig_to_html(fig)
-        pie_charts_html.append(pie_chart_html)
+                # Convert the plot to HTML
+                pie_chart_html = mpld3.fig_to_html(fig)
+                pie_charts_html.append(pie_chart_html)
 
-    matplotlib.pyplot.close()
+                # Close the plot to prevent memory leaks
+                plt.close(fig)
+
+    # If no information is present at all, display an error
+    if not any(html for html in pie_charts_html):
+        pie_charts_html.append(f"<p>Error: No information available for class {j}</p>")
 
     # Render the student_dashboard.html template and pass the pie chart HTML
     return render_template('Academic Performance/gc9.html', pie_charts=pie_charts_html)
@@ -7043,22 +7670,31 @@ def gc10():
         # Fetch the data
         data = cursor.fetchone()
 
-        # If data is None, replace it with a default value
         if data is None:
-            data = ('No Data', 0, 0)
+            # If no data is available for the subject, display an error
+            pie_charts_html.append(f"<p>Error: Marks not available for subject {i}</p>")
+        else:
+            if None in data:
+                # If any value is null, display an error for marks not available for that subject
+                pie_charts_html.append(f"<p>Error: Marks not available for subject {data[0]}</p>")
+            else:
+                # Plot the pie chart
+                labels = [data[0] + ' obtained marks',data[0] + ' total marks']
+                sizes = [data[1],str(int(data[2]) - int(data[1]))]  # Calculating remaining marks
+                fig,ax = plt.subplots(figsize=(5,5))
+                ax.pie(sizes,labels=labels,autopct='%1.1f%%')
+                ax.set_title(data[0] + ' Marks Distribution')
 
-        # Plot the pie chart
-        labels = [data[0] + ' obtained marks', data[0] + ' total marks']
-        sizes = [data[1], str(int(data[2])-int(data[1]))]
-        fig,ax = plt.subplots(figsize=(5,5))
-        ax.pie(sizes, labels=labels, autopct='%1.1f%%')
-        ax.set_title(data[0] + ' Marks Distribution')
+                # Convert the plot to HTML
+                pie_chart_html = mpld3.fig_to_html(fig)
+                pie_charts_html.append(pie_chart_html)
 
-        # Convert the plot to HTML
-        pie_chart_html = mpld3.fig_to_html(fig)
-        pie_charts_html.append(pie_chart_html)
+                # Close the plot to prevent memory leaks
+                plt.close(fig)
 
-    matplotlib.pyplot.close()
+    # If no information is present at all, display an error
+    if not any(html for html in pie_charts_html):
+        pie_charts_html.append(f"<p>Error: No information available for class {j}</p>")
 
     # Render the student_dashboard.html template and pass the pie chart HTML
     return render_template('Academic Performance/gc10.html', pie_charts=pie_charts_html)
@@ -7074,18 +7710,31 @@ def gc11():
         # Fetch the data
         data = cursor.fetchone()
 
-        # Plot the pie chart
-        labels = [data[0] + ' obtained marks', data[0] + ' total marks']
-        sizes = [data[1], str(int(data[2])-int(data[1]))]
-        fig,ax = plt.subplots(figsize=(5,5))
-        ax.pie(sizes, labels=labels, autopct='%1.1f%%')
-        ax.set_title(data[0] + ' Marks Distribution')
+        if data is None:
+            # If no data is available for the subject, display an error
+            pie_charts_html.append(f"<p>Error: Marks not available for subject {i}</p>")
+        else:
+            if None in data:
+                # If any value is null, display an error for marks not available for that subject
+                pie_charts_html.append(f"<p>Error: Marks not available for subject {data[0]}</p>")
+            else:
+                # Plot the pie chart
+                labels = [data[0] + ' obtained marks',data[0] + ' total marks']
+                sizes = [data[1],str(int(data[2]) - int(data[1]))]  # Calculating remaining marks
+                fig,ax = plt.subplots(figsize=(5,5))
+                ax.pie(sizes,labels=labels,autopct='%1.1f%%')
+                ax.set_title(data[0] + ' Marks Distribution')
 
-        # Convert the plot to HTML
-        pie_chart_html = mpld3.fig_to_html(fig)
-        pie_charts_html.append(pie_chart_html)
+                # Convert the plot to HTML
+                pie_chart_html = mpld3.fig_to_html(fig)
+                pie_charts_html.append(pie_chart_html)
 
-    matplotlib.pyplot.close()
+                # Close the plot to prevent memory leaks
+                plt.close(fig)
+
+    # If no information is present at all, display an error
+    if not any(html for html in pie_charts_html):
+        pie_charts_html.append(f"<p>Error: No information available for class {j}</p>")
 
     # Render the student_dashboard.html template and pass the pie chart HTML
     return render_template('Academic Performance/gc11.html', pie_charts=pie_charts_html)
@@ -7101,18 +7750,31 @@ def gc12():
         # Fetch the data
         data = cursor.fetchone()
 
-        # Plot the pie chart
-        labels = [data[0] + ' obtained marks', data[0] + ' total marks']
-        sizes = [data[1], str(int(data[2])-int(data[1]))]
-        fig,ax = plt.subplots(figsize=(5,5))
-        ax.pie(sizes, labels=labels, autopct='%1.1f%%')
-        ax.set_title(data[0] + ' Marks Distribution')
+        if data is None:
+            # If no data is available for the subject, display an error
+            pie_charts_html.append(f"<p>Error: Marks not available for subject {i}</p>")
+        else:
+            if None in data:
+                # If any value is null, display an error for marks not available for that subject
+                pie_charts_html.append(f"<p>Error: Marks not available for subject {data[0]}</p>")
+            else:
+                # Plot the pie chart
+                labels = [data[0] + ' obtained marks',data[0] + ' total marks']
+                sizes = [data[1],str(int(data[2]) - int(data[1]))]  # Calculating remaining marks
+                fig,ax = plt.subplots(figsize=(5,5))
+                ax.pie(sizes,labels=labels,autopct='%1.1f%%')
+                ax.set_title(data[0] + ' Marks Distribution')
 
-        # Convert the plot to HTML
-        pie_chart_html = mpld3.fig_to_html(fig)
-        pie_charts_html.append(pie_chart_html)
+                # Convert the plot to HTML
+                pie_chart_html = mpld3.fig_to_html(fig)
+                pie_charts_html.append(pie_chart_html)
 
-    matplotlib.pyplot.close()
+                # Close the plot to prevent memory leaks
+                plt.close(fig)
+
+    # If no information is present at all, display an error
+    if not any(html for html in pie_charts_html):
+        pie_charts_html.append(f"<p>Error: No information available for class {j}</p>")
 
     # Render the student_dashboard.html template and pass the pie chart HTML
     return render_template('Academic Performance/gc12.html', pie_charts=pie_charts_html)
@@ -7130,20 +7792,31 @@ def g_ug_sem_1():
         # Fetch the data
         data = cursor.fetchone()
 
-        if data:
-            # Plot the pie chart
-            labels = [data[0] + ' obtained marks', data[0] + ' total marks']
-            sizes = [data[1], str(int(data[2])-int(data[1]))]  # Calculating remaining marks
-            fig, ax = plt.subplots(figsize=(5, 5))
-            ax.pie(sizes, labels=labels, autopct='%1.1f%%')
-            ax.set_title(data[0] + ' Marks Distribution')
+        if data is None:
+            # If no data is available for the subject, display an error
+            pie_charts_html.append(f"<p>Error: Marks not available for subject {i}</p>")
+        else:
+            if None in data:
+                # If any value is null, display an error for marks not available for that subject
+                pie_charts_html.append(f"<p>Error: Marks not available for subject {data[0]}</p>")
+            else:
+                # Plot the pie chart
+                labels = [data[0] + ' obtained marks',data[0] + ' total marks']
+                sizes = [data[1],str(int(data[2]) - int(data[1]))]  # Calculating remaining marks
+                fig,ax = plt.subplots(figsize=(5,5))
+                ax.pie(sizes,labels=labels,autopct='%1.1f%%')
+                ax.set_title(data[0] + ' Marks Distribution')
 
-            # Convert the plot to HTML
-            pie_chart_html = mpld3.fig_to_html(fig)
-            pie_charts_html.append(pie_chart_html)
+                # Convert the plot to HTML
+                pie_chart_html = mpld3.fig_to_html(fig)
+                pie_charts_html.append(pie_chart_html)
 
-            # Close the plot to prevent memory leaks
-            plt.close(fig)
+                # Close the plot to prevent memory leaks
+                plt.close(fig)
+
+    # If no information is present at all, display an error
+    if not any(html for html in pie_charts_html):
+        pie_charts_html.append(f"<p>Error: No information available for semester {j}</p>")
 
     # Render the g_ug_sem_1.html template and pass the pie chart HTML
     return render_template('Academic Performance/g_ug_sem_1.html', pie_charts=pie_charts_html)
@@ -7171,7 +7844,7 @@ def g_ug_sem_2():
             else:
                 # Plot the pie chart
                 labels = [data[0] + ' obtained marks', data[0] + ' total marks']
-                sizes = [data[1], data[2] - data[1]]  # Calculating remaining marks
+                sizes = [data[1],str(int(data[2]) - int(data[1]))]  # Calculating remaining marks
                 fig, ax = plt.subplots(figsize=(5, 5))
                 ax.pie(sizes, labels=labels, autopct='%1.1f%%')
                 ax.set_title(data[0] + ' Marks Distribution')
@@ -7189,6 +7862,1138 @@ def g_ug_sem_2():
 
     # Render the g_ug_sem_2.html template and pass the pie chart HTML
     return render_template('Academic Performance/g_ug_sem_2.html', pie_charts=pie_charts_html)
+
+
+@app.route('/student_dashboard/g_ug_sem_3')
+def g_ug_sem_3():
+    pie_charts_html = []  # This list will store HTML representations of pie charts
+    j = 3  # Assuming the semester number is 3 for undergraduate semester 3
+
+    for i in range(1, 6):
+        # Execute the SQL query to fetch data for the ith subject
+        cursor.execute(f"SELECT ug_sem_{j}_sub_{i}_name, ug_sem_{j}_sub_{i}_marks_obtained, ug_sem_{j}_sub_{i}_total_marks FROM ug_sem_{j} WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+
+        # Fetch the data
+        data = cursor.fetchone()
+
+        if data is None:
+            # If no data is available for the subject, display an error
+            pie_charts_html.append(f"<p>Error: Marks not available for subject {i}</p>")
+        else:
+            if None in data:
+                # If any value is null, display an error for marks not available for that subject
+                pie_charts_html.append(f"<p>Error: Marks not available for subject {data[0]}</p>")
+            else:
+                # Plot the pie chart
+                labels = [data[0] + ' obtained marks', data[0] + ' total marks']
+                sizes = [data[1],str(int(data[2]) - int(data[1]))]  # Calculating remaining marks
+                fig, ax = plt.subplots(figsize=(5, 5))
+                ax.pie(sizes, labels=labels, autopct='%1.1f%%')
+                ax.set_title(data[0] + ' Marks Distribution')
+
+                # Convert the plot to HTML
+                pie_chart_html = mpld3.fig_to_html(fig)
+                pie_charts_html.append(pie_chart_html)
+
+                # Close the plot to prevent memory leaks
+                plt.close(fig)
+
+    # If no information is present at all, display an error
+    if not any(html for html in pie_charts_html):
+        pie_charts_html.append(f"<p>Error: No information available for semester {j}</p>")
+
+    # Render the g_ug_sem_3.html template and pass the pie chart HTML
+    return render_template('Academic Performance/g_ug_sem_3.html', pie_charts=pie_charts_html)
+
+
+
+@app.route('/student_dashboard/g_ug_sem_4')
+def g_ug_sem_4():
+    pie_charts_html = []  # This list will store HTML representations of pie charts
+    j = 4  # Assuming the semester number is 4 for undergraduate semester 4
+
+    for i in range(1, 6):
+        # Execute the SQL query to fetch data for the ith subject
+        cursor.execute(f"SELECT ug_sem_{j}_sub_{i}_name, ug_sem_{j}_sub_{i}_marks_obtained, ug_sem_{j}_sub_{i}_total_marks FROM ug_sem_{j} WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+
+        # Fetch the data
+        data = cursor.fetchone()
+
+        if data is None:
+            # If no data is available for the subject, display an error
+            pie_charts_html.append(f"<p>Error: Marks not available for subject {i}</p>")
+        else:
+            if None in data:
+                # If any value is null, display an error for marks not available for that subject
+                pie_charts_html.append(f"<p>Error: Marks not available for subject {data[0]}</p>")
+            else:
+                # Plot the pie chart
+                labels = [data[0] + ' obtained marks', data[0] + ' total marks']
+                sizes = [data[1],str(int(data[2]) - int(data[1]))]  # Calculating remaining marks
+                fig, ax = plt.subplots(figsize=(5, 5))
+                ax.pie(sizes, labels=labels, autopct='%1.1f%%')
+                ax.set_title(data[0] + ' Marks Distribution')
+
+                # Convert the plot to HTML
+                pie_chart_html = mpld3.fig_to_html(fig)
+                pie_charts_html.append(pie_chart_html)
+
+                # Close the plot to prevent memory leaks
+                plt.close(fig)
+
+    # If no information is present at all, display an error
+    if not any(html for html in pie_charts_html):
+        pie_charts_html.append(f"<p>Error: No information available for semester {j}</p>")
+
+    # Render the g_ug_sem_4.html template and pass the pie chart HTML
+    return render_template('Academic Performance/g_ug_sem_4.html', pie_charts=pie_charts_html)
+
+
+
+@app.route('/student_dashboard/g_ug_sem_5')
+def g_ug_sem_5():
+    pie_charts_html = []  # This list will store HTML representations of pie charts
+    j = 5  # Assuming the semester number is 5 for undergraduate semester 5
+
+    for i in range(1, 6):
+        # Execute the SQL query to fetch data for the ith subject
+        cursor.execute(f"SELECT ug_sem_{j}_sub_{i}_name, ug_sem_{j}_sub_{i}_marks_obtained, ug_sem_{j}_sub_{i}_total_marks FROM ug_sem_{j} WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+
+        # Fetch the data
+        data = cursor.fetchone()
+
+        if data is None:
+            # If no data is available for the subject, display an error
+            pie_charts_html.append(f"<p>Error: Marks not available for subject {i}</p>")
+        else:
+            if None in data:
+                # If any value is null, display an error for marks not available for that subject
+                pie_charts_html.append(f"<p>Error: Marks not available for subject {data[0]}</p>")
+            else:
+                # Plot the pie chart
+                labels = [data[0] + ' obtained marks', data[0] + ' total marks']
+                sizes = [data[1],str(int(data[2]) - int(data[1]))]  # Calculating remaining marks
+                fig, ax = plt.subplots(figsize=(5, 5))
+                ax.pie(sizes, labels=labels, autopct='%1.1f%%')
+                ax.set_title(data[0] + ' Marks Distribution')
+
+                # Convert the plot to HTML
+                pie_chart_html = mpld3.fig_to_html(fig)
+                pie_charts_html.append(pie_chart_html)
+
+                # Close the plot to prevent memory leaks
+                plt.close(fig)
+
+    # If no information is present at all, display an error
+    if not any(html for html in pie_charts_html):
+        pie_charts_html.append(f"<p>Error: No information available for semester {j}</p>")
+
+    # Render the g_ug_sem_5.html template and pass the pie chart HTML
+    return render_template('Academic Performance/g_ug_sem_5.html', pie_charts=pie_charts_html)
+
+
+
+@app.route('/student_dashboard/g_ug_sem_6')
+def g_ug_sem_6():
+    pie_charts_html = []  # This list will store HTML representations of pie charts
+    j = 6  # Assuming the semester number is 6 for undergraduate semester 6
+
+    for i in range(1, 6):
+        # Execute the SQL query to fetch data for the ith subject
+        cursor.execute(f"SELECT ug_sem_{j}_sub_{i}_name, ug_sem_{j}_sub_{i}_marks_obtained, ug_sem_{j}_sub_{i}_total_marks FROM ug_sem_{j} WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+
+        # Fetch the data
+        data = cursor.fetchone()
+
+        if data is None:
+            # If no data is available for the subject, display an error
+            pie_charts_html.append(f"<p>Error: Marks not available for subject {i}</p>")
+        else:
+            if None in data:
+                # If any value is null, display an error for marks not available for that subject
+                pie_charts_html.append(f"<p>Error: Marks not available for subject {data[0]}</p>")
+            else:
+                # Plot the pie chart
+                labels = [data[0] + ' obtained marks', data[0] + ' total marks']
+                sizes = [data[1],str(int(data[2]) - int(data[1]))]  # Calculating remaining marks
+                fig, ax = plt.subplots(figsize=(5, 5))
+                ax.pie(sizes, labels=labels, autopct='%1.1f%%')
+                ax.set_title(data[0] + ' Marks Distribution')
+
+                # Convert the plot to HTML
+                pie_chart_html = mpld3.fig_to_html(fig)
+                pie_charts_html.append(pie_chart_html)
+
+                # Close the plot to prevent memory leaks
+                plt.close(fig)
+
+    # If no information is present at all, display an error
+    if not any(html for html in pie_charts_html):
+        pie_charts_html.append(f"<p>Error: No information available for semester {j}</p>")
+
+    # Render the g_ug_sem_6.html template and pass the pie chart HTML
+    return render_template('Academic Performance/g_ug_sem_6.html', pie_charts=pie_charts_html)
+
+
+@app.route('/student_dashboard/g_ug_sem_7')
+def g_ug_sem_7():
+    pie_charts_html = []  # This list will store HTML representations of pie charts
+    j = 7  # Assuming the semester number is 7 for undergraduate semester 7
+
+    for i in range(1, 6):
+        # Execute the SQL query to fetch data for the ith subject
+        cursor.execute(f"SELECT ug_sem_{j}_sub_{i}_name, ug_sem_{j}_sub_{i}_marks_obtained, ug_sem_{j}_sub_{i}_total_marks FROM ug_sem_{j} WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+
+        # Fetch the data
+        data = cursor.fetchone()
+
+        if data is None:
+            # If no data is available for the subject, display an error
+            pie_charts_html.append(f"<p>Error: Marks not available for subject {i}</p>")
+        else:
+            if None in data:
+                # If any value is null, display an error for marks not available for that subject
+                pie_charts_html.append(f"<p>Error: Marks not available for subject {data[0]}</p>")
+            else:
+                # Plot the pie chart
+                labels = [data[0] + ' obtained marks', data[0] + ' total marks']
+                sizes = [data[1],str(int(data[2]) - int(data[1]))]  # Calculating remaining marks
+                fig, ax = plt.subplots(figsize=(5, 5))
+                ax.pie(sizes, labels=labels, autopct='%1.1f%%')
+                ax.set_title(data[0] + ' Marks Distribution')
+
+                # Convert the plot to HTML
+                pie_chart_html = mpld3.fig_to_html(fig)
+                pie_charts_html.append(pie_chart_html)
+
+                # Close the plot to prevent memory leaks
+                plt.close(fig)
+
+    # If no information is present at all, display an error
+    if not any(html for html in pie_charts_html):
+        pie_charts_html.append(f"<p>Error: No information available for semester {j}</p>")
+
+    # Render the g_ug_sem_7.html template and pass the pie chart HTML
+    return render_template('Academic Performance/g_ug_sem_7.html', pie_charts=pie_charts_html)
+
+
+@app.route('/student_dashboard/g_ug_sem_8')
+def g_ug_sem_8():
+    pie_charts_html = []  # This list will store HTML representations of pie charts
+    j = 8  # Assuming the semester number is 8 for undergraduate semester 8
+
+    for i in range(1, 6):
+        # Execute the SQL query to fetch data for the ith subject
+        cursor.execute(f"SELECT ug_sem_{j}_sub_{i}_name, ug_sem_{j}_sub_{i}_marks_obtained, ug_sem_{j}_sub_{i}_total_marks FROM ug_sem_{j} WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+
+        # Fetch the data
+        data = cursor.fetchone()
+
+        if data is None:
+            # If no data is available for the subject, display an error
+            pie_charts_html.append(f"<p>Error: Marks not available for subject {i}</p>")
+        else:
+            if None in data:
+                # If any value is null, display an error for marks not available for that subject
+                pie_charts_html.append(f"<p>Error: Marks not available for subject {data[0]}</p>")
+            else:
+                # Plot the pie chart
+                labels = [data[0] + ' obtained marks', data[0] + ' total marks']
+                sizes = [data[1],str(int(data[2]) - int(data[1]))]  # Calculating remaining marks
+                fig, ax = plt.subplots(figsize=(5, 5))
+                ax.pie(sizes, labels=labels, autopct='%1.1f%%')
+                ax.set_title(data[0] + ' Marks Distribution')
+
+                # Convert the plot to HTML
+                pie_chart_html = mpld3.fig_to_html(fig)
+                pie_charts_html.append(pie_chart_html)
+
+                # Close the plot to prevent memory leaks
+                plt.close(fig)
+
+    # If no information is present at all, display an error
+    if not any(html for html in pie_charts_html):
+        pie_charts_html.append(f"<p>Error: No information available for semester {j}</p>")
+
+    # Render the g_ug_sem_8.html template and pass the pie chart HTML
+    return render_template('Academic Performance/g_ug_sem_8.html', pie_charts=pie_charts_html)
+
+
+@app.route('/student_dashboard/g_ug_sem_9')
+def g_ug_sem_9():
+    pie_charts_html = []  # This list will store HTML representations of pie charts
+    j = 9  # Assuming the semester number is 9 for undergraduate semester 9
+
+    for i in range(1, 6):
+        # Execute the SQL query to fetch data for the ith subject
+        cursor.execute(f"SELECT ug_sem_{j}_sub_{i}_name, ug_sem_{j}_sub_{i}_marks_obtained, ug_sem_{j}_sub_{i}_total_marks FROM ug_sem_{j} WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+
+        # Fetch the data
+        data = cursor.fetchone()
+
+        if data is None:
+            # If no data is available for the subject, display an error
+            pie_charts_html.append(f"<p>Error: Marks not available for subject {i}</p>")
+        else:
+            if None in data:
+                # If any value is null, display an error for marks not available for that subject
+                pie_charts_html.append(f"<p>Error: Marks not available for subject {data[0]}</p>")
+            else:
+                # Plot the pie chart
+                labels = [data[0] + ' obtained marks', data[0] + ' total marks']
+                sizes = [data[1],str(int(data[2]) - int(data[1]))]  # Calculating remaining marks
+                fig, ax = plt.subplots(figsize=(5, 5))
+                ax.pie(sizes, labels=labels, autopct='%1.1f%%')
+                ax.set_title(data[0] + ' Marks Distribution')
+
+                # Convert the plot to HTML
+                pie_chart_html = mpld3.fig_to_html(fig)
+                pie_charts_html.append(pie_chart_html)
+
+                # Close the plot to prevent memory leaks
+                plt.close(fig)
+
+    # If no information is present at all, display an error
+    if not any(html for html in pie_charts_html):
+        pie_charts_html.append(f"<p>Error: No information available for semester {j}</p>")
+
+    # Render the g_ug_sem_9.html template and pass the pie chart HTML
+    return render_template('Academic Performance/g_ug_sem_9.html', pie_charts=pie_charts_html)
+
+
+@app.route('/student_dashboard/g_ug_sem_10')
+def g_ug_sem_10():
+    pie_charts_html = []  # This list will store HTML representations of pie charts
+    j = 10  # Assuming the semester number is 10 for undergraduate semester 10
+
+    for i in range(1, 6):
+        # Execute the SQL query to fetch data for the ith subject
+        cursor.execute(f"SELECT ug_sem_{j}_sub_{i}_name, ug_sem_{j}_sub_{i}_marks_obtained, ug_sem_{j}_sub_{i}_total_marks FROM ug_sem_{j} WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+
+        # Fetch the data
+        data = cursor.fetchone()
+
+        if data is None:
+            # If no data is available for the subject, display an error
+            pie_charts_html.append(f"<p>Error: Marks not available for subject {i}</p>")
+        else:
+            if None in data:
+                # If any value is null, display an error for marks not available for that subject
+                pie_charts_html.append(f"<p>Error: Marks not available for subject {data[0]}</p>")
+            else:
+                # Plot the pie chart
+                labels = [data[0] + ' obtained marks', data[0] + ' total marks']
+                sizes = [data[1],str(int(data[2]) - int(data[1]))]  # Calculating remaining marks
+                fig, ax = plt.subplots(figsize=(5, 5))
+                ax.pie(sizes, labels=labels, autopct='%1.1f%%')
+                ax.set_title(data[0] + ' Marks Distribution')
+
+                # Convert the plot to HTML
+                pie_chart_html = mpld3.fig_to_html(fig)
+                pie_charts_html.append(pie_chart_html)
+
+                # Close the plot to prevent memory leaks
+                plt.close(fig)
+
+    # If no information is present at all, display an error
+    if not any(html for html in pie_charts_html):
+        pie_charts_html.append(f"<p>Error: No information available for semester {j}</p>")
+
+    # Render the g_ug_sem_10.html template and pass the pie chart HTML
+    return render_template('Academic Performance/g_ug_sem_10.html', pie_charts=pie_charts_html)
+
+
+@app.route('/student_dashboard/g_pg_sem_1')
+def g_pg_sem_1():
+    pie_charts_html = []  # This list will store HTML representations of pie charts
+    j = 1  # Assuming the semester number is 1 for postgraduate semester 1
+
+    for i in range(1, 6):
+        # Execute the SQL query to fetch data for the ith subject
+        cursor.execute(f"SELECT pg_sem_{j}_sub_{i}_name, pg_sem_{j}_sub_{i}_marks_obtained, pg_sem_{j}_sub_{i}_total_marks FROM pg_sem_{j} WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+
+        # Fetch the data
+        data = cursor.fetchone()
+
+        if data is None:
+            # If no data is available for the subject, display an error
+            pie_charts_html.append(f"<p>Error: Marks not available for subject {i}</p>")
+        else:
+            if None in data:
+                # If any value is null, display an error for marks not available for that subject
+                pie_charts_html.append(f"<p>Error: Marks not available for subject {data[0]}</p>")
+            else:
+                # Plot the pie chart
+                labels = [data[0] + ' obtained marks',data[0] + ' total marks']
+                sizes = [data[1],str(int(data[2]) - int(data[1]))]  # Calculating remaining marks
+                fig,ax = plt.subplots(figsize=(5,5))
+                ax.pie(sizes,labels=labels,autopct='%1.1f%%')
+                ax.set_title(data[0] + ' Marks Distribution')
+
+                # Convert the plot to HTML
+                pie_chart_html = mpld3.fig_to_html(fig)
+                pie_charts_html.append(pie_chart_html)
+
+                # Close the plot to prevent memory leaks
+                plt.close(fig)
+
+    # If no information is present at all, display an error
+    if not any(html for html in pie_charts_html):
+        pie_charts_html.append(f"<p>Error: No information available for semester {j}</p>")
+
+    # Render the g_pg_sem_1.html template and pass the pie chart HTML
+    return render_template('Academic Performance/g_pg_sem_1.html', pie_charts=pie_charts_html)
+
+
+@app.route('/student_dashboard/g_pg_sem_2')
+def g_pg_sem_2():
+    pie_charts_html = []  # This list will store HTML representations of pie charts
+    j = 2  # Assuming the semester number is 2 for postgraduate semester 2
+
+    for i in range(1, 6):
+        # Execute the SQL query to fetch data for the ith subject
+        cursor.execute(f"SELECT pg_sem_{j}_sub_{i}_name, pg_sem_{j}_sub_{i}_marks_obtained, pg_sem_{j}_sub_{i}_total_marks FROM pg_sem_{j} WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+
+        # Fetch the data
+        data = cursor.fetchone()
+
+        if data is None:
+            # If no data is available for the subject, display an error
+            pie_charts_html.append(f"<p>Error: Marks not available for subject {i}</p>")
+        else:
+            if None in data:
+                # If any value is null, display an error for marks not available for that subject
+                pie_charts_html.append(f"<p>Error: Marks not available for subject {data[0]}</p>")
+            else:
+                # Plot the pie chart
+                labels = [data[0] + ' obtained marks', data[0] + ' total marks']
+                sizes = [data[1],str(int(data[2]) - int(data[1]))]  # Calculating remaining marks
+                fig, ax = plt.subplots(figsize=(5, 5))
+                ax.pie(sizes, labels=labels, autopct='%1.1f%%')
+                ax.set_title(data[0] + ' Marks Distribution')
+
+                # Convert the plot to HTML
+                pie_chart_html = mpld3.fig_to_html(fig)
+                pie_charts_html.append(pie_chart_html)
+
+                # Close the plot to prevent memory leaks
+                plt.close(fig)
+
+    # If no information is present at all, display an error
+    if not any(html for html in pie_charts_html):
+        pie_charts_html.append(f"<p>Error: No information available for semester {j}</p>")
+
+    # Render the g_pg_sem_2.html template and pass the pie chart HTML
+    return render_template('Academic Performance/g_pg_sem_2.html', pie_charts=pie_charts_html)
+
+
+@app.route('/student_dashboard/g_pg_sem_3')
+def g_pg_sem_3():
+    pie_charts_html = []  # This list will store HTML representations of pie charts
+    j = 3  # Assuming the semester number is 3 for postgraduate semester 3
+
+    for i in range(1, 6):
+        # Execute the SQL query to fetch data for the ith subject
+        cursor.execute(f"SELECT pg_sem_{j}_sub_{i}_name, pg_sem_{j}_sub_{i}_marks_obtained, pg_sem_{j}_sub_{i}_total_marks FROM pg_sem_{j} WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+
+        # Fetch the data
+        data = cursor.fetchone()
+
+        if data is None:
+            # If no data is available for the subject, display an error
+            pie_charts_html.append(f"<p>Error: Marks not available for subject {i}</p>")
+        else:
+            if None in data:
+                # If any value is null, display an error for marks not available for that subject
+                pie_charts_html.append(f"<p>Error: Marks not available for subject {data[0]}</p>")
+            else:
+                # Plot the pie chart
+                labels = [data[0] + ' obtained marks', data[0] + ' total marks']
+                sizes = [data[1],str(int(data[2]) - int(data[1]))]  # Calculating remaining marks
+                fig, ax = plt.subplots(figsize=(5, 5))
+                ax.pie(sizes, labels=labels, autopct='%1.1f%%')
+                ax.set_title(data[0] + ' Marks Distribution')
+
+                # Convert the plot to HTML
+                pie_chart_html = mpld3.fig_to_html(fig)
+                pie_charts_html.append(pie_chart_html)
+
+                # Close the plot to prevent memory leaks
+                plt.close(fig)
+
+    # If no information is present at all, display an error
+    if not any(html for html in pie_charts_html):
+        pie_charts_html.append(f"<p>Error: No information available for semester {j}</p>")
+
+    # Render the g_pg_sem_3.html template and pass the pie chart HTML
+    return render_template('Academic Performance/g_pg_sem_3.html', pie_charts=pie_charts_html)
+
+
+
+@app.route('/student_dashboard/g_pg_sem_4')
+def g_pg_sem_4():
+    pie_charts_html = []  # This list will store HTML representations of pie charts
+    j = 4  # Assuming the semester number is 4 for postgraduate semester 4
+
+    for i in range(1, 6):
+        # Execute the SQL query to fetch data for the ith subject
+        cursor.execute(f"SELECT pg_sem_{j}_sub_{i}_name, pg_sem_{j}_sub_{i}_marks_obtained, pg_sem_{j}_sub_{i}_total_marks FROM pg_sem_{j} WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+
+        # Fetch the data
+        data = cursor.fetchone()
+
+        if data is None:
+            # If no data is available for the subject, display an error
+            pie_charts_html.append(f"<p>Error: Marks not available for subject {i}</p>")
+        else:
+            if None in data:
+                # If any value is null, display an error for marks not available for that subject
+                pie_charts_html.append(f"<p>Error: Marks not available for subject {data[0]}</p>")
+            else:
+                # Plot the pie chart
+                labels = [data[0] + ' obtained marks', data[0] + ' total marks']
+                sizes = [data[1],str(int(data[2]) - int(data[1]))]  # Calculating remaining marks
+                fig, ax = plt.subplots(figsize=(5, 5))
+                ax.pie(sizes, labels=labels, autopct='%1.1f%%')
+                ax.set_title(data[0] + ' Marks Distribution')
+
+                # Convert the plot to HTML
+                pie_chart_html = mpld3.fig_to_html(fig)
+                pie_charts_html.append(pie_chart_html)
+
+                # Close the plot to prevent memory leaks
+                plt.close(fig)
+
+    # If no information is present at all, display an error
+    if not any(html for html in pie_charts_html):
+        pie_charts_html.append(f"<p>Error: No information available for semester {j}</p>")
+
+    # Render the g_pg_sem_4.html template and pass the pie chart HTML
+    return render_template('Academic Performance/g_pg_sem_4.html', pie_charts=pie_charts_html)
+
+
+
+@app.route('/student_dashboard/g_pg_sem_5')
+def g_pg_sem_5():
+    pie_charts_html = []  # This list will store HTML representations of pie charts
+    j = 5  # Assuming the semester number is 5 for postgraduate semester 5
+
+    for i in range(1, 6):
+        # Execute the SQL query to fetch data for the ith subject
+        cursor.execute(f"SELECT pg_sem_{j}_sub_{i}_name, pg_sem_{j}_sub_{i}_marks_obtained, pg_sem_{j}_sub_{i}_total_marks FROM pg_sem_{j} WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+
+        # Fetch the data
+        data = cursor.fetchone()
+
+        if data is None:
+            # If no data is available for the subject, display an error
+            pie_charts_html.append(f"<p>Error: Marks not available for subject {i}</p>")
+        else:
+            if None in data:
+                # If any value is null, display an error for marks not available for that subject
+                pie_charts_html.append(f"<p>Error: Marks not available for subject {data[0]}</p>")
+            else:
+                # Plot the pie chart
+                labels = [data[0] + ' obtained marks', data[0] + ' total marks']
+                sizes = [data[1],str(int(data[2]) - int(data[1]))]  # Calculating remaining marks
+                fig, ax = plt.subplots(figsize=(5, 5))
+                ax.pie(sizes, labels=labels, autopct='%1.1f%%')
+                ax.set_title(data[0] + ' Marks Distribution')
+
+                # Convert the plot to HTML
+                pie_chart_html = mpld3.fig_to_html(fig)
+                pie_charts_html.append(pie_chart_html)
+
+                # Close the plot to prevent memory leaks
+                plt.close(fig)
+
+    # If no information is present at all, display an error
+    if not any(html for html in pie_charts_html):
+        pie_charts_html.append(f"<p>Error: No information available for semester {j}</p>")
+
+    # Render the g_pg_sem_5.html template and pass the pie chart HTML
+    return render_template('Academic Performance/g_pg_sem_5.html', pie_charts=pie_charts_html)
+
+
+
+@app.route('/student_dashboard/g_pg_sem_6')
+def g_pg_sem_6():
+    pie_charts_html = []  # This list will store HTML representations of pie charts
+    j = 6  # Assuming the semester number is 6 for postgraduate semester 6
+
+    for i in range(1, 6):
+        # Execute the SQL query to fetch data for the ith subject
+        cursor.execute(f"SELECT pg_sem_{j}_sub_{i}_name, pg_sem_{j}_sub_{i}_marks_obtained, pg_sem_{j}_sub_{i}_total_marks FROM pg_sem_{j} WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+
+        # Fetch the data
+        data = cursor.fetchone()
+
+        if data is None:
+            # If no data is available for the subject, display an error
+            pie_charts_html.append(f"<p>Error: Marks not available for subject {i}</p>")
+        else:
+            if None in data:
+                # If any value is null, display an error for marks not available for that subject
+                pie_charts_html.append(f"<p>Error: Marks not available for subject {data[0]}</p>")
+            else:
+                # Plot the pie chart
+                labels = [data[0] + ' obtained marks', data[0] + ' total marks']
+                sizes = [data[1],str(int(data[2]) - int(data[1]))]  # Calculating remaining marks
+                fig, ax = plt.subplots(figsize=(5, 5))
+                ax.pie(sizes, labels=labels, autopct='%1.1f%%')
+                ax.set_title(data[0] + ' Marks Distribution')
+
+                # Convert the plot to HTML
+                pie_chart_html = mpld3.fig_to_html(fig)
+                pie_charts_html.append(pie_chart_html)
+
+                # Close the plot to prevent memory leaks
+                plt.close(fig)
+
+    # If no information is present at all, display an error
+    if not any(html for html in pie_charts_html):
+        pie_charts_html.append(f"<p>Error: No information available for semester {j}</p>")
+
+    # Render the g_pg_sem_6.html template and pass the pie chart HTML
+    return render_template('Academic Performance/g_pg_sem_6.html', pie_charts=pie_charts_html)
+
+
+@app.route('/student_dashboard/g_pg_sem_7')
+def g_pg_sem_7():
+    pie_charts_html = []  # This list will store HTML representations of pie charts
+    j = 7  # Assuming the semester number is 7 for postgraduate semester 7
+
+    for i in range(1, 6):
+        # Execute the SQL query to fetch data for the ith subject
+        cursor.execute(f"SELECT pg_sem_{j}_sub_{i}_name, pg_sem_{j}_sub_{i}_marks_obtained, pg_sem_{j}_sub_{i}_total_marks FROM pg_sem_{j} WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+
+        # Fetch the data
+        data = cursor.fetchone()
+
+        if data is None:
+            # If no data is available for the subject, display an error
+            pie_charts_html.append(f"<p>Error: Marks not available for subject {i}</p>")
+        else:
+            if None in data:
+                # If any value is null, display an error for marks not available for that subject
+                pie_charts_html.append(f"<p>Error: Marks not available for subject {data[0]}</p>")
+            else:
+                # Plot the pie chart
+                labels = [data[0] + ' obtained marks', data[0] + ' total marks']
+                sizes = [data[1],str(int(data[2]) - int(data[1]))]  # Calculating remaining marks
+                fig, ax = plt.subplots(figsize=(5, 5))
+                ax.pie(sizes, labels=labels, autopct='%1.1f%%')
+                ax.set_title(data[0] + ' Marks Distribution')
+
+                # Convert the plot to HTML
+                pie_chart_html = mpld3.fig_to_html(fig)
+                pie_charts_html.append(pie_chart_html)
+
+                # Close the plot to prevent memory leaks
+                plt.close(fig)
+
+    # If no information is present at all, display an error
+    if not any(html for html in pie_charts_html):
+        pie_charts_html.append(f"<p>Error: No information available for semester {j}</p>")
+
+    # Render the g_pg_sem_7.html template and pass the pie chart HTML
+    return render_template('Academic Performance/g_pg_sem_7.html', pie_charts=pie_charts_html)
+
+
+@app.route('/student_dashboard/g_pg_sem_8')
+def g_pg_sem_8():
+    pie_charts_html = []  # This list will store HTML representations of pie charts
+    j = 8  # Assuming the semester number is 8 for postgraduate semester 8
+
+    for i in range(1, 6):
+        # Execute the SQL query to fetch data for the ith subject
+        cursor.execute(f"SELECT pg_sem_{j}_sub_{i}_name, pg_sem_{j}_sub_{i}_marks_obtained, pg_sem_{j}_sub_{i}_total_marks FROM pg_sem_{j} WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+
+        # Fetch the data
+        data = cursor.fetchone()
+
+        if data is None:
+            # If no data is available for the subject, display an error
+            pie_charts_html.append(f"<p>Error: Marks not available for subject {i}</p>")
+        else:
+            if None in data:
+                # If any value is null, display an error for marks not available for that subject
+                pie_charts_html.append(f"<p>Error: Marks not available for subject {data[0]}</p>")
+            else:
+                # Plot the pie chart
+                labels = [data[0] + ' obtained marks', data[0] + ' total marks']
+                sizes = [data[1],str(int(data[2]) - int(data[1]))]  # Calculating remaining marks
+                fig, ax = plt.subplots(figsize=(5, 5))
+                ax.pie(sizes, labels=labels, autopct='%1.1f%%')
+                ax.set_title(data[0] + ' Marks Distribution')
+
+                # Convert the plot to HTML
+                pie_chart_html = mpld3.fig_to_html(fig)
+                pie_charts_html.append(pie_chart_html)
+
+                # Close the plot to prevent memory leaks
+                plt.close(fig)
+
+    # If no information is present at all, display an error
+    if not any(html for html in pie_charts_html):
+        pie_charts_html.append(f"<p>Error: No information available for semester {j}</p>")
+
+    # Render the g_pg_sem_8.html template and pass the pie chart HTML
+    return render_template('Academic Performance/g_pg_sem_8.html', pie_charts=pie_charts_html)
+
+
+@app.route('/student_dashboard/g_pg_sem_9')
+def g_pg_sem_9():
+    pie_charts_html = []  # This list will store HTML representations of pie charts
+    j = 9  # Assuming the semester number is 9 for postgraduate semester 9
+
+    for i in range(1, 6):
+        # Execute the SQL query to fetch data for the ith subject
+        cursor.execute(f"SELECT pg_sem_{j}_sub_{i}_name, pg_sem_{j}_sub_{i}_marks_obtained, pg_sem_{j}_sub_{i}_total_marks FROM pg_sem_{j} WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+
+        # Fetch the data
+        data = cursor.fetchone()
+
+        if data is None:
+            # If no data is available for the subject, display an error
+            pie_charts_html.append(f"<p>Error: Marks not available for subject {i}</p>")
+        else:
+            if None in data:
+                # If any value is null, display an error for marks not available for that subject
+                pie_charts_html.append(f"<p>Error: Marks not available for subject {data[0]}</p>")
+            else:
+                # Plot the pie chart
+                labels = [data[0] + ' obtained marks', data[0] + ' total marks']
+                sizes = [data[1],str(int(data[2]) - int(data[1]))]  # Calculating remaining marks
+                fig, ax = plt.subplots(figsize=(5, 5))
+                ax.pie(sizes, labels=labels, autopct='%1.1f%%')
+                ax.set_title(data[0] + ' Marks Distribution')
+
+                # Convert the plot to HTML
+                pie_chart_html = mpld3.fig_to_html(fig)
+                pie_charts_html.append(pie_chart_html)
+
+                # Close the plot to prevent memory leaks
+                plt.close(fig)
+
+    # If no information is present at all, display an error
+    if not any(html for html in pie_charts_html):
+        pie_charts_html.append(f"<p>Error: No information available for semester {j}</p>")
+
+    # Render the g_pg_sem_9.html template and pass the pie chart HTML
+    return render_template('Academic Performance/g_pg_sem_9.html', pie_charts=pie_charts_html)
+
+
+@app.route('/student_dashboard/g_pg_sem_10')
+def g_pg_sem_10():
+    pie_charts_html = []  # This list will store HTML representations of pie charts
+    j = 10  # Assuming the semester number is 10 for postgraduate semester 10
+
+    for i in range(1, 6):
+        # Execute the SQL query to fetch data for the ith subject
+        cursor.execute(f"SELECT pg_sem_{j}_sub_{i}_name, pg_sem_{j}_sub_{i}_marks_obtained, pg_sem_{j}_sub_{i}_total_marks FROM pg_sem_{j} WHERE aadhaar_no = ?", (session['aadhaar_no'],))
+
+        # Fetch the data
+        data = cursor.fetchone()
+
+        if data is None:
+            # If no data is available for the subject, display an error
+            pie_charts_html.append(f"<p>Error: Marks not available for subject {i}</p>")
+        else:
+            if None in data:
+                # If any value is null, display an error for marks not available for that subject
+                pie_charts_html.append(f"<p>Error: Marks not available for subject {data[0]}</p>")
+            else:
+                # Plot the pie chart
+                labels = [data[0] + ' obtained marks', data[0] + ' total marks']
+                sizes = [data[1],str(int(data[2]) - int(data[1]))]  # Calculating remaining marks
+                fig, ax = plt.subplots(figsize=(5, 5))
+                ax.pie(sizes, labels=labels, autopct='%1.1f%%')
+                ax.set_title(data[0] + ' Marks Distribution')
+
+                # Convert the plot to HTML
+                pie_chart_html = mpld3.fig_to_html(fig)
+                pie_charts_html.append(pie_chart_html)
+
+                # Close the plot to prevent memory leaks
+                plt.close(fig)
+
+    # If no information is present at all, display an error
+    if not any(html for html in pie_charts_html):
+        pie_charts_html.append(f"<p>Error: No information available for semester {j}</p>")
+
+    # Render the g_pg_sem_10.html template and pass the pie chart HTML
+    return render_template('Academic Performance/g_pg_sem_10.html', pie_charts=pie_charts_html)
+
+
+
+@app.route('/student_dashboard/report_c1')
+def report_c1():
+    i = 1  # Assuming the class is 1
+
+    # Fetch student_info from the database
+    cursor.execute("SELECT * FROM student_info WHERE aadhaar_no = ?",(session['aadhaar_no'],))
+    student_details = cursor.fetchone()
+
+    # Fetch c_1_info from the database
+    cursor.execute("SELECT * FROM class_1 WHERE aadhaar_no = ?",(session['aadhaar_no'],))
+    c_1_info = cursor.fetchone()
+
+    # Initialize an empty list to store subject-wise details
+    rows = []
+
+    # Fetch subject-wise details from the database
+    for j in range(1,6):  # Assuming there are 5 subjects in class 1
+        cursor.execute(
+            f"SELECT c_1_sub_{j}_name, c_1_sub_{j}_marks_obtained, c_1_sub_{j}_total_marks, c_1_sub_{j}_percentage, c_1_sub_{j}_grade FROM class_1 WHERE aadhaar_no = ?",
+            (session['aadhaar_no'],))
+        subject_data = cursor.fetchone()
+        rows.append(subject_data)
+
+    # Render the report_c1.html template and pass the student and class 1 information
+    return render_template('Reports/report_c1.html',student=student_details,class_1=c_1_info,rows=rows)
+
+@app.route('/student_dashboard/report_c2')
+def report_c2():
+    i = 2  # Assuming the class is 2
+
+    # Fetch student_info from the database
+    cursor.execute("SELECT * FROM student_info WHERE aadhaar_no = ?",(session['aadhaar_no'],))
+    student_details = cursor.fetchone()
+
+    # Fetch c_2_info from the database
+    cursor.execute("SELECT * FROM class_2 WHERE aadhaar_no = ?",(session['aadhaar_no'],))
+    c_2_info = cursor.fetchone()
+
+    # Initialize an empty list to store subject-wise details
+    rows = []
+
+    # Fetch subject-wise details from the database
+    for j in range(1,6):  # Assuming there are 5 subjects in class 2
+        cursor.execute(
+            f"SELECT c_2_sub_{j}_name, c_2_sub_{j}_marks_obtained, c_2_sub_{j}_total_marks, c_2_sub_{j}_percentage, c_2_sub_{j}_grade FROM class_2 WHERE aadhaar_no = ?",
+            (session['aadhaar_no'],))
+        subject_data = cursor.fetchone()
+        rows.append(subject_data)
+
+    # Render the report_c1.html template and pass the student and class 2 information
+    return render_template('Reports/report_c2.html',student=student_details,class_2=c_2_info,rows=rows)
+
+@app.route('/student_dashboard/report_c3')
+def report_c3():
+    i = 3  # Assuming the class is 3
+
+    # Fetch student_info from the database
+    cursor.execute("SELECT * FROM student_info WHERE aadhaar_no = ?",(session['aadhaar_no'],))
+    student_details = cursor.fetchone()
+
+    # Fetch c_3_info from the database
+    cursor.execute("SELECT * FROM class_3 WHERE aadhaar_no = ?",(session['aadhaar_no'],))
+    c_3_info = cursor.fetchone()
+
+    # Initialize an empty list to store subject-wise details
+    rows = []
+
+    # Fetch subject-wise details from the database
+    for j in range(1,6):  # Assuming there are 5 subjects in class 3
+        cursor.execute(
+            f"SELECT c_3_sub_{j}_name, c_3_sub_{j}_marks_obtained, c_3_sub_{j}_total_marks, c_3_sub_{j}_percentage, c_3_sub_{j}_grade FROM class_3 WHERE aadhaar_no = ?",
+            (session['aadhaar_no'],))
+        subject_data = cursor.fetchone()
+        rows.append(subject_data)
+
+    # Render the report_c3.html template and pass the student and class 3 information
+    return render_template('Reports/report_c3.html',student=student_details,class_3=c_3_info,rows=rows)
+
+@app.route('/student_dashboard/report_c4')
+def report_c4():
+    i = 4  # Assuming the class is 4
+
+    # Fetch student_info from the database
+    cursor.execute("SELECT * FROM student_info WHERE aadhaar_no = ?",(session['aadhaar_no'],))
+    student_details = cursor.fetchone()
+
+    # Fetch c_4_info from the database
+    cursor.execute("SELECT * FROM class_4 WHERE aadhaar_no = ?",(session['aadhaar_no'],))
+    c_4_info = cursor.fetchone()
+
+    # Initialize an empty list to store subject-wise details
+    rows = []
+
+    # Fetch subject-wise details from the database
+    for j in range(1,6):  # Assuming there are 5 subjects in class 4
+        cursor.execute(
+            f"SELECT c_4_sub_{j}_name, c_4_sub_{j}_marks_obtained, c_4_sub_{j}_total_marks, c_4_sub_{j}_percentage, c_4_sub_{j}_grade FROM class_4 WHERE aadhaar_no = ?",
+            (session['aadhaar_no'],))
+        subject_data = cursor.fetchone()
+        rows.append(subject_data)
+
+    # Render the report_c4.html template and pass the student and class 4 information
+    return render_template('Reports/report_c4.html',student=student_details,class_4=c_4_info,rows=rows)
+
+@app.route('/student_dashboard/report_c5')
+def report_c5():
+    i = 5  # Assuming the class is 5
+
+    # Fetch student_info from the database
+    cursor.execute("SELECT * FROM student_info WHERE aadhaar_no = ?",(session['aadhaar_no'],))
+    student_details = cursor.fetchone()
+
+    # Fetch c_5_info from the database
+    cursor.execute("SELECT * FROM class_5 WHERE aadhaar_no = ?",(session['aadhaar_no'],))
+    c_5_info = cursor.fetchone()
+
+    # Initialize an empty list to store subject-wise details
+    rows = []
+
+    # Fetch subject-wise details from the database
+    for j in range(1,6):  # Assuming there are 5 subjects in class 5
+        cursor.execute(
+            f"SELECT c_5_sub_{j}_name, c_5_sub_{j}_marks_obtained, c_5_sub_{j}_total_marks, c_5_sub_{j}_percentage, c_5_sub_{j}_grade FROM class_5 WHERE aadhaar_no = ?",
+            (session['aadhaar_no'],))
+        subject_data = cursor.fetchone()
+        rows.append(subject_data)
+
+    # Render the report_c5.html template and pass the student and class 5 information
+    return render_template('Reports/report_c5.html',student=student_details,class_5=c_5_info,rows=rows)
+
+@app.route('/student_dashboard/report_c6')
+def report_c6():
+    i = 6  # Assuming the class is 6
+
+    # Fetch student_info from the database
+    cursor.execute("SELECT * FROM student_info WHERE aadhaar_no = ?",(session['aadhaar_no'],))
+    student_details = cursor.fetchone()
+
+    # Fetch c_6_info from the database
+    cursor.execute("SELECT * FROM class_6 WHERE aadhaar_no = ?",(session['aadhaar_no'],))
+    c_6_info = cursor.fetchone()
+
+    # Initialize an empty list to store subject-wise details
+    rows = []
+
+    # Fetch subject-wise details from the database
+    for j in range(1,6):  # Assuming there are 5 subjects in class 6
+        cursor.execute(
+            f"SELECT c_6_sub_{j}_name, c_6_sub_{j}_marks_obtained, c_6_sub_{j}_total_marks, c_6_sub_{j}_percentage, c_6_sub_{j}_grade FROM class_6 WHERE aadhaar_no = ?",
+            (session['aadhaar_no'],))
+        subject_data = cursor.fetchone()
+        rows.append(subject_data)
+
+    # Render the report_c6.html template and pass the student and class 6 information
+    return render_template('Reports/report_c6.html',student=student_details,class_6=c_6_info,rows=rows)
+
+@app.route('/student_dashboard/report_c7')
+def report_c7():
+    i = 7  # Assuming the class is 7
+
+    # Fetch student_info from the database
+    cursor.execute("SELECT * FROM student_info WHERE aadhaar_no = ?",(session['aadhaar_no'],))
+    student_details = cursor.fetchone()
+
+    # Fetch c_7_info from the database
+    cursor.execute("SELECT * FROM class_7 WHERE aadhaar_no = ?",(session['aadhaar_no'],))
+    c_7_info = cursor.fetchone()
+
+    # Initialize an empty list to store subject-wise details
+    rows = []
+
+    # Fetch subject-wise details from the database
+    for j in range(1,6):  # Assuming there are 5 subjects in class 7
+        cursor.execute(
+            f"SELECT c_7_sub_{j}_name, c_7_sub_{j}_marks_obtained, c_7_sub_{j}_total_marks, c_7_sub_{j}_percentage, c_7_sub_{j}_grade FROM class_7 WHERE aadhaar_no = ?",
+            (session['aadhaar_no'],))
+        subject_data = cursor.fetchone()
+        rows.append(subject_data)
+
+    # Render the report_c7.html template and pass the student and class 7 information
+    return render_template('Reports/report_c7.html',student=student_details,class_7=c_7_info,rows=rows)
+
+@app.route('/student_dashboard/report_c8')
+def report_c8():
+    i = 8  # Assuming the class is 8
+
+    # Fetch student_info from the database
+    cursor.execute("SELECT * FROM student_info WHERE aadhaar_no = ?",(session['aadhaar_no'],))
+    student_details = cursor.fetchone()
+
+    # Fetch c_8_info from the database
+    cursor.execute("SELECT * FROM class_8 WHERE aadhaar_no = ?",(session['aadhaar_no'],))
+    c_8_info = cursor.fetchone()
+
+    # Initialize an empty list to store subject-wise details
+    rows = []
+
+    # Fetch subject-wise details from the database
+    for j in range(1,6):  # Assuming there are 5 subjects in class 8
+        cursor.execute(
+            f"SELECT c_8_sub_{j}_name, c_8_sub_{j}_marks_obtained, c_8_sub_{j}_total_marks, c_8_sub_{j}_percentage, c_8_sub_{j}_grade FROM class_8 WHERE aadhaar_no = ?",
+            (session['aadhaar_no'],))
+        subject_data = cursor.fetchone()
+        rows.append(subject_data)
+
+    # Render the report_c8.html template and pass the student and class 8 information
+    return render_template('Reports/report_c8.html',student=student_details,class_8=c_8_info,rows=rows)
+
+@app.route('/student_dashboard/report_c9')
+def report_c9():
+    i = 9  # Assuming the class is 9
+
+    # Fetch student_info from the database
+    cursor.execute("SELECT * FROM student_info WHERE aadhaar_no = ?",(session['aadhaar_no'],))
+    student_details = cursor.fetchone()
+
+    # Fetch c_9_info from the database
+    cursor.execute("SELECT * FROM class_9 WHERE aadhaar_no = ?",(session['aadhaar_no'],))
+    c_9_info = cursor.fetchone()
+
+    # Initialize an empty list to store subject-wise details
+    rows = []
+
+    # Fetch subject-wise details from the database
+    for j in range(1,6):  # Assuming there are 5 subjects in class 9
+        cursor.execute(
+            f"SELECT c_9_sub_{j}_name, c_9_sub_{j}_marks_obtained, c_9_sub_{j}_total_marks, c_9_sub_{j}_percentage, c_9_sub_{j}_grade FROM class_9 WHERE aadhaar_no = ?",
+            (session['aadhaar_no'],))
+        subject_data = cursor.fetchone()
+        rows.append(subject_data)
+
+    # Render the report_c9.html template and pass the student and class 9 information
+    return render_template('Reports/report_c9.html',student=student_details,class_9=c_9_info,rows=rows)
+
+@app.route('/student_dashboard/report_c10')
+def report_c10():
+    i = 10  # Assuming the class is 10
+
+    # Fetch student_info from the database
+    cursor.execute("SELECT * FROM student_info WHERE aadhaar_no = ?",(session['aadhaar_no'],))
+    student_details = cursor.fetchone()
+
+    # Fetch c_10_info from the database
+    cursor.execute("SELECT * FROM class_10 WHERE aadhaar_no = ?",(session['aadhaar_no'],))
+    c_10_info = cursor.fetchone()
+
+    # Initialize an empty list to store subject-wise details
+    rows = []
+
+    # Fetch subject-wise details from the database
+    for j in range(1,6):  # Assuming there are 5 subjects in class 10
+        cursor.execute(
+            f"SELECT c_10_sub_{j}_name, c_10_sub_{j}_marks_obtained, c_10_sub_{j}_total_marks, c_10_sub_{j}_percentage, c_10_sub_{j}_grade FROM class_10 WHERE aadhaar_no = ?",
+            (session['aadhaar_no'],))
+        subject_data = cursor.fetchone()
+        rows.append(subject_data)
+
+    # Render the report_c10.html template and pass the student and class 10 information
+    return render_template('Reports/report_c10.html',student=student_details,class_10=c_10_info,rows=rows)
+
+
+@app.route('/student_dashboard/report_c11')
+def report_c11():
+    i = 11  # Assuming the class is 11
+
+    # Fetch student_info from the database
+    cursor.execute("SELECT * FROM student_info WHERE aadhaar_no = ?",(session['aadhaar_no'],))
+    student_details = cursor.fetchone()
+
+    # Fetch c_11_info from the database
+    cursor.execute("SELECT * FROM class_11 WHERE aadhaar_no = ?",(session['aadhaar_no'],))
+    c_11_info = cursor.fetchone()
+
+    # Initialize an empty list to store subject-wise details
+    rows = []
+
+    # Fetch subject-wise details from the database
+    for j in range(1,6):  # Assuming there are 5 subjects in class 11
+        cursor.execute(
+            f"SELECT c_11_sub_{j}_name, c_11_sub_{j}_marks_obtained, c_11_sub_{j}_total_marks, c_11_sub_{j}_percentage, c_11_sub_{j}_grade FROM class_11 WHERE aadhaar_no = ?",
+            (session['aadhaar_no'],))
+        subject_data = cursor.fetchone()
+        rows.append(subject_data)
+
+    # Render the report_c11.html template and pass the student and class 11 information
+    return render_template('Reports/report_c11.html',student=student_details,class_11=c_11_info,rows=rows)
+
+
+@app.route('/student_dashboard/report_c12')
+def report_c12():
+    i = 12  # Assuming the class is 12
+
+    # Fetch student_info from the database
+    cursor.execute("SELECT * FROM student_info WHERE aadhaar_no = ?",(session['aadhaar_no'],))
+    student_details = cursor.fetchone()
+
+    # Fetch c_11_info from the database
+    cursor.execute("SELECT * FROM class_12 WHERE aadhaar_no = ?",(session['aadhaar_no'],))
+    c_12_info = cursor.fetchone()
+
+    # Initialize an empty list to store subject-wise details
+    rows = []
+
+    # Fetch subject-wise details from the database
+    for j in range(1,6):  # Assuming there are 5 subjects in class 11
+        cursor.execute(
+            f"SELECT c_12_sub_{j}_name, c_12_sub_{j}_marks_obtained, c_12_sub_{j}_total_marks, c_12_sub_{j}_percentage, c_12_sub_{j}_grade FROM class_12 WHERE aadhaar_no = ?",
+            (session['aadhaar_no'],))
+        subject_data = cursor.fetchone()
+        rows.append(subject_data)
+
+    # Render the report_c11.html template and pass the student and class 11 information
+    return render_template('Reports/report_c12.html',student=student_details,class_12=c_12_info,rows=rows)
+
+@app.route('/student_dashboard/report_ug_sem_1')
+def report_ug_sem_1():
+    i = 1  # Assuming the sem is 1
+
+    # Fetch student_info from the database
+    cursor.execute("SELECT * FROM student_info WHERE aadhaar_no = ?",(session['aadhaar_no'],))
+    student_details = cursor.fetchone()
+
+    # Fetch ug_sem_1_info from the database
+    cursor.execute("SELECT * FROM ug_sem_1 WHERE aadhaar_no = ?",(session['aadhaar_no'],))
+    ug_sem_1_info = cursor.fetchone()
+
+    # Initialize an empty list to store subject-wise details
+    rows = []
+
+    # Fetch subject-wise details from the database
+    for j in range(1,6):  # Assuming there are 5 subjects in ug_sem 1
+        cursor.execute(
+            f"SELECT ug_sem_1_sub_{j}_name, ug_sem_1_sub_{j}_marks_obtained, ug_sem_1_sub_{j}_total_marks, ug_sem_1_sub_{j}_percentage, ug_sem_1_sub_{j}_grade FROM ug_sem_1 WHERE aadhaar_no = ?",
+            (session['aadhaar_no'],))
+        subject_data = cursor.fetchone()
+        rows.append(subject_data)
+
+    # Render the report_ug_sem_1.html template and pass the student and ug_sem 1 information
+    return render_template('Reports/report_ug_sem_1.html',student=student_details,ug_sem_1=ug_sem_1_info,rows=rows)
+
+
+
+@app.route('/student_dashboard/report_pg_sem_1')
+def report_pg_sem_1():
+    i = 1  # Assuming the sem is 1
+
+    # Fetch student_info from the database
+    cursor.execute("SELECT * FROM student_info WHERE aadhaar_no = ?",(session['aadhaar_no'],))
+    student_details = cursor.fetchone()
+
+    # Fetch pg_sem_1_info from the database
+    cursor.execute("SELECT * FROM pg_sem_1 WHERE aadhaar_no = ?",(session['aadhaar_no'],))
+    pg_sem_1_info = cursor.fetchone()
+
+    # Initialize an empty list to store subject-wise details
+    rows = []
+
+    # Fetch subject-wise details from the database
+    for j in range(1,6):  # Assuming there are 5 subjects in pg_sem 1
+        cursor.execute(
+            f"SELECT pg_sem_1_sub_{j}_name, pg_sem_1_sub_{j}_marks_obtained, pg_sem_1_sub_{j}_total_marks, pg_sem_1_sub_{j}_percentage, pg_sem_1_sub_{j}_grade FROM pg_sem_1 WHERE aadhaar_no = ?",
+            (session['aadhaar_no'],))
+        subject_data = cursor.fetchone()
+        rows.append(subject_data)
+
+    # Render the report_pg_sem_1.html template and pass the student and pg_sem 1 information
+    return render_template('Reports/report_pg_sem_1.html',student=student_details,pg_sem_1=pg_sem_1_info,rows=rows)
 
 
 

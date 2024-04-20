@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Student Dashboard</title>
+    <link rel="stylesheet" href="../../static/styles/style.css">
+    <link rel="stylesheet" href="../../static/styles/style_report.css">
+    <link rel="stylesheet" href="../../static/styles/footer.css">
+    <link rel="stylesheet" href="../../static/styles/nav.css">
+    <link rel="icon" type="image/x-icon" href="../../static/img/et_logo.png">
+</head>
+
+<body>
+
+    <header>
+        <img id="et_logo" src="../../static/img/et_logo.png" height="50px" width="50px"/>
+
+        <nav class="main-nav">
+
+            <a href="/student_profile" id="selected">Profile</a>
+            <a href="/student_dashboard">Dashboard</a>
+            <a href="/student_manage">Manage</a>
+            <a href="/login">Logout</a>
+
+        </nav>
+    </header>
+
+    <main>
+        <h1>Report</h1>
+
+        <form id="overview_form" action="/student_dashboard" method="post">
+        <div class="select_class">
+            <label for="select_class" class="select_class">Select class:</label>
+            <select id="select_class" class="select_class">
+                <option selected value="1">Class 1</option>
+                <option value="2">Class 2</option>
+                <option value="3">Class 3</option>
+                <option value="4">Class 4</option>
+                <option value="5">Class 5</option>
+                <option value="6">Class 6</option>
+                <option value="7">Class 7</option>
+                <option value="8">Class 8</option>
+                <option selected value="9">Class 9</option>
+                <option value="10">Class 10</option>
+                <option value="11">Class 11</option>
+                <option value="12">Class 12</option>
+            </select>
+            <button class="select_class" id="report_gen"> Go</button>
+        </div>
+        </form>
+
+
+        <div class="report">
+            <div class="report-info">
+                <h2>Class 9</h2>
+                <p><b>Name:</b> {{ student.first_name }} {{ student.last_name }}</p>
+                <p><b>Gender:</b> {{ student.gender }}</p>
+                <p><b>Date of Birth:</b> {{ student.date_of_birth }}</p>
+                <p><b>Email:</b> {{ student.email }}</p>
+                <p><b>Phone Number:</b> {{ student.phone_no }}</p>
+                <p><b>Aadhaar Number:</b> {{ student.aadhaar_no }}</p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Subject</th>
+                            <th>Marks Obtained</th>
+                            <th>Total Marks</th>
+                            <th>Percentage</th>
+                            <th>Grade</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for subject_data in rows %}
+                            <tr>
+                                <td>{{ subject_data[0] }}</td>
+                                <td>{{ subject_data[1] }}</td>
+                                <td>{{ subject_data[2] }}</td>
+                                <td>{{ subject_data[3] }}</td>
+                                <td>{{ subject_data[4] }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+
+                <p><b>Marks Obtained:</b> {{ class_9.c_9_marks_obtained }}</p>
+                <p><b>Total Marks:</b> {{ class_9.c_9_total_marks }}</p>
+                <p><b>Percentage:</b> {{ class_9.c_9_percentage }}</p>
+                <p><b>Grade:</b> {{ class_9.c_9_grade }}</p>
+
+
+            </div>
+        </div>
+    </main>
+
+    <footer>
+		<img src="../../static/img/smart_india_hackathon_2022_w.png" id="Smart_India_Hackathon_2022_img" alt="Smart India Hackathon 2022 Logo">
+			<p>© 2024 Your Website. All Rights Reserved.</p>
+			<!-- social links, Digital India , help, and support info -->
+            <div class="footer-social">
+                <ul class="footer-social">
+                    <li><a href="https://www.facebook.com/yourwebsite" target="_blank">Facebook</a></li>
+                    <li><a href="https://www.twitter.com/yourwebsite" target="_blank">Twitter</a></li>
+                    <li><a href="https://www.instagram.com/yourwebsite" target="_blank">Instagram</a></li>
+                    <li><a href="https://www.linkedin.com/yourwebsite" target="_blank">LinkedIn</a></li>
+                </ul>
+            </div>
+            <div class="footer-contact">
+                <ul>
+                    <li><a href="mailto:help@iep.com">Email - help@iep.com </a></li>
+                    <li><a href="tel:1234567890">Help Line No. - 1234567890</a></li>
+                    <li><a href="https://www.digitalindia.gov.in" target="_blank">Digital India</a></li>
+                </ul>
+            </div>
+		<img src="../../static/img/digital_india_logo.png" id="Digital_India_img" alt="Digital India Logo">
+    </footer>
+    <script src="../../static/js/script_report_gen_class.js"></script>
+</body>
+</html>

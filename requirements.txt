@@ -5,3 +5,4 @@ Werkzeug
 numpy
 mpld3
 pandas
+seaborn

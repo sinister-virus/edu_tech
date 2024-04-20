@@ -28,7 +28,7 @@ continueBtn.addEventListener("click", (event) => {
       window.location.href = "/student_register";
     }
     if (selectedUserType === "institute") {
-      window.location.href = "institute_register";
+      window.location.href = "/institute_register";
     }
     else if (selectedUserType === "admin") {
       window.location.href = "/admin_register";

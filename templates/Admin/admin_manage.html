@@ -27,50 +27,33 @@
 
     <main>
         <h1>Manage</h1>
-        <h2>Overview</h2>
-        <!-- Add a brief overview of the platform's statistics and recent activity -->
-        <div class="stats">
-            <div class="stat">
-                <h2>Total Users</h2>
-                <p>1,234</p>
-            </div>
-            <div class="stat">
-                <h2>Active Users</h2>
-                <p>567</p>
-            </div>
-            <div class="stat">
-                <h2>New Users Today</h2>
-                <p>34</p>
+        <h2>Manage Users</h2>
+
+        <div>
+            <div class="select_class">
+                <h3>Add a new user</h3>
+                <div>
+                    <label for="aadhaar_no" class="select_class">Aadhaar No:</label>
+                    <input type="text" id="aadhaar_no" name="aadhaar_no" class="select_class">
+                </div>
+
+                <br>
+
+                <div>
+                    <label for="user_type" class="select_class">Select User Type:</label>
+                    <select id="user_type" class="select_class">
+                        <option value="0">Select</option>
+                        <option value="admin">Admin</option>
+                        <option value="student">Student</option>
+                        <option value="institute">Institute</option>
+                    </select>
+                </div>
+
+                <br>
+
+                <button class="select_class" id="go"> Go</button>
             </div>
         </div>
-        <h2>Recent Activity</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>User</th>
-                    <th>Action</th>
-                    <th>Date/Time</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>John Doe</td>
-                    <td>Created Account</td>
-                    <td>12/01/2023 10:30 AM</td>
-                </tr>
-                <tr>
-                    <td>Jane Smith</td>
-                    <td>Logged In</td>
-                    <td>12/01/2023 09:45 AM</td>
-                </tr>
-                <tr>
-                    <td>Bob Johnson</td>
-                    <td>Reset Password</td>
-                    <td>11/30/2023 06:15 PM</td>
-                </tr>
-            </tbody>
-        </table>
-
     </main>
 
     <footer>
@@ -94,5 +77,6 @@
             </div>
 		<img src="../../static/img/digital_india_logo.png" id="Digital_India_img" alt="Digital India Logo">
     </footer>
+    <script src="../../static/js/admin_manage.js"></script>
 </body>
 </html>

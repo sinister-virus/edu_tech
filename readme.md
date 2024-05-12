@@ -22,7 +22,7 @@ The list of the features of the platform, including those related to school educ
 
 1. **Install Python 3.x**:
 
-	- Visit the official Python website at python.org.
+	- Visit the official Python website [https://www.python.org](https://www.python.org).
 	- Navigate to the Downloads section and select the latest version of Python 3.x for your operating system (Windows, macOS, or Linux).
 	- Download the installer and run it.
 	- Follow the installation wizard's instructions, ensuring to select the option to add Python to your system PATH during installation.

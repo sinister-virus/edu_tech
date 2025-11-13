@@ -144,7 +144,7 @@ A list of the contributors to the project.
 ## License
 
 [`GNU General Public License v3.0`](LICENSE)
-[GNU General Public License v3.0](LICENSE)
+
 ## Contact
 
 Contact information for the project.

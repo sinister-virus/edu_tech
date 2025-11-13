@@ -127,10 +127,24 @@ A list of the contributors to the project.
 4. Pratham Chopde
 5. Atharva Paraskar
 
+## Publications
+
+1. A Unified Digital Space for Student Academic Achievement and Dropout Statistics in India   
+   Conference: IEEE OTCON 2025   
+   Link: [https://doi.org/10.1109/OTCON65728.2025.11070669](https://doi.org/10.1109/OTCON65728.2025.11070669)
+
+2. Interlink Platform for School, Higher and Technical Education in India: Design Platform   
+   Journal: EAI Endorsed Transactions on Internet of Things   
+   Link: [https://doi.org/10.4108/eetiot.6152](https://doi.org/10.4108/eetiot.6152)
+
+3. Review On Educational Academic Performance Analysis and Dropout Visualization by Analyzing Grades of Student   
+   Journal: International Research Journal on Advanced Engineering and Management   
+   Link: [https://doi.org/10.47392/IRJAEM.2024.0194](https://doi.org/10.47392/IRJAEM.2024.0194)
+
 ## License
 
-GNU General Public License v3.0
-
+[`GNU General Public License v3.0`](LICENSE)
+[GNU General Public License v3.0](LICENSE)
 ## Contact
 
 Contact information for the project.
